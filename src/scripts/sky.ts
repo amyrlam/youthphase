@@ -41,14 +41,14 @@ const STOPS: { alt: number; top: RGB; bottom: RGB }[] = [
   { alt: 90, top: [79, 151, 232], bottom: [168, 212, 242] },
 ];
 
-/* Sun glow color keyed by altitude: pale and warm overhead, deep
-   red-orange at the horizon. */
+/* Sun glow color keyed by altitude: pale and warm overhead, unmistakably
+   red at the horizon. */
 const SUN_GLOW: { alt: number; rgb: RGB; a: number }[] = [
-  { alt: -5, rgb: [255, 92, 56], a: 0 },
-  { alt: -2, rgb: [255, 106, 64], a: 0.55 },
-  { alt: 0, rgb: [255, 128, 78], a: 0.6 },
-  { alt: 6, rgb: [255, 178, 110], a: 0.6 },
-  { alt: 20, rgb: [255, 224, 168], a: 0.55 },
+  { alt: -6, rgb: [255, 66, 34], a: 0 },
+  { alt: -3, rgb: [255, 76, 40], a: 0.65 },
+  { alt: 0, rgb: [255, 98, 48], a: 0.72 },
+  { alt: 6, rgb: [255, 156, 90], a: 0.62 },
+  { alt: 20, rgb: [255, 216, 156], a: 0.55 },
   { alt: 60, rgb: [255, 246, 220], a: 0.5 },
 ];
 
@@ -115,7 +115,7 @@ export function scrimFor(ink: RGB, top: RGB, bottom: RGB): { color: RGB; opacity
 
 /* Small text needs 7:1 for AAA, which no single ink can achieve against a
    sunset gradient. Shift the local background toward black (or white) just
-   far enough — the result backs the status line and mode button. */
+   far enough — the result backs the status line and the corner buttons. */
 export function chipFor(bg: RGB, inkIsLight: boolean): { bg: RGB; ink: RGB } {
   const ink = inkIsLight ? WHITE : BLACK;
   const toward = inkIsLight ? BLACK : WHITE;
@@ -193,6 +193,9 @@ function seededRandom(seed: number): () => number {
   };
 }
 
+const reducedMotion = () =>
+  typeof matchMedia !== 'undefined' && matchMedia('(prefers-reduced-motion: reduce)').matches;
+
 function plantStars() {
   const container = document.getElementById('stars');
   if (!container || container.childElementCount > 0) return;
@@ -211,6 +214,42 @@ function plantStars() {
     if (size > 2.2) star.style.boxShadow = '0 0 4px rgba(240, 244, 255, 0.7)';
     container.appendChild(star);
   }
+}
+
+/* An occasional shooting star while the sky is dark. */
+let nightNow = false;
+function scheduleShootingStar() {
+  if (reducedMotion()) return;
+  setTimeout(
+    () => {
+      const container = document.getElementById('stars');
+      if (container && nightNow && !document.hidden && !demoRunning) {
+        const s = document.createElement('span');
+        s.className = 'shooting-star';
+        s.style.left = `${10 + Math.random() * 65}%`;
+        s.style.top = `${5 + Math.random() * 35}%`;
+        s.addEventListener('animationend', () => s.remove());
+        container.appendChild(s);
+      }
+      scheduleShootingStar();
+    },
+    18000 + Math.random() * 25000,
+  );
+}
+
+/* Tap/click anywhere (except links and buttons) leaves a tiny sparkle. */
+function enableSparkles() {
+  if (reducedMotion()) return;
+  addEventListener('pointerdown', (e) => {
+    if ((e.target as Element | null)?.closest('a, button')) return;
+    const s = document.createElement('span');
+    s.className = 'sparkle';
+    s.textContent = '✦';
+    s.style.left = `${e.clientX}px`;
+    s.style.top = `${e.clientY}px`;
+    s.addEventListener('animationend', () => s.remove());
+    document.body.appendChild(s);
+  });
 }
 
 async function locate(): Promise<Place> {
@@ -238,22 +277,39 @@ const posX = (azimuthDeg: number) =>
   Math.max(4, Math.min(96, 50 - Math.sin((azimuthDeg * Math.PI) / 180) * 42));
 const posY = (altitudeDeg: number) => 82 - (Math.max(0, altitudeDeg) / 90) * 62;
 
-function render(place: Place, mode: Mode) {
-  const now = new Date();
+/* Sun/moon screen positions advance in 15-minute steps — a slow sundial
+   hop rather than imperceptible drift. */
+const QUARTER_HOUR = 15 * 60 * 1000;
+const quantize = (d: Date) => new Date(Math.floor(d.getTime() / QUARTER_HOUR) * QUARTER_HOUR);
+
+function formatTime(d: Date): string {
+  return d
+    .toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' })
+    .toLowerCase()
+    .replace(' ', '');
+}
+
+let demoRunning = false;
+
+function render(place: Place, mode: Mode, at = new Date(), demo = false) {
   const { latitude, longitude } = place;
 
-  const sun = SunCalc.getPosition(now, latitude, longitude);
+  const sun = SunCalc.getPosition(at, latitude, longitude);
   const sunAltDeg = sun.altitude;
-  const moon = SunCalc.getMoonPosition(now, latitude, longitude);
-  const moonIllum = SunCalc.getMoonIllumination(now);
+  const moonIllum = SunCalc.getMoonIllumination(at);
+
+  // Positions hop on the quarter hour; colors glide continuously.
+  const qt = demo ? at : quantize(at);
+  const qSun = SunCalc.getPosition(qt, latitude, longitude);
+  const qMoon = SunCalc.getMoonPosition(qt, latitude, longitude);
 
   const altDeg = mode === 'auto' ? sunAltDeg : FORCED_ALT[mode];
   let { top, bottom } = skyColors(altDeg);
 
   // Moonlight gently lifts the night sky — brighter when the moon is
   // fuller and higher.
-  if (mode === 'auto' && altDeg < -10 && moon.altitude > 0) {
-    const strength = moonIllum.fraction * Math.min(1, moon.altitude / 35) * 0.16;
+  if (mode === 'auto' && altDeg < -10 && qMoon.altitude > 0) {
+    const strength = moonIllum.fraction * Math.min(1, qMoon.altitude / 35) * 0.16;
     top = mix(top, MOONLIGHT, strength);
     bottom = mix(bottom, MOONLIGHT, strength);
   }
@@ -274,60 +330,78 @@ function render(place: Place, mode: Mode) {
     scrimEl.style.opacity = String(scrim.opacity);
   }
 
-  for (const id of ['sky-status', 'sky-mode']) {
-    const el = document.getElementById(id);
-    if (el) {
-      el.style.backgroundColor = css(chip.bg);
-      el.style.color = css(chip.ink);
-    }
+  for (const el of document.querySelectorAll<HTMLElement>('.sky-chip')) {
+    el.style.backgroundColor = css(chip.bg);
+    el.style.color = css(chip.ink);
   }
 
   // The stars come out as the sun drops below civil twilight.
+  const starOpacity = altDeg <= -12 ? 1 : altDeg >= -6 ? 0 : (-altDeg - 6) / 6;
+  nightNow = starOpacity > 0.5;
   const stars = document.getElementById('stars');
-  if (stars) {
-    const starOpacity = altDeg <= -12 ? 1 : altDeg >= -6 ? 0 : (-altDeg - 6) / 6;
-    stars.style.opacity = String(starOpacity * 0.9);
-  }
+  if (stars) stars.style.opacity = String(starOpacity * 0.9);
 
-  // A soft glow that tracks whichever body is up: the sun by day
-  // (reddening toward the horizon), the moon by night.
+  // A soft glow that tracks the sun, reddening toward the horizon. (The
+  // moon gets its own disc below.)
   const glow = document.getElementById('glow');
   if (glow) {
-    let body: { x: number; y: number; color: string; opacity: number } | null = null;
-    if (mode === 'day') {
-      body =
-        sunAltDeg > 0
-          ? { x: posX(sun.azimuth), y: posY(sun.altitude), color: sunGlowColor(sunAltDeg), opacity: 1 }
-          : { x: 68, y: 30, color: sunGlowColor(45), opacity: 1 };
-    } else if (mode === 'auto') {
-      if (sunAltDeg > -5) {
-        body = { x: posX(sun.azimuth), y: posY(sun.altitude), color: sunGlowColor(sunAltDeg), opacity: 1 };
-      } else if (moon.altitude > 0) {
-        body = {
-          x: posX(moon.azimuth),
-          y: posY(moon.altitude),
-          color: 'rgba(226, 233, 255, 0.4)',
-          opacity: 0.4 + moonIllum.fraction * 0.6,
-        };
-      }
-    }
-
-    if (body) {
-      glow.style.left = `${body.x}%`;
-      glow.style.top = `${body.y}%`;
-      glow.style.backgroundColor = body.color;
-      glow.style.opacity = String(body.opacity);
+    const showSun = mode === 'day' || (mode !== 'night' && sunAltDeg > -6);
+    if (showSun) {
+      const up = sunAltDeg > 0;
+      glow.style.left = `${mode === 'day' && !up ? 66 : posX(qSun.azimuth)}%`;
+      glow.style.top = `${mode === 'day' && !up ? 30 : posY(qSun.altitude)}%`;
+      glow.style.backgroundColor = sunGlowColor(mode === 'day' && !up ? 45 : sunAltDeg);
+      glow.style.opacity = '1';
     } else {
       glow.style.opacity = '0';
     }
   }
 
+  // A delicate phase-accurate moon disc at night.
+  const moonEl = document.getElementById('moon');
+  if (moonEl) {
+    const moonUp = qMoon.altitude > 0;
+    const showMoon =
+      mode === 'night' || (mode === 'auto' && sunAltDeg < -4 && moonUp);
+    if (showMoon) {
+      moonEl.style.left = `${moonUp ? posX(qMoon.azimuth) : 72}%`;
+      moonEl.style.top = `${moonUp ? posY(qMoon.altitude) : 24}%`;
+      moonEl.style.opacity = '0.9';
+      const shade = moonEl.querySelector<HTMLElement>('.moon-shade');
+      if (shade) {
+        // Slide the shadow off the lit side: waxing lights the right limb.
+        const offset = moonIllum.fraction * 100 * (moonIllum.waxing ? -1 : 1);
+        shade.style.transform = `translateX(${offset.toFixed(1)}%)`;
+      }
+    } else {
+      moonEl.style.opacity = '0';
+    }
+  }
+
   const status = document.getElementById('sky-status');
   if (status) {
-    const inTenMinutes = SunCalc.getPosition(new Date(now.getTime() + 10 * 60 * 1000), latitude, longitude);
+    const inTenMinutes = SunCalc.getPosition(new Date(at.getTime() + 10 * 60 * 1000), latitude, longitude);
     const rising = inTenMinutes.altitude > sun.altitude;
-    status.textContent = `${skyLabel(sunAltDeg, rising, moonIllum.phase)} · ${place.label}`;
+    const label = skyLabel(sunAltDeg, rising, moonIllum.phase);
+    status.textContent = demo
+      ? `${formatTime(at)} · ${label}`
+      : `${label} · ${place.label}`;
   }
+}
+
+/* Play the next 24 hours in about 14 seconds. */
+async function playDemo(place: Place, mode: Mode) {
+  if (demoRunning) return;
+  demoRunning = true;
+  document.documentElement.classList.add('sky-demo');
+  const base = new Date();
+  for (let m = 0; m <= 24 * 60; m += 10) {
+    render(place, 'auto', new Date(base.getTime() + m * 60 * 1000), true);
+    await new Promise((r) => setTimeout(r, 95));
+  }
+  document.documentElement.classList.remove('sky-demo');
+  demoRunning = false;
+  render(place, mode);
 }
 
 async function start() {
@@ -335,6 +409,8 @@ async function start() {
   let place = FALLBACK;
 
   plantStars();
+  enableSparkles();
+  scheduleShootingStar();
 
   const button = document.getElementById('sky-mode');
   const syncButton = () => {
@@ -351,16 +427,25 @@ async function start() {
       /* fine to not persist */
     }
     syncButton();
-    render(place, mode);
+    if (!demoRunning) render(place, mode);
   });
+
+  document.getElementById('sky-demo')?.addEventListener('click', () => playDemo(place, mode));
+
+  // Dev console hook: preview the sky at any moment, e.g.
+  // __skyAt('2026-07-16T20:30'). Call with no argument to return to now.
+  (window as unknown as Record<string, unknown>).__skyAt = (iso?: string) =>
+    render(place, mode, iso ? new Date(iso) : new Date(), Boolean(iso));
 
   // Paint immediately with the San Francisco fallback, then refine once
   // the IP lookup resolves.
   syncButton();
   render(place, mode);
   place = await locate();
-  render(place, mode);
-  setInterval(() => render(place, mode), 60 * 1000);
+  if (!demoRunning) render(place, mode);
+  setInterval(() => {
+    if (!demoRunning) render(place, mode);
+  }, 60 * 1000);
 }
 
 if (typeof document !== 'undefined') start();

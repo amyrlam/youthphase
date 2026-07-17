@@ -29,6 +29,16 @@ const { title = 'Amy Lam', description = 'Personal site of Amy Lam' } = Astro.pr
     <!-- Star field is planted by sky.ts -->
     <div id="stars" aria-hidden="true" class="pointer-events-none absolute inset-0 opacity-0"></div>
 
+    <!-- A delicate phase-accurate moon; sky.ts positions it and slides
+         the shade to match the current phase. -->
+    <div
+      id="moon"
+      aria-hidden="true"
+      class="pointer-events-none absolute -translate-x-1/2 -translate-y-1/2 opacity-0"
+    >
+      <div class="moon-disc"><div class="moon-shade"></div></div>
+    </div>
+
     <!-- Contrast scrim: sky.ts raises its opacity when the gradient behind
          the center content can't meet AAA on its own (golden hour). -->
     <div
@@ -40,12 +50,23 @@ const { title = 'Amy Lam', description = 'Personal site of Amy Lam' } = Astro.pr
 
     <slot />
 
-    <button
-      id="sky-mode"
-      class="fixed right-5 bottom-5 rounded-full border border-current/30 px-3 py-1.5 text-xs lowercase tracking-widest focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-current"
+    <div
+      class="fixed right-5 bottom-[calc(1.25rem+env(safe-area-inset-bottom))] flex items-center gap-2"
     >
-      sky: auto
-    </button>
+      <button
+        id="sky-demo"
+        aria-label="Play a 24-hour sky time-lapse"
+        class="sky-chip rounded-full border border-current/30 px-3 py-1.5 text-xs lowercase tracking-widest focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-current"
+      >
+        ▶ 24h
+      </button>
+      <button
+        id="sky-mode"
+        class="sky-chip rounded-full border border-current/30 px-3 py-1.5 text-xs lowercase tracking-widest focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-current"
+      >
+        sky: auto
+      </button>
+    </div>
     <script src="../scripts/sky.ts"></script>
   </body>
 </html>

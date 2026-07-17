@@ -24,7 +24,23 @@ Key files:
 - `src/layouts/Layout.astro` — shared shell (glow element + sky script)
 - `src/pages/index.astro` — homepage
 
+## Deploying (Vercel)
+
+The site is fully static — suncalc computes sun/moon positions in the
+browser, so there is no server-side work and the free tier is plenty:
+
+1. Push this repo to GitHub
+2. [vercel.com/new](https://vercel.com/new) → import the repo — Vercel
+   auto-detects Astro; no configuration needed
+3. Add `youthphase.dev` under Project → Settings → Domains
+
+(Netlify and Cloudflare Pages work identically.) The only runtime request
+is the IP geolocation lookup to ipapi.co, which is free up to 1,000
+lookups/day; if traffic ever exceeds that, swap in the host's own geo
+headers or fall back to San Francisco.
+
 ## Later
 
+- Pick a font: compare candidates at `/fonts`, then delete that page
 - Short bio on the homepage
 - Blog: link reposts first, original posts after (Astro content collections)

@@ -31,6 +31,10 @@ import Layout from '../layouts/Layout.astro';
       </a>
     </nav>
 
-    <p id="sky-status" class="absolute bottom-7 rounded-full px-3 py-1.5 text-sm lowercase tracking-widest"></p>
+    <p
+      id="sky-status"
+      class="sky-chip absolute bottom-[calc(4.25rem+env(safe-area-inset-bottom))] rounded-full px-3 py-1.5 text-sm lowercase tracking-widest sm:bottom-[calc(1.75rem+env(safe-area-inset-bottom))]"
+    >
+    </p>
   </main>
 </Layout>

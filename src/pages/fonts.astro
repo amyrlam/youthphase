@@ -1,0 +1,54 @@
+---
+/* Temporary font comparison page — delete once a font is chosen. */
+import Layout from '../layouts/Layout.astro';
+import '@fontsource-variable/sora';
+import '@fontsource-variable/instrument-sans';
+
+const fonts = [
+  {
+    name: 'space grotesk',
+    css: "'Space Grotesk Variable', sans-serif",
+    note: 'current · techy, characterful',
+  },
+  {
+    name: 'sora',
+    css: "'Sora Variable', sans-serif",
+    note: 'rounder, friendlier',
+  },
+  {
+    name: 'instrument sans',
+    css: "'Instrument Sans Variable', sans-serif",
+    note: 'editorial, neutral',
+  },
+];
+---
+
+<Layout title="fonts — Amy Lam" description="Font options for youthphase.dev">
+  <main
+    class="relative flex min-h-dvh flex-col items-center justify-center gap-12 px-6 py-20 text-center"
+  >
+    {
+      fonts.map((f) => (
+        <section class="flex flex-col items-center gap-2">
+          <h2
+            class="text-5xl font-medium lowercase tracking-tight sm:text-7xl"
+            style={`font-family: ${f.css}`}
+          >
+            amy lam
+          </h2>
+          <p
+            class="sky-chip rounded-full px-3 py-1.5 text-sm lowercase tracking-widest"
+            style={`font-family: ${f.css}`}
+          >
+            {f.name} · {f.note}
+          </p>
+        </section>
+      ))
+    }
+    <a
+      href="/"
+      class="sky-chip rounded-full border border-current/30 px-3 py-1.5 text-sm lowercase tracking-widest focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-current"
+      >← home</a
+    >
+  </main>
+</Layout>
