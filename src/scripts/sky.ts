@@ -363,15 +363,6 @@ function formatTime(d: Date): string {
 
 let demoRunning = false;
 
-/* The favicon follows the sky: sun by day, moon by night. */
-let faviconNight: boolean | null = null;
-function setFavicon(night: boolean) {
-  if (night === faviconNight) return;
-  faviconNight = night;
-  const link = document.getElementById('favicon') as HTMLLinkElement | null;
-  if (link) link.href = night ? '/favicon-night.svg' : '/favicon-day.svg';
-}
-
 function render(place: Place, mode: Mode, at = new Date(), demo = false) {
   const { latitude, longitude } = place;
 
@@ -463,7 +454,6 @@ function render(place: Place, mode: Mode, at = new Date(), demo = false) {
   }
 
   updateStars(place, qt);
-  setFavicon(altDeg < -6);
 
   const status = document.getElementById('sky-status');
   if (status) {

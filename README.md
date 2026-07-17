@@ -9,8 +9,7 @@ ipapi.co, falling back to San Francisco), and the page tints itself accordingly 
 deep midnight blue at night (brightened by a full moon), pink and peach at golden
 hour, moody slate blue at midday. A soft glow tracks whichever body is up, and the
 stars are real: the ~70 brightest stars, placed for your latitude, longitude, and
-the time, hopping along on the quarter hour. The favicon swaps between a sun and a
-moon with the sky.
+the time, hopping along on the quarter hour.
 
 ## Development
 
