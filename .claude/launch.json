@@ -1,0 +1,14 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "dev",
+      "runtimeExecutable": "/Users/amyrlam/.local/opt/node/bin/npm",
+      "runtimeArgs": ["run", "dev"],
+      "port": 4321,
+      "env": {
+        "PATH": "/Users/amyrlam/.local/opt/node/bin:/usr/bin:/bin:/usr/sbin:/sbin"
+      }
+    }
+  ]
+}

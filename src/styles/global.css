@@ -1,0 +1,42 @@
+@import 'tailwindcss';
+@import '@fontsource-variable/space-grotesk';
+
+/* Registered custom properties so the sky colors animate smoothly
+   as the sun/moon script updates them. */
+@property --sky-top {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: #131637;
+}
+@property --sky-bottom {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: #3a3168;
+}
+@property --ink {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: #f1eefb;
+}
+
+html {
+  font-family: 'Space Grotesk Variable', system-ui, sans-serif;
+}
+
+body {
+  min-height: 100dvh;
+  color: var(--ink);
+  background: linear-gradient(180deg, var(--sky-top), var(--sky-bottom));
+  transition:
+    --sky-top 1.6s ease,
+    --sky-bottom 1.6s ease,
+    --ink 1.6s ease;
+}
+
+#glow {
+  transition:
+    left 2s ease,
+    top 2s ease,
+    background-color 2s ease,
+    opacity 2s ease;
+}
