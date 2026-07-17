@@ -1,0 +1,45 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { Image } from 'astro:assets';
+
+/* Swap these placeholders for real photos: drop files in src/assets/about/,
+   import them here, and give each an alt that says what's in the picture. */
+import placeholder1 from '../assets/about/placeholder-1.svg';
+import placeholder2 from '../assets/about/placeholder-2.svg';
+
+const photos = [
+  { src: placeholder1, alt: 'Placeholder — replace with a photo of Amy' },
+  { src: placeholder2, alt: 'Placeholder — replace with another photo' },
+];
+---
+
+<Layout title="about — Amy Lam" description="About Amy Lam.">
+  <main class="relative mx-auto flex min-h-dvh max-w-2xl flex-col gap-6 px-6 pt-20 pb-32">
+    <a
+      href="/"
+      class="sky-chip relative self-start rounded-full px-3 py-1.5 text-xs lowercase tracking-widest underline underline-offset-2 after:absolute after:-inset-2 after:content-[''] hover:-translate-y-0.5 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-current"
+    >
+      ← home
+    </a>
+
+    <h1 class="text-4xl font-medium lowercase tracking-tight sm:text-5xl">about</h1>
+
+    <section class="sky-card rounded-2xl px-6 py-8 sm:px-10 sm:py-10">
+      <div class="prose prose-lg max-w-none">
+        <!-- Placeholder bio — replace with your own words. -->
+        <p>
+          hi, i'm amy. this is placeholder bio copy — a couple of sentences about who you
+          are, what you work on, and what you're into lately.
+        </p>
+        <p>
+          maybe a second short paragraph: where you are (salt lake city?), what this site
+          is for, and how to reach you.
+        </p>
+      </div>
+
+      <div class="mt-8 grid grid-cols-2 gap-4">
+        {photos.map((photo) => <Image src={photo.src} alt={photo.alt} class="rounded-2xl" />)}
+      </div>
+    </section>
+  </main>
+</Layout>

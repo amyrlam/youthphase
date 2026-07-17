@@ -73,7 +73,15 @@ is the IP geolocation lookup to ipapi.co, which is free up to 1,000
 lookups/day; if traffic ever exceeds that, swap in the host's own geo
 headers or fall back to San Francisco.
 
+## About page
+
+`/about` holds a short bio and a photo grid. Both are placeholders right
+now: edit the prose in `src/pages/about.astro`, drop real photos into
+`src/assets/about/`, and update the `photos` array (each entry needs an
+`alt` describing the picture — the images are optimized by `astro:assets`
+at build time).
+
 ## Later
 
-- Short bio on the homepage
+- Replace the placeholder bio and photos on /about
 - Write the first real post(s) and delete the two examples

@@ -48,11 +48,22 @@ import Layout from '../layouts/Layout.astro';
     >
     </p>
 
-    <a
-      href="/blog"
-      class="sky-chip fixed left-5 bottom-[calc(1.25rem+env(safe-area-inset-bottom))] rounded-full border border-current/30 px-3 py-1.5 text-xs lowercase tracking-widest after:absolute after:-inset-2 after:content-[''] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-current"
+    <nav
+      aria-label="Site pages"
+      class="fixed left-5 bottom-[calc(1.25rem+env(safe-area-inset-bottom))] flex items-center gap-4"
     >
-      blog
-    </a>
+      <a
+        href="/about"
+        class="sky-chip relative rounded-full px-3 py-1.5 text-xs lowercase tracking-widest underline underline-offset-2 after:absolute after:-inset-2 after:content-[''] hover:-translate-y-0.5 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-current"
+      >
+        about
+      </a>
+      <a
+        href="/blog"
+        class="sky-chip relative rounded-full px-3 py-1.5 text-xs lowercase tracking-widest underline underline-offset-2 after:absolute after:-inset-2 after:content-[''] hover:-translate-y-0.5 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-current"
+      >
+        blog
+      </a>
+    </nav>
   </main>
 </Layout>
