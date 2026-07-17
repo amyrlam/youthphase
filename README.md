@@ -26,6 +26,38 @@ Key files:
 - `src/layouts/Layout.astro` — shared shell (glow element + sky script)
 - `src/pages/index.astro` — homepage
 
+## Blog
+
+Posts are Markdown files in `src/content/blog/`. Two frontmatter shapes:
+
+```yaml
+# original writing
+title: string
+description: string (optional)
+publishDate: date
+draft: boolean (optional, defaults to false)
+```
+
+```yaml
+# a repost — mirrors an article published elsewhere so the link never
+# rots. The post page automatically shows an "originally posted on
+# {source}" callout linking back to the source.
+title: string
+description: string (optional)
+publishDate: date
+draft: boolean (optional)
+original:
+  url: string
+  source: string
+```
+
+`src/content/blog/example-post.md` and `example-repost.md` demonstrate both
+shapes — delete them once real posts replace them. `/blog` lists all
+non-draft posts newest-first; `/blog/[slug]` renders one. Both reuse the
+same computed-contrast system as the rest of the site (`.sky-card`), so
+long-form text stays AAA-compliant at any sun position, not just the
+homepage's centered hero.
+
 ## Deploying (Vercel)
 
 The site is fully static — suncalc computes sun/moon positions in the
@@ -44,4 +76,4 @@ headers or fall back to San Francisco.
 ## Later
 
 - Short bio on the homepage
-- Blog: link reposts first, original posts after (Astro content collections)
+- Write the first real post(s) and delete the two examples

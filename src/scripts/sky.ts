@@ -395,6 +395,7 @@ function render(place: Place, mode: Mode, at = new Date(), demo = false) {
   root.style.setProperty('--sky-top', css(top));
   root.style.setProperty('--sky-bottom', css(bottom));
   root.style.setProperty('--ink', css(ink));
+  root.style.setProperty('--card-bg', css(chip.bg));
 
   const scrimEl = document.getElementById('scrim');
   if (scrimEl) {
