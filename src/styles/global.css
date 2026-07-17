@@ -23,6 +23,13 @@ html {
   font-family: 'Space Grotesk Variable', system-ui, sans-serif;
 }
 
+/* The glow/scrim layers can poke past the right edge; clip so the page
+   can never scroll sideways (vertical scroll stays available). */
+html,
+body {
+  overflow-x: clip;
+}
+
 body {
   min-height: 100dvh;
   color: var(--ink);
@@ -45,30 +52,60 @@ body {
   transition: opacity 2s ease;
 }
 
-.star-dot {
-  position: absolute;
-  width: 2px;
-  height: 2px;
-  border-radius: 50%;
-  background: rgba(240, 244, 255, 0.85);
+#scrim {
+  transition:
+    opacity 1.6s ease,
+    background-color 1.6s ease;
 }
 
+/* Stars are planted by sky.ts with per-star base opacity (--o) and
+   twinkle period (--d). */
+.star {
+  position: absolute;
+  border-radius: 50%;
+  background: rgb(240, 244, 255);
+  opacity: var(--o, 0.8);
+  animation: twinkle var(--d, 4s) ease-in-out infinite;
+}
+
+/* Real twinkling is scintillation: small, uneven wavers with an
+   occasional deeper dip — not a smooth pulse. */
 @keyframes twinkle {
   0%,
   100% {
-    opacity: 1;
+    opacity: var(--o, 0.8);
   }
-  50% {
-    opacity: 0.3;
+  18% {
+    opacity: calc(var(--o, 0.8) * 0.75);
   }
-}
-
-#stars .twinkle {
-  animation: twinkle 4.5s ease-in-out infinite;
+  31% {
+    opacity: var(--o, 0.8);
+  }
+  46% {
+    opacity: calc(var(--o, 0.8) * 0.88);
+  }
+  63% {
+    opacity: calc(var(--o, 0.8) * 0.45);
+  }
+  71% {
+    opacity: calc(var(--o, 0.8) * 0.92);
+  }
+  85% {
+    opacity: calc(var(--o, 0.8) * 0.8);
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  #stars .twinkle {
+  .star {
     animation: none;
   }
+}
+
+/* The status line and mode button sit on a computed "chip" background
+   that guarantees 7:1 contrast whatever the sky is doing. */
+#sky-status,
+#sky-mode {
+  transition:
+    background-color 1.6s ease,
+    color 1.6s ease;
 }

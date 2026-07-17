@@ -18,7 +18,7 @@ const { title = 'Amy Lam', description = 'Personal site of Amy Lam' } = Astro.pr
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <title>{title}</title>
   </head>
-  <body class="relative overflow-hidden antialiased">
+  <body class="relative antialiased">
     <div
       id="glow"
       aria-hidden="true"
@@ -26,43 +26,23 @@ const { title = 'Amy Lam', description = 'Personal site of Amy Lam' } = Astro.pr
     >
     </div>
 
-    <div id="stars" aria-hidden="true" class="pointer-events-none absolute inset-0 opacity-0">
-      <!-- The Big Dipper: Alkaid, Mizar, Alioth, Megrez, Phecda, Merak, Dubhe -->
-      <svg
-        viewBox="0 0 100 60"
-        class="absolute top-[10%] right-[8%] w-[min(36vmin,260px)]"
-        fill="none"
-      >
-        <g stroke="rgba(235, 240, 255, 0.18)" stroke-width="0.5">
-          <polyline points="5,12 22,20 38,24 54,26"></polyline>
-          <polygon points="54,26 78,20 82,40 60,44"></polygon>
-        </g>
-        <g fill="rgba(240, 244, 255, 0.95)">
-          <circle cx="5" cy="12" r="1.3"></circle>
-          <circle cx="22" cy="20" r="1.5" class="twinkle"></circle>
-          <circle cx="38" cy="24" r="1.6"></circle>
-          <circle cx="54" cy="26" r="1.1"></circle>
-          <circle cx="60" cy="44" r="1.4"></circle>
-          <circle cx="82" cy="40" r="1.4" class="twinkle" style="animation-delay: 2s"></circle>
-          <circle cx="78" cy="20" r="1.7"></circle>
-        </g>
-      </svg>
-      <!-- a few loose stars -->
-      <span class="star-dot" style="left: 12%; top: 18%"></span>
-      <span class="star-dot twinkle" style="left: 24%; top: 9%; animation-delay: 1s"></span>
-      <span class="star-dot" style="left: 41%; top: 14%"></span>
-      <span class="star-dot" style="left: 57%; top: 7%"></span>
-      <span class="star-dot twinkle" style="left: 8%; top: 42%; animation-delay: 3s"></span>
-      <span class="star-dot" style="left: 88%; top: 55%"></span>
-      <span class="star-dot" style="left: 70%; top: 64%"></span>
-      <span class="star-dot twinkle" style="left: 30%; top: 70%; animation-delay: 2.5s"></span>
+    <!-- Star field is planted by sky.ts -->
+    <div id="stars" aria-hidden="true" class="pointer-events-none absolute inset-0 opacity-0"></div>
+
+    <!-- Contrast scrim: sky.ts raises its opacity when the gradient behind
+         the center content can't meet AAA on its own (golden hour). -->
+    <div
+      id="scrim"
+      aria-hidden="true"
+      class="pointer-events-none absolute top-[48%] left-1/2 h-[44vh] w-[min(96vw,64rem)] -translate-x-1/2 -translate-y-1/2 rounded-[50%] opacity-0 blur-3xl"
+    >
     </div>
 
     <slot />
 
     <button
       id="sky-mode"
-      class="fixed right-5 bottom-5 rounded-full border border-current/25 px-3 py-1.5 text-xs lowercase tracking-widest opacity-60 transition-opacity hover:opacity-100 focus-visible:opacity-100"
+      class="fixed right-5 bottom-5 rounded-full border border-current/30 px-3 py-1.5 text-xs lowercase tracking-widest focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-current"
     >
       sky: auto
     </button>
