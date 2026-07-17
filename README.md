@@ -40,8 +40,3 @@ browser, so there is no server-side work and the free tier is plenty:
 is the IP geolocation lookup to ipapi.co, which is free up to 1,000
 lookups/day; if traffic ever exceeds that, swap in the host's own geo
 headers or fall back to San Francisco.
-
-## Later
-
-- Short bio on the homepage
-- Blog: link reposts first, original posts after (Astro content collections)
