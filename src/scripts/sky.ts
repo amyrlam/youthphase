@@ -35,10 +35,10 @@ const STOPS: { alt: number; top: RGB; bottom: RGB }[] = [
   { alt: -6, top: [27, 30, 75], bottom: [78, 55, 112] },
   { alt: -2, top: [56, 56, 117], bottom: [186, 104, 128] },
   { alt: 0, top: [74, 78, 148], bottom: [232, 137, 106] },
-  { alt: 4, top: [111, 136, 201], bottom: [242, 179, 128] },
-  { alt: 12, top: [127, 168, 221], bottom: [207, 224, 239] },
-  { alt: 35, top: [110, 163, 232], bottom: [188, 217, 245] },
-  { alt: 90, top: [79, 151, 232], bottom: [168, 212, 242] },
+  { alt: 4, top: [84, 102, 156], bottom: [206, 150, 116] },
+  { alt: 12, top: [64, 88, 134], bottom: [110, 136, 170] },
+  { alt: 35, top: [52, 80, 126], bottom: [112, 140, 170] },
+  { alt: 90, top: [44, 72, 118], bottom: [100, 130, 162] },
 ];
 
 /* Sun glow color keyed by altitude: pale and warm overhead, unmistakably
@@ -181,8 +181,7 @@ function skyLabel(altDeg: number, rising: boolean, moonPhase: number): string {
   return 'daylight';
 }
 
-/* Deterministic PRNG (mulberry32) so the star field is identical on every
-   visit. */
+/* Deterministic PRNG (mulberry32) for per-star twinkle character. */
 function seededRandom(seed: number): () => number {
   return () => {
     seed |= 0;
@@ -196,24 +195,97 @@ function seededRandom(seed: number): () => number {
 const reducedMotion = () =>
   typeof matchMedia !== 'undefined' && matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-function plantStars() {
+/* The real sky: the ~70 brightest stars as [RA hours, Dec degrees,
+   magnitude] (J2000). Which ones you see — and where — depends on your
+   location and the time. */
+// prettier-ignore
+const STARS: [number, number, number][] = [
+  [6.75, -16.72, -1.46], [6.40, -52.70, -0.74], [14.26, 19.18, -0.05],
+  [18.62, 38.78, 0.03], [5.28, 45.99, 0.08], [5.24, -8.20, 0.13],
+  [7.66, 5.22, 0.34], [5.92, 7.41, 0.42], [1.63, -57.24, 0.46],
+  [14.06, -60.37, 0.61], [19.85, 8.87, 0.77], [12.44, -63.10, 0.76],
+  [4.60, 16.51, 0.85], [16.49, -26.43, 0.96], [13.42, -11.16, 0.97],
+  [7.76, 28.03, 1.14], [22.96, -29.62, 1.16], [20.69, 45.28, 1.25],
+  [12.80, -59.69, 1.25], [10.14, 11.97, 1.35], [6.98, -28.97, 1.50],
+  [7.58, 31.89, 1.57], [17.56, -37.10, 1.62], [12.52, -57.11, 1.64],
+  [5.42, 6.35, 1.64], [5.44, 28.61, 1.65], [9.22, -69.72, 1.69],
+  [5.60, -1.20, 1.69], [22.14, -46.96, 1.74], [5.68, -1.94, 1.77],
+  [12.90, 55.96, 1.77], [11.06, 61.75, 1.79], [3.41, 49.86, 1.80],
+  [7.14, -26.39, 1.83], [18.40, -34.38, 1.85], [8.38, -59.51, 1.86],
+  [13.79, 49.31, 1.86], [6.00, 44.95, 1.90], [16.81, -69.03, 1.91],
+  [6.63, 16.40, 1.92], [20.43, -56.74, 1.94], [8.75, -54.71, 1.96],
+  [6.38, -17.96, 1.98], [9.46, -8.66, 1.98], [2.53, 89.26, 1.98],
+  [2.12, 23.46, 2.00], [0.73, -17.99, 2.02], [13.42, 54.93, 2.04],
+  [18.92, -26.30, 2.05], [1.16, 35.62, 2.05], [0.14, 29.09, 2.06],
+  [14.11, -36.37, 2.06], [5.80, -9.67, 2.06], [17.58, 12.56, 2.07],
+  [14.85, 74.16, 2.08], [10.33, 19.84, 2.08], [3.14, 40.96, 2.12],
+  [11.82, 14.57, 2.13], [5.53, -0.30, 2.23], [20.37, 40.26, 2.23],
+  [17.94, 51.49, 2.23], [0.67, 56.54, 2.24], [2.07, 42.33, 2.26],
+  [0.15, 59.15, 2.27], [11.03, 56.38, 2.37], [21.74, 9.87, 2.40],
+  [12.26, 57.03, 2.44], [21.31, 62.59, 2.46], [0.95, 60.72, 2.47],
+  [3.79, 24.11, 2.87], [16.50, 21.49, 2.77],
+];
+
+const RAD = Math.PI / 180;
+
+/* Local sidereal time in degrees — how far the celestial sphere has
+   turned for this longitude and moment. */
+function siderealDeg(at: Date, lonDeg: number): number {
+  const days = (at.getTime() - Date.UTC(2000, 0, 1, 12)) / 86400000;
+  return ((((280.46061837 + 360.98564736629 * days + lonDeg) % 360) + 360) % 360);
+}
+
+function starAltAz(
+  raHours: number,
+  decDeg: number,
+  at: Date,
+  latDeg: number,
+  lonDeg: number,
+): { altDeg: number; azDeg: number } {
+  const H = (siderealDeg(at, lonDeg) - raHours * 15) * RAD;
+  const lat = latDeg * RAD;
+  const dec = decDeg * RAD;
+  const alt = Math.asin(Math.sin(dec) * Math.sin(lat) + Math.cos(dec) * Math.cos(lat) * Math.cos(H));
+  const azFromSouth = Math.atan2(
+    Math.sin(H),
+    Math.cos(H) * Math.sin(lat) - Math.tan(dec) * Math.cos(lat),
+  );
+  return { altDeg: alt / RAD, azDeg: (((azFromSouth / RAD + 180) % 360) + 360) % 360 };
+}
+
+/* Stars get the full sky height; the sun/moon glow stays lower. */
+const starY = (altDeg: number) => 88 - (Math.max(0, altDeg) / 90) * 80;
+
+function updateStars(place: Place, at: Date) {
   const container = document.getElementById('stars');
-  if (!container || container.childElementCount > 0) return;
-  const rand = seededRandom(97);
-  for (let i = 0; i < 70; i++) {
-    const star = document.createElement('span');
-    star.className = 'star';
-    const size = 1 + rand() * 1.6;
-    star.style.left = `${(rand() * 100).toFixed(1)}%`;
-    star.style.top = `${(rand() * 100).toFixed(1)}%`;
-    star.style.width = `${size.toFixed(1)}px`;
-    star.style.height = `${size.toFixed(1)}px`;
-    star.style.setProperty('--o', (0.35 + rand() * 0.65).toFixed(2));
-    star.style.setProperty('--d', `${(2.5 + rand() * 5).toFixed(1)}s`);
-    star.style.animationDelay = `${(rand() * 6).toFixed(1)}s`;
-    if (size > 2.2) star.style.boxShadow = '0 0 4px rgba(240, 244, 255, 0.7)';
-    container.appendChild(star);
+  if (!container) return;
+  if (container.childElementCount === 0) {
+    const rand = seededRandom(97);
+    for (const [, , mag] of STARS) {
+      const star = document.createElement('span');
+      star.className = 'star';
+      const size = Math.max(1, 3.4 - mag * 0.75);
+      star.style.width = `${size.toFixed(1)}px`;
+      star.style.height = `${size.toFixed(1)}px`;
+      star.style.setProperty('--o', Math.min(0.95, Math.max(0.3, 0.9 - mag * 0.18)).toFixed(2));
+      star.style.setProperty('--d', `${(2.5 + rand() * 5).toFixed(1)}s`);
+      star.style.animationDelay = `${(rand() * 6).toFixed(1)}s`;
+      if (mag < 0.5) star.style.boxShadow = '0 0 4px rgba(240, 244, 255, 0.7)';
+      container.appendChild(star);
+    }
   }
+  const spans = container.children;
+  STARS.forEach(([ra, dec], i) => {
+    const el = spans[i] as HTMLElement;
+    const { altDeg, azDeg } = starAltAz(ra, dec, at, place.latitude, place.longitude);
+    if (altDeg > 2) {
+      el.style.display = '';
+      el.style.left = `${posX(azDeg).toFixed(2)}%`;
+      el.style.top = `${starY(altDeg).toFixed(2)}%`;
+    } else {
+      el.style.display = 'none';
+    }
+  });
 }
 
 /* An occasional shooting star while the sky is dark. */
@@ -291,6 +363,15 @@ function formatTime(d: Date): string {
 
 let demoRunning = false;
 
+/* The favicon follows the sky: sun by day, moon by night. */
+let faviconNight: boolean | null = null;
+function setFavicon(night: boolean) {
+  if (night === faviconNight) return;
+  faviconNight = night;
+  const link = document.getElementById('favicon') as HTMLLinkElement | null;
+  if (link) link.href = night ? '/favicon-night.svg' : '/favicon-day.svg';
+}
+
 function render(place: Place, mode: Mode, at = new Date(), demo = false) {
   const { latitude, longitude } = place;
 
@@ -341,42 +422,48 @@ function render(place: Place, mode: Mode, at = new Date(), demo = false) {
   const stars = document.getElementById('stars');
   if (stars) stars.style.opacity = String(starOpacity * 0.9);
 
-  // A soft glow that tracks the sun, reddening toward the horizon. (The
-  // moon gets its own disc below.)
+  // One soft glow tracks whichever body is up: the sun by day (reddening
+  // toward the horizon), a whisper of cool moonlight by night — brighter
+  // when the moon is fuller.
   const glow = document.getElementById('glow');
   if (glow) {
-    const showSun = mode === 'day' || (mode !== 'night' && sunAltDeg > -6);
-    if (showSun) {
-      const up = sunAltDeg > 0;
-      glow.style.left = `${mode === 'day' && !up ? 66 : posX(qSun.azimuth)}%`;
-      glow.style.top = `${mode === 'day' && !up ? 30 : posY(qSun.altitude)}%`;
-      glow.style.backgroundColor = sunGlowColor(mode === 'day' && !up ? 45 : sunAltDeg);
-      glow.style.opacity = '1';
+    const moonUp = qMoon.altitude > 0;
+    let body: { x: number; y: number; color: string; opacity: number } | null = null;
+    if (mode === 'day') {
+      body =
+        sunAltDeg > 0
+          ? { x: posX(qSun.azimuth), y: posY(qSun.altitude), color: sunGlowColor(sunAltDeg), opacity: 1 }
+          : { x: 66, y: 30, color: sunGlowColor(45), opacity: 1 };
+    } else if (mode === 'night') {
+      body = {
+        x: moonUp ? posX(qMoon.azimuth) : 72,
+        y: moonUp ? posY(qMoon.altitude) : 26,
+        color: 'rgba(214, 224, 252, 0.3)',
+        opacity: 0.3 + moonIllum.fraction * 0.5,
+      };
+    } else if (sunAltDeg > -6) {
+      body = { x: posX(qSun.azimuth), y: posY(qSun.altitude), color: sunGlowColor(sunAltDeg), opacity: 1 };
+    } else if (moonUp) {
+      body = {
+        x: posX(qMoon.azimuth),
+        y: posY(qMoon.altitude),
+        color: 'rgba(214, 224, 252, 0.3)',
+        opacity: 0.3 + moonIllum.fraction * 0.5,
+      };
+    }
+
+    if (body) {
+      glow.style.left = `${body.x}%`;
+      glow.style.top = `${body.y}%`;
+      glow.style.backgroundColor = body.color;
+      glow.style.opacity = String(body.opacity);
     } else {
       glow.style.opacity = '0';
     }
   }
 
-  // A delicate phase-accurate moon disc at night.
-  const moonEl = document.getElementById('moon');
-  if (moonEl) {
-    const moonUp = qMoon.altitude > 0;
-    const showMoon =
-      mode === 'night' || (mode === 'auto' && sunAltDeg < -4 && moonUp);
-    if (showMoon) {
-      moonEl.style.left = `${moonUp ? posX(qMoon.azimuth) : 72}%`;
-      moonEl.style.top = `${moonUp ? posY(qMoon.altitude) : 24}%`;
-      moonEl.style.opacity = '0.9';
-      const shade = moonEl.querySelector<HTMLElement>('.moon-shade');
-      if (shade) {
-        // Slide the shadow off the lit side: waxing lights the right limb.
-        const offset = moonIllum.fraction * 100 * (moonIllum.waxing ? -1 : 1);
-        shade.style.transform = `translateX(${offset.toFixed(1)}%)`;
-      }
-    } else {
-      moonEl.style.opacity = '0';
-    }
-  }
+  updateStars(place, qt);
+  setFavicon(altDeg < -6);
 
   const status = document.getElementById('sky-status');
   if (status) {
@@ -408,7 +495,6 @@ async function start() {
   let mode = storedMode();
   let place = FALLBACK;
 
-  plantStars();
   enableSparkles();
   scheduleShootingStar();
 

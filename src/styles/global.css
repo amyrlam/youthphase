@@ -66,6 +66,9 @@ body {
   background: rgb(240, 244, 255);
   opacity: var(--o, 0.8);
   animation: twinkle var(--d, 4s) ease-in-out infinite;
+  transition:
+    left 2s ease,
+    top 2s ease;
 }
 
 /* Real twinkling is scintillation: small, uneven wavers with an
@@ -107,32 +110,6 @@ body {
   transition:
     background-color 1.6s ease,
     color 1.6s ease;
-}
-
-/* A delicate moon: warm-white disc, halo, and a shade that slides across
-   to match the real phase. */
-#moon {
-  transition:
-    left 2s ease,
-    top 2s ease,
-    opacity 2s ease;
-}
-
-.moon-disc {
-  width: clamp(22px, 4vmin, 34px);
-  aspect-ratio: 1;
-  border-radius: 50%;
-  overflow: hidden;
-  background: #f4f1e8;
-  box-shadow: 0 0 28px 8px rgba(226, 233, 255, 0.35);
-}
-
-.moon-shade {
-  width: 100%;
-  height: 100%;
-  border-radius: 50%;
-  background: color-mix(in srgb, var(--sky-top) 88%, black);
-  transition: transform 2s ease;
 }
 
 /* Every so often, a shooting star (night only — it lives in #stars). */
@@ -188,8 +165,7 @@ html.sky-demo body,
 html.sky-demo #glow,
 html.sky-demo #stars,
 html.sky-demo #scrim,
-html.sky-demo #moon,
-html.sky-demo .moon-shade,
+html.sky-demo .star,
 html.sky-demo .sky-chip {
   transition-duration: 0.18s;
   transition-timing-function: linear;

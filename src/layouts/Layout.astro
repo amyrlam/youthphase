@@ -15,7 +15,7 @@ const { title = 'Amy Lam', description = 'Personal site of Amy Lam' } = Astro.pr
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="description" content={description} />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link id="favicon" rel="icon" type="image/svg+xml" href="/favicon-day.svg" />
     <title>{title}</title>
   </head>
   <body class="relative antialiased">
@@ -26,18 +26,9 @@ const { title = 'Amy Lam', description = 'Personal site of Amy Lam' } = Astro.pr
     >
     </div>
 
-    <!-- Star field is planted by sky.ts -->
+    <!-- The real night sky: sky.ts positions the brightest stars for the
+         visitor's location and time. -->
     <div id="stars" aria-hidden="true" class="pointer-events-none absolute inset-0 opacity-0"></div>
-
-    <!-- A delicate phase-accurate moon; sky.ts positions it and slides
-         the shade to match the current phase. -->
-    <div
-      id="moon"
-      aria-hidden="true"
-      class="pointer-events-none absolute -translate-x-1/2 -translate-y-1/2 opacity-0"
-    >
-      <div class="moon-disc"><div class="moon-shade"></div></div>
-    </div>
 
     <!-- Contrast scrim: sky.ts raises its opacity when the gradient behind
          the center content can't meet AAA on its own (golden hour). -->
