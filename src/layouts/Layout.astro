@@ -1,5 +1,10 @@
 ---
 import '../styles/global.css';
+/* Candidate fonts, loaded everywhere while the choice is open so /fonts
+   can preview them on any page (?font=sora etc.) — drop the two losers
+   once a font is picked. */
+import '@fontsource-variable/sora';
+import '@fontsource-variable/instrument-sans';
 
 interface Props {
   title?: string;
@@ -17,6 +22,18 @@ const { title = 'Amy Lam', description = 'Personal site of Amy Lam' } = Astro.pr
     <meta name="description" content={description} />
     <link id="favicon" rel="icon" type="image/svg+xml" href="/favicon-day.svg" />
     <title>{title}</title>
+    <script is:inline>
+      // Font preview: any page can be viewed in a candidate font via
+      // ?font=grotesk|sora|instrument (see /fonts). Runs before paint.
+      (() => {
+        const face = {
+          grotesk: "'Space Grotesk Variable', system-ui, sans-serif",
+          sora: "'Sora Variable', system-ui, sans-serif",
+          instrument: "'Instrument Sans Variable', system-ui, sans-serif",
+        }[new URLSearchParams(location.search).get('font')];
+        if (face) document.documentElement.style.fontFamily = face;
+      })();
+    </script>
   </head>
   <body class="relative antialiased">
     <div

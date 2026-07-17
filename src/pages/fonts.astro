@@ -7,16 +7,19 @@ import '@fontsource-variable/instrument-sans';
 const fonts = [
   {
     name: 'space grotesk',
+    slug: 'grotesk',
     css: "'Space Grotesk Variable', sans-serif",
     note: 'current · techy, characterful',
   },
   {
     name: 'sora',
+    slug: 'sora',
     css: "'Sora Variable', sans-serif",
     note: 'rounder, friendlier',
   },
   {
     name: 'instrument sans',
+    slug: 'instrument',
     css: "'Instrument Sans Variable', sans-serif",
     note: 'editorial, neutral',
   },
@@ -42,6 +45,13 @@ const fonts = [
           >
             {f.name} · {f.note}
           </p>
+          <a
+            href={`/?font=${f.slug}`}
+            class="sky-chip rounded-full border border-current/30 px-3 py-1 text-xs lowercase tracking-widest focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-current"
+            style={`font-family: ${f.css}`}
+          >
+            see the full page →
+          </a>
         </section>
       ))
     }
