@@ -22,38 +22,38 @@ const { title = 'Amy Lam', description = 'Personal site of Amy Lam' } = Astro.pr
     <div
       id="glow"
       aria-hidden="true"
-      class="pointer-events-none absolute h-[45vmin] w-[45vmin] -translate-x-1/2 -translate-y-1/2 rounded-full opacity-0 blur-[90px]"
+      class="pointer-events-none fixed h-[45vmin] w-[45vmin] -translate-x-1/2 -translate-y-1/2 rounded-full opacity-0 blur-[90px]"
     >
     </div>
 
     <!-- The real night sky: sky.ts positions the brightest stars for the
          visitor's location and time. -->
-    <div id="stars" aria-hidden="true" class="pointer-events-none absolute inset-0 opacity-0"></div>
+    <div id="stars" aria-hidden="true" class="pointer-events-none fixed inset-0 opacity-0"></div>
 
     <!-- Contrast scrim: sky.ts raises its opacity when the gradient behind
          the center content can't meet AAA on its own (golden hour). -->
     <div
       id="scrim"
       aria-hidden="true"
-      class="pointer-events-none absolute top-[48%] left-1/2 h-[44vh] w-[min(96vw,64rem)] -translate-x-1/2 -translate-y-1/2 rounded-[50%] opacity-0 blur-3xl"
+      class="pointer-events-none fixed top-[48%] left-1/2 h-[44vh] w-[min(96vw,64rem)] -translate-x-1/2 -translate-y-1/2 rounded-[50%] opacity-0 blur-3xl"
     >
     </div>
 
     <slot />
 
     <div
-      class="fixed right-5 bottom-[calc(1.25rem+env(safe-area-inset-bottom))] flex items-center gap-2"
+      class="fixed right-5 bottom-[calc(1.25rem+env(safe-area-inset-bottom))] flex items-center gap-4"
     >
       <button
         id="sky-demo"
         aria-label="Play a 24-hour sky time-lapse"
-        class="sky-chip rounded-full border border-current/30 px-3 py-1.5 text-xs lowercase tracking-widest focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-current"
+        class="sky-chip relative rounded-full border border-current/30 px-3 py-1.5 text-xs lowercase tracking-widest after:absolute after:-inset-2 after:content-[''] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-current"
       >
         ▶ 24h
       </button>
       <button
         id="sky-mode"
-        class="sky-chip rounded-full border border-current/30 px-3 py-1.5 text-xs lowercase tracking-widest focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-current"
+        class="sky-chip relative rounded-full border border-current/30 px-3 py-1.5 text-xs lowercase tracking-widest after:absolute after:-inset-2 after:content-[''] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-current"
       >
         sky: auto
       </button>
