@@ -10,11 +10,28 @@ interface Place {
 
 const FALLBACK: Place = { latitude: 37.7749, longitude: -122.4194, label: 'san francisco' };
 
+/* Manual override for accessibility: 'auto' follows the real sky,
+   'day'/'night' pin the palette. */
+type Mode = 'auto' | 'day' | 'night';
+const MODE_KEY = 'sky-mode';
+const MODES: Mode[] = ['auto', 'day', 'night'];
+const FORCED_ALT: Record<'day' | 'night', number> = { day: 45, night: -30 };
+
+function storedMode(): Mode {
+  try {
+    const m = localStorage.getItem(MODE_KEY);
+    if (m === 'day' || m === 'night') return m;
+  } catch {
+    /* private browsing etc. */
+  }
+  return 'auto';
+}
+
 /* Sky palette keyed by sun altitude in degrees. */
 const STOPS: { alt: number; top: RGB; bottom: RGB }[] = [
-  { alt: -90, top: [4, 5, 18], bottom: [11, 13, 34] },
-  { alt: -18, top: [8, 9, 28], bottom: [20, 23, 52] },
-  { alt: -12, top: [14, 16, 44], bottom: [33, 36, 78] },
+  { alt: -90, top: [7, 12, 38], bottom: [23, 34, 84] },
+  { alt: -18, top: [10, 16, 48], bottom: [30, 43, 100] },
+  { alt: -12, top: [16, 24, 62], bottom: [42, 55, 116] },
   { alt: -6, top: [27, 30, 75], bottom: [78, 55, 112] },
   { alt: -2, top: [56, 56, 117], bottom: [186, 104, 128] },
   { alt: 0, top: [74, 78, 148], bottom: [232, 137, 106] },
@@ -91,7 +108,7 @@ async function locate(): Promise<Place> {
   return FALLBACK;
 }
 
-function render(place: Place) {
+function render(place: Place, mode: Mode) {
   const now = new Date();
   const { latitude, longitude } = place;
 
@@ -100,11 +117,12 @@ function render(place: Place) {
   const moon = SunCalc.getMoonPosition(now, latitude, longitude);
   const moonIllum = SunCalc.getMoonIllumination(now);
 
-  let { top, bottom } = skyColors(sunAltDeg);
+  const altDeg = mode === 'auto' ? sunAltDeg : FORCED_ALT[mode];
+  let { top, bottom } = skyColors(altDeg);
 
   // Moonlight gently lifts the night sky — brighter when the moon is
   // fuller and higher.
-  if (sunAltDeg < -10 && moon.altitude > 0) {
+  if (mode === 'auto' && altDeg < -10 && moon.altitude > 0) {
     const strength = moonIllum.fraction * Math.min(1, moon.altitude / 0.6) * 0.16;
     top = mix(top, MOONLIGHT, strength);
     bottom = mix(bottom, MOONLIGHT, strength);
@@ -117,16 +135,25 @@ function render(place: Place) {
   root.style.setProperty('--sky-bottom', css(bottom));
   root.style.setProperty('--ink', css(ink));
 
+  // The stars come out as the sun drops below civil twilight.
+  const stars = document.getElementById('stars');
+  if (stars) {
+    const starOpacity = altDeg <= -12 ? 1 : altDeg >= -6 ? 0 : (-altDeg - 6) / 6;
+    stars.style.opacity = String(starOpacity * 0.9);
+  }
+
   // A soft glow that tracks whichever body is up: the sun by day, the
-  // moon by night.
+  // moon by night. Only meaningful when following the real sky.
   const glow = document.getElementById('glow');
   if (glow) {
     const body =
-      sunAltDeg > -6
-        ? { pos: sun, color: 'rgba(255, 236, 200, 0.5)', opacity: 1 }
-        : moon.altitude > 0
-          ? { pos: moon, color: 'rgba(226, 233, 255, 0.4)', opacity: 0.4 + moonIllum.fraction * 0.6 }
-          : null;
+      mode !== 'auto'
+        ? null
+        : sunAltDeg > -6
+          ? { pos: sun, color: 'rgba(255, 236, 200, 0.5)', opacity: 1 }
+          : moon.altitude > 0
+            ? { pos: moon, color: 'rgba(226, 233, 255, 0.4)', opacity: 0.4 + moonIllum.fraction * 0.6 }
+            : null;
 
     if (body) {
       // Azimuth 0 = due south; map east→west onto left→right.
@@ -150,12 +177,34 @@ function render(place: Place) {
 }
 
 async function start() {
+  let mode = storedMode();
+  let place = FALLBACK;
+
+  const button = document.getElementById('sky-mode');
+  const syncButton = () => {
+    if (!button) return;
+    button.textContent = `sky: ${mode}`;
+    button.setAttribute('aria-label', `Sky theme: ${mode}. Click to change.`);
+  };
+
+  button?.addEventListener('click', () => {
+    mode = MODES[(MODES.indexOf(mode) + 1) % MODES.length];
+    try {
+      localStorage.setItem(MODE_KEY, mode);
+    } catch {
+      /* fine to not persist */
+    }
+    syncButton();
+    render(place, mode);
+  });
+
   // Paint immediately with the San Francisco fallback, then refine once
   // the IP lookup resolves.
-  render(FALLBACK);
-  const place = await locate();
-  render(place);
-  setInterval(() => render(place), 60 * 1000);
+  syncButton();
+  render(place, mode);
+  place = await locate();
+  render(place, mode);
+  setInterval(() => render(place, mode), 60 * 1000);
 }
 
 start();

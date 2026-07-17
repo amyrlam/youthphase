@@ -6,12 +6,12 @@
 @property --sky-top {
   syntax: '<color>';
   inherits: true;
-  initial-value: #131637;
+  initial-value: #0a1030;
 }
 @property --sky-bottom {
   syntax: '<color>';
   inherits: true;
-  initial-value: #3a3168;
+  initial-value: #1e2c60;
 }
 @property --ink {
   syntax: '<color>';
@@ -39,4 +39,36 @@ body {
     top 2s ease,
     background-color 2s ease,
     opacity 2s ease;
+}
+
+#stars {
+  transition: opacity 2s ease;
+}
+
+.star-dot {
+  position: absolute;
+  width: 2px;
+  height: 2px;
+  border-radius: 50%;
+  background: rgba(240, 244, 255, 0.85);
+}
+
+@keyframes twinkle {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.3;
+  }
+}
+
+#stars .twinkle {
+  animation: twinkle 4.5s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #stars .twinkle {
+    animation: none;
+  }
 }
