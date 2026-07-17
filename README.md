@@ -44,6 +44,5 @@ headers or fall back to San Francisco.
 
 ## Later
 
-- Pick a font: compare candidates at `/fonts`, then delete that page
 - Short bio on the homepage
 - Blog: link reposts first, original posts after (Astro content collections)
