@@ -48,28 +48,25 @@ import Layout from '../layouts/Layout.astro';
       </a>
     </nav>
 
-    <p
-      id="sky-status"
-      class="sky-chip absolute bottom-[calc(4.25rem+env(safe-area-inset-bottom))] rounded-full px-3 py-1.5 text-sm lowercase tracking-widest sm:bottom-[calc(1.75rem+env(safe-area-inset-bottom))]"
-    >
-    </p>
-
-    <nav
-      aria-label="Site pages"
-      class="fixed left-5 bottom-[calc(1.25rem+env(safe-area-inset-bottom))] flex items-center gap-4"
-    >
+    <nav aria-label="Site pages" class="flex items-center gap-8">
       <a
         href="/about"
-        class="sky-chip relative rounded-full px-3 py-1.5 text-xs lowercase tracking-widest underline underline-offset-2 after:absolute after:-inset-2 after:content-[''] hover:-translate-y-0.5 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-current"
+        class="text-2xl font-medium lowercase tracking-tight underline underline-offset-4 transition-transform duration-300 hover:-translate-y-0.5 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-current"
       >
         about
       </a>
       <a
         href="/blog"
-        class="sky-chip relative rounded-full px-3 py-1.5 text-xs lowercase tracking-widest underline underline-offset-2 after:absolute after:-inset-2 after:content-[''] hover:-translate-y-0.5 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-current"
+        class="text-2xl font-medium lowercase tracking-tight underline underline-offset-4 transition-transform duration-300 hover:-translate-y-0.5 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-current"
       >
         blog
       </a>
     </nav>
+
+    <p
+      id="sky-status"
+      class="sky-caption absolute bottom-[calc(4.25rem+env(safe-area-inset-bottom))] text-sm lowercase tracking-widest sm:bottom-[calc(1.75rem+env(safe-area-inset-bottom))]"
+    >
+    </p>
   </main>
 </Layout>

@@ -155,6 +155,29 @@ body {
   text-underline-offset: 2px;
 }
 
+/* Non-interactive captions (like the sky status) and quiet nav links sit
+   on a soft blurred backdrop instead of a crisp pill, so nothing inert or
+   low-key reads as a button. The backdrop is the same computed chip color
+   (7:1 vs its ink), solid at the center where the text sits and feathering
+   at the edges. */
+.sky-caption {
+  /* Positioning (relative/absolute) comes from utility classes — an
+     unlayered `position` here would override them. */
+  isolation: isolate;
+  color: var(--chip-ink, #ffffff);
+}
+
+.sky-caption::before {
+  content: '';
+  position: absolute;
+  inset: -2px -8px;
+  z-index: -1;
+  border-radius: 9999px;
+  background: var(--card-bg, #141a3d);
+  filter: blur(10px);
+  transition: background-color 1.6s ease;
+}
+
 /* Every so often, a shooting star (night only — it lives in #stars). */
 .shooting-star {
   position: absolute;
@@ -210,6 +233,7 @@ html.sky-demo #stars,
 html.sky-demo #scrim,
 html.sky-demo .star,
 html.sky-demo .sky-chip,
+html.sky-demo .sky-caption::before,
 html.sky-demo .sky-card {
   transition-duration: 0.18s;
   transition-timing-function: linear;
