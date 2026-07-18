@@ -39,6 +39,15 @@ const { title = 'Amy Lam', description = 'Personal site of Amy Lam' } = Astro.pr
     >
     </div>
 
+    <!-- The horizon band: the sky settles into the chip color at ground
+         level; nav, status, and the buttons all sit on its solid zone. -->
+    <div
+      id="horizon"
+      aria-hidden="true"
+      class="pointer-events-none fixed inset-x-0 bottom-0 h-40 sm:h-32"
+    >
+    </div>
+
     <slot />
 
     <div

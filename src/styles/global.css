@@ -155,27 +155,18 @@ body {
   text-underline-offset: 2px;
 }
 
-/* Non-interactive captions (like the sky status) and quiet nav links sit
-   on a soft blurred backdrop instead of a crisp pill, so nothing inert or
-   low-key reads as a button. The backdrop is the same computed chip color
-   (7:1 vs its ink), solid at the center where the text sits and feathering
-   at the edges. */
-.sky-caption {
-  /* Positioning (relative/absolute) comes from utility classes — an
-     unlayered `position` here would override them. */
-  isolation: isolate;
-  color: var(--chip-ink, #ffffff);
+/* The horizon: the bottom of the sky settles into the computed chip color
+   (7:1 vs --chip-ink), like dusk gathering at ground level. Small text —
+   nav links, the status caption, the corner buttons — lives on its solid
+   lower zone, which is what makes small text AAA-safe outside the hero. */
+#horizon {
+  background: linear-gradient(to top, var(--card-bg, #141a3d) 50%, transparent);
+  transition: background-color 1.6s ease;
 }
 
-.sky-caption::before {
-  content: '';
-  position: absolute;
-  inset: -2px -8px;
-  z-index: -1;
-  border-radius: 9999px;
-  background: var(--card-bg, #141a3d);
-  filter: blur(10px);
-  transition: background-color 1.6s ease;
+/* Text that sits on the horizon band. */
+.sky-caption {
+  color: var(--chip-ink, #ffffff);
 }
 
 /* Every so often, a shooting star (night only — it lives in #stars). */
@@ -233,7 +224,7 @@ html.sky-demo #stars,
 html.sky-demo #scrim,
 html.sky-demo .star,
 html.sky-demo .sky-chip,
-html.sky-demo .sky-caption::before,
+html.sky-demo #horizon,
 html.sky-demo .sky-card {
   transition-duration: 0.18s;
   transition-timing-function: linear;
