@@ -49,6 +49,13 @@ body {
     opacity 2s ease;
 }
 
+#moon-core {
+  transition:
+    left 2s ease,
+    top 2s ease,
+    opacity 2s ease;
+}
+
 #stars {
   transition: opacity 2s ease;
 }
@@ -220,6 +227,7 @@ body {
    plays smoothly. */
 html.sky-demo body,
 html.sky-demo #glow,
+html.sky-demo #moon-core,
 html.sky-demo #stars,
 html.sky-demo #scrim,
 html.sky-demo .star,

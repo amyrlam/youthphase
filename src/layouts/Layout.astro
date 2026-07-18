@@ -26,6 +26,15 @@ const { title = 'Amy Lam', description = 'Personal site of Amy Lam' } = Astro.pr
     >
     </div>
 
+    <!-- The moon's luminous core: a small bright center inside the wide
+         halo above — a sense of moon, not a literal disc. -->
+    <div
+      id="moon-core"
+      aria-hidden="true"
+      class="pointer-events-none fixed h-[7vmin] w-[7vmin] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[#eef2ff] opacity-0 blur-[18px]"
+    >
+    </div>
+
     <!-- The real night sky: sky.ts positions the brightest stars for the
          visitor's location and time. -->
     <div id="stars" aria-hidden="true" class="pointer-events-none fixed inset-0 opacity-0"></div>
