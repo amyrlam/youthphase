@@ -19,23 +19,25 @@ import Layout from '../layouts/Layout.astro';
         <p>
           I grew up with my grandparents on the Connecticut shoreline, where Pop kept a
           little dinghy in the harbor named <em>Youth Phase</em>. Each time life carried him
-          somewhere new, he'd repaint the numeral on her hull — even in his old age, he
-          never stopped counting. This site is named for her.
+          somewhere new, he'd update the letters on the hull — even in his old age, he never
+          stopped counting.
         </p>
       </div>
 
-      <!-- Youth Phase herself, drawn rather than photographed — the same
+      <!-- Youth Phase, drawn rather than photographed — the same
            one-exception move as the moon face. The water is filled with
            the live sky variables, so the harbor sits in whatever weather
            the visitor's sky is having; the hull is polaroid ivory, the
-           site's one deliberately sky-independent color. She rides at
-           anchor: a slow bob, drifting ripples, a drooping pennant —
-           weather-speed motion, stilled under prefers-reduced-motion. -->
+           site's one deliberately sky-independent color. Stern-on, the
+           way the boat sits when you look out from the dock: name and
+           numeral lettered across the transom, the mooring buoy floating
+           alongside. A slow bob and drifting ripples — weather-speed
+           motion, stilled under prefers-reduced-motion. -->
       <figure class="dinghy-scene mt-8">
         <svg
           viewBox="0 0 600 340"
           role="img"
-          aria-label="An illustrated white dinghy named Youth Phase, the numeral IX on her hull, riding at anchor on water that mirrors the current sky, with a wooded shoreline and moored sailboats in the distance"
+          aria-label="An illustrated white dinghy seen from the stern, Youth Phase IX lettered across the transom, riding at anchor beside a mooring buoy on water that mirrors the current sky, with a wooded shoreline and moored sailboats in the distance"
           class="block w-full rounded-2xl"
         >
           <defs>
@@ -75,8 +77,8 @@ import Layout from '../layouts/Layout.astro';
           <rect x="0" y="170" width="600" height="170" fill="url(#sea)"></rect>
           <rect x="0" y="170" width="600" height="170" fill="#0a1030" opacity="0.18"></rect>
 
-          <!-- Her reflection: a soft ivory smudge, shimmering slowly. -->
-          <ellipse class="dinghy-reflection" cx="300" cy="268" rx="92" ry="10" fill="#f7f4ed" opacity="0.14">
+          <!-- The reflection: a soft ivory smudge, shimmering slowly. -->
+          <ellipse class="dinghy-reflection" cx="300" cy="268" rx="66" ry="9" fill="#f7f4ed" opacity="0.14">
           </ellipse>
 
           <!-- Ripples in moonlight, each drifting on its own period. -->
@@ -88,63 +90,67 @@ import Layout from '../layouts/Layout.astro';
             <path class="ripple ripple-3" d="M90 226 q26 -5 52 0" stroke-width="1.5" opacity="0.2"></path>
           </g>
 
-          <!-- Youth Phase. Side profile, bow to the right, like she's
-               swung on her mooring to face the tide. -->
+          <!-- Youth Phase, stern-on. The transom carries the name the way
+               Pop lettered it: the name across, the numeral centered
+               beneath. -->
           <g class="dinghy">
-            <!-- Mast stub and the drooping pennant from the photo. -->
-            <line x1="286" y1="212" x2="282" y2="102" stroke="#8fa0c0" stroke-width="3" stroke-linecap="round"
-            ></line>
+            <!-- The gunwale rim and the sliver of interior visible over
+                 the transom edge. -->
             <path
-              class="pennant"
-              d="M282 102 q20 4 34 14 q-16 10 -30 6 q-3 -10 -4 -20 z"
-              fill="#f7f4ed"
-              opacity="0.95"
+              d="M246 206 Q300 194 354 206 Q300 220 246 206 Z"
+              fill="#8fa0c0"
+            ></path>
+            <path
+              d="M252 206 Q300 197 348 206 Q300 216 252 206 Z"
+              fill="#dde4f0"
+              opacity="0.55"
             ></path>
 
-            <!-- Hull: ivory sides, a navy waterline stroke, the sheer
-                 dipping amidships like a real lapstrake dinghy. -->
+            <!-- The transom: flat, rounded at the chine, ivory like the
+                 polaroid. -->
             <path
-              d="M196 212 C240 220 360 220 404 208 C412 206 418 210 414 218 C404 240 380 252 300 252 C228 252 206 240 198 224 C195 218 193 212 196 212 Z"
+              d="M246 206 Q300 214 354 206 Q358 208 357 214 L352 240 Q348 252 300 254 Q252 252 248 240 L243 214 Q242 208 246 206 Z"
               fill="#f7f4ed"
             ></path>
-            <!-- Interior shadow along the sheer. -->
+            <!-- Transom seams. -->
+            <path d="M250 224 Q300 231 350 224" fill="none" stroke="#c3cde0" stroke-width="1.5" opacity="0.6"></path>
+            <!-- Rub rail along the transom top. -->
             <path
-              d="M204 214 C244 221 356 221 400 210 C396 218 380 224 300 224 C240 224 216 220 204 214 Z"
-              fill="#8fa0c0"
-              opacity="0.5"
-            ></path>
-            <!-- Rub rail. -->
-            <path
-              d="M196 212 C240 220 360 220 404 208"
+              d="M246 206 Q300 214 354 206"
               fill="none"
               stroke="#1e2c60"
               stroke-width="2.5"
               stroke-linecap="round"
               opacity="0.55"
             ></path>
-            <!-- Lapstrake plank lines. -->
-            <path d="M206 230 C250 238 352 238 402 226" fill="none" stroke="#c3cde0" stroke-width="1.5" opacity="0.7"></path>
-            <path d="M214 241 C256 247 346 247 394 237" fill="none" stroke="#c3cde0" stroke-width="1.5" opacity="0.5"></path>
 
-            <!-- Her name, painted the way Pop painted it. -->
+            <!-- The name, lettered across the transom. -->
             <text
               x="300"
-              y="243"
+              y="230"
               text-anchor="middle"
               fill="#1e2c60"
-              style="font-size: 15px; font-weight: 500; letter-spacing: 0.18em;"
+              style="font-size: 11.5px; font-weight: 500; letter-spacing: 0.09em;"
             >
               YOUTH PHASE
             </text>
             <text
-              x="384"
-              y="238"
+              x="300"
+              y="247"
               text-anchor="middle"
               fill="#1e2c60"
-              style="font-size: 14px; font-weight: 500; letter-spacing: 0.08em;"
+              style="font-size: 13px; font-weight: 500; letter-spacing: 0.1em;"
             >
               IX
             </text>
+          </g>
+
+          <!-- The mooring buoy — the white ball from the photo, riding
+               its own swell beside the boat. -->
+          <g class="buoy">
+            <circle cx="432" cy="248" r="9" fill="#f7f4ed"></circle>
+            <path d="M423.5 250 a9 9 0 0 0 17 0" fill="#8fa0c0" opacity="0.45"></path>
+            <ellipse cx="432" cy="260" rx="12" ry="2.5" fill="#f0f4ff" opacity="0.2"></ellipse>
           </g>
         </svg>
         <figcaption class="pt-3 text-center text-sm lowercase tracking-widest">
@@ -211,6 +217,17 @@ import Layout from '../layouts/Layout.astro';
           <p id="contact-status" aria-live="polite" class="text-sm lowercase tracking-wide"></p>
         </div>
       </form>
+
+      <!-- For the engineers who got curious about the sky. -->
+      <p class="mt-8 text-sm lowercase tracking-wide">
+        prefer reading code to writing messages? this site is
+        <a
+          href="https://github.com/amyrlam/youthphase"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="link-squiggle">open source</a
+        >.
+      </p>
     </section>
   </main>
 </Layout>
@@ -224,9 +241,10 @@ import Layout from '../layouts/Layout.astro';
     animation: dinghy-bob 7s ease-in-out infinite;
   }
 
-  .pennant {
-    transform-origin: 282px 102px;
-    animation: pennant-sway 5s ease-in-out infinite;
+  /* The buoy rides the same water on its own period, out of phase with
+     the boat so they never move in lockstep. */
+  .buoy {
+    animation: buoy-bob 5.5s ease-in-out -2s infinite;
   }
 
   .dinghy-reflection {
@@ -257,13 +275,13 @@ import Layout from '../layouts/Layout.astro';
     }
   }
 
-  @keyframes pennant-sway {
+  @keyframes buoy-bob {
     0%,
     100% {
-      transform: skewY(0deg);
+      transform: translateY(0);
     }
     50% {
-      transform: skewY(-4deg);
+      transform: translateY(2.5px);
     }
   }
 
@@ -291,7 +309,7 @@ import Layout from '../layouts/Layout.astro';
 
   @media (prefers-reduced-motion: reduce) {
     .dinghy,
-    .pennant,
+    .buoy,
     .dinghy-reflection,
     .ripple {
       animation: none;
