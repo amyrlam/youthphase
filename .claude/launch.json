@@ -9,6 +9,33 @@
       "env": {
         "PATH": "/Users/amyrlam/.local/opt/node/bin:/usr/bin:/bin:/usr/sbin:/sbin"
       }
+    },
+    {
+      "name": "worktree-1",
+      "runtimeExecutable": "/Users/amyrlam/.local/opt/node/bin/npm",
+      "runtimeArgs": ["run", "dev", "--", "--port", "4331"],
+      "port": 4331,
+      "env": {
+        "PATH": "/Users/amyrlam/.local/opt/node/bin:/usr/bin:/bin:/usr/sbin:/sbin"
+      }
+    },
+    {
+      "name": "worktree-2",
+      "runtimeExecutable": "/Users/amyrlam/.local/opt/node/bin/npm",
+      "runtimeArgs": ["run", "dev", "--", "--port", "4332"],
+      "port": 4332,
+      "env": {
+        "PATH": "/Users/amyrlam/.local/opt/node/bin:/usr/bin:/bin:/usr/sbin:/sbin"
+      }
+    },
+    {
+      "name": "worktree-3",
+      "runtimeExecutable": "/Users/amyrlam/.local/opt/node/bin/npm",
+      "runtimeArgs": ["run", "dev", "--", "--port", "4333"],
+      "port": 4333,
+      "env": {
+        "PATH": "/Users/amyrlam/.local/opt/node/bin:/usr/bin:/bin:/usr/sbin:/sbin"
+      }
     }
   ]
 }
