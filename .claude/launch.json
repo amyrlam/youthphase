@@ -4,7 +4,12 @@
     {
       "name": "dev",
       "runtimeExecutable": "/Users/amyrlam/.local/opt/node/bin/npm",
-      "runtimeArgs": ["run", "dev"],
+      "runtimeArgs": [
+        "run",
+        "dev",
+        "--",
+        "--host"
+      ],
       "port": 4321,
       "env": {
         "PATH": "/Users/amyrlam/.local/opt/node/bin:/usr/bin:/bin:/usr/sbin:/sbin"
@@ -13,7 +18,14 @@
     {
       "name": "worktree-1",
       "runtimeExecutable": "/Users/amyrlam/.local/opt/node/bin/npm",
-      "runtimeArgs": ["run", "dev", "--", "--port", "4331"],
+      "runtimeArgs": [
+        "run",
+        "dev",
+        "--",
+        "--port",
+        "4331",
+        "--host"
+      ],
       "port": 4331,
       "env": {
         "PATH": "/Users/amyrlam/.local/opt/node/bin:/usr/bin:/bin:/usr/sbin:/sbin"
@@ -22,7 +34,14 @@
     {
       "name": "worktree-2",
       "runtimeExecutable": "/Users/amyrlam/.local/opt/node/bin/npm",
-      "runtimeArgs": ["run", "dev", "--", "--port", "4332"],
+      "runtimeArgs": [
+        "run",
+        "dev",
+        "--",
+        "--port",
+        "4332",
+        "--host"
+      ],
       "port": 4332,
       "env": {
         "PATH": "/Users/amyrlam/.local/opt/node/bin:/usr/bin:/bin:/usr/sbin:/sbin"
@@ -31,7 +50,14 @@
     {
       "name": "worktree-3",
       "runtimeExecutable": "/Users/amyrlam/.local/opt/node/bin/npm",
-      "runtimeArgs": ["run", "dev", "--", "--port", "4333"],
+      "runtimeArgs": [
+        "run",
+        "dev",
+        "--",
+        "--port",
+        "4333",
+        "--host"
+      ],
       "port": 4333,
       "env": {
         "PATH": "/Users/amyrlam/.local/opt/node/bin:/usr/bin:/bin:/usr/sbin:/sbin"

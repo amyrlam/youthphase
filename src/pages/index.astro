@@ -4,13 +4,15 @@ import Layout from '../layouts/Layout.astro';
 
 <Layout>
   <main class="relative flex min-h-dvh flex-col items-center justify-center gap-8 px-6 text-center">
-    <h1 class="text-6xl font-medium lowercase tracking-tight sm:text-8xl">Amy Lam</h1>
+    <!-- .show-dim: these bow out while the triple-tap moon show plays
+         (global.css), clearing the center of the sky for the moon. -->
+    <h1 class="show-dim text-6xl font-medium lowercase tracking-tight sm:text-8xl">Amy Lam</h1>
 
-    <p class="-mt-4 text-sm lowercase tracking-widest sm:text-base">
+    <p class="show-dim -mt-4 text-sm lowercase tracking-widest sm:text-base">
       frontend software engineer · design systems · slc → sf
     </p>
 
-    <nav aria-label="Social links" class="flex items-center gap-3">
+    <nav aria-label="Social links" class="show-dim flex items-center gap-3">
       <a
         href="https://www.linkedin.com/in/amyrlam"
         target="_blank"

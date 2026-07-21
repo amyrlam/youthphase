@@ -61,9 +61,10 @@ const ogImage = new URL('/og.png', Astro.site);
     </div>
 
     <!-- The moon's revealed face: the one place the "never a picture"
-         rule breaks, on purpose. While the triple-tap show plays
-         (sky.ts), the point of light blooms into a small cratered disc
-         whose lit shape
+         rule breaks, on purpose. While the triple-tap show plays,
+         sky.ts centers this large on the page (the hero text bows out)
+         and the resting star-point hides so only the face carries the
+         light. The lit shape
          is the real phase geometry — the terminator is an elliptical arc,
          so crescents are crescents and gibbous is gibbous, not a circle
          sliding off another circle. sky.ts positions it with the moon and
@@ -72,7 +73,7 @@ const ogImage = new URL('/og.png', Astro.site);
     <div
       id="moon-face"
       aria-hidden="true"
-      class="pointer-events-none fixed h-[68px] w-[68px] -translate-x-1/2 -translate-y-1/2"
+      class="pointer-events-none fixed h-14 w-14 -translate-x-1/2 -translate-y-1/2"
     >
       <svg viewBox="0 0 100 100" class="h-full w-full">
         <defs>
@@ -108,15 +109,26 @@ const ogImage = new URL('/og.png', Astro.site);
     </div>
 
     <!-- The finale wash: when the show's month of phases completes,
-         moonlight floods the sky from the moon's position before the
-         sparkle bursts (sky.ts). Sits below the page content in DOM
-         order so the flood stays behind the text. -->
+         moonlight rises softly from the stage and recedes (sky.ts).
+         Sits below the page content in DOM order so the flood stays
+         behind the text. -->
     <div id="moon-finale" aria-hidden="true" class="pointer-events-none fixed inset-0 opacity-0">
     </div>
 
+    <!-- Day-show shower cloud: a faint gray dim over the sky while the
+         rain falls, lifting when the rainbow arrives (sky.ts). -->
+    <div id="cloud-dim" aria-hidden="true" class="pointer-events-none fixed inset-0 opacity-0"></div>
+
+    <!-- Day-show rainbow: the left leg of a bow whose arch is far off
+         the upper right — mostly horizontal across the page, sweeping
+         up as it exits (sky.ts triggers it; geometry in global.css). -->
+    <div id="rainbow" aria-hidden="true" class="pointer-events-none fixed"></div>
+
     <!-- The easter egg's trigger is a triple-tap anywhere on the sky
          (sky.ts) — no dedicated touch target needed, so nothing ever
-         sits above the page content stealing taps. -->
+         sits above the page content stealing taps. Night with the moon
+         up: the month of phases. Daylight: a shower and a rainbow.
+         Dark, moonless sky: a scatter of shooting stars. -->
 
 
     <!-- The real night sky: sky.ts positions the brightest stars for the

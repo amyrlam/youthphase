@@ -80,7 +80,15 @@ function initLightbox() {
       if (img) img.hidden = true;
       video!.hidden = false;
       video!.src = trigger.dataset.video;
-      video!.play().catch(() => {});
+      // Sound when allowed: browsers only permit unmuted play() inside a
+      // user gesture, and the swipe toss swaps media after its animation
+      // finishes — outside the gesture window — so that path rejects.
+      // Fall back to muted autoplay; the controls offer unmute.
+      video!.muted = false;
+      video!.play().catch(() => {
+        video!.muted = true;
+        video!.play().catch(() => {});
+      });
     } else {
       video!.hidden = true;
       video!.pause();
