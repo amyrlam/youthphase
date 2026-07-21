@@ -1,0 +1,182 @@
+---
+/* Paired with src/scripts/lightbox.ts. Grid items should be a
+   data-lightbox-trigger element carrying data-full/data-alt/data-caption
+   (or data-video for the one video tile). The script reads all triggers
+   in DOM order so Prev/Next and arrow keys carousel through the whole
+   grid, not just the item that was clicked. */
+---
+
+<dialog id="lightbox" class="lightbox-dialog" aria-label="Photo viewer">
+  <button
+    type="button"
+    onclick="this.closest('dialog').close()"
+    aria-label="Close"
+    class="lightbox-btn lightbox-close"
+  >
+    ✕
+  </button>
+  <button type="button" id="lightbox-prev" aria-label="Previous photo" class="lightbox-btn lightbox-prev">
+    ‹
+  </button>
+  <button type="button" id="lightbox-next" aria-label="Next photo" class="lightbox-btn lightbox-next">
+    ›
+  </button>
+
+  <!-- The expanded view is styled as a polaroid: ivory card, image inset,
+       caption written in the bottom margin. The grid itself stays plain. -->
+  <div class="lightbox-polaroid">
+    <img id="lightbox-img" src="" alt="" class="lightbox-media" />
+    <video id="lightbox-video" hidden controls playsinline class="lightbox-media"></video>
+    <p id="lightbox-caption" class="lightbox-caption"></p>
+  </div>
+</dialog>
+
+<script src="../scripts/lightbox.ts"></script>
+
+<style>
+  .lightbox-dialog {
+    /* box-sizing: border-box so the gutter padding below is included in
+       this cap, not added on top of it — otherwise narrow viewports
+       overflow and the nav buttons end up sitting on the photo instead
+       of beside it. */
+    box-sizing: border-box;
+    max-width: min(96vw, 60rem);
+    max-height: 90vh;
+    margin: auto;
+    border: none;
+    background: transparent;
+    /* Side gutters give the prev/next buttons their own space instead of
+       sitting on top of the photo. Equal to the visible button size
+       (2.25rem) + a 1rem gap to the polaroid. .lightbox-close reads this
+       same variable, so the two stay in sync automatically — including
+       under the mobile override below. */
+    --gutter: 3.25rem;
+    padding-inline: var(--gutter);
+    overflow: visible;
+  }
+
+  /* Mobile screens can't spare a full gutter — let prev/next overlap the
+     photo's outer edge instead so the image itself gets the width back. */
+  @media (max-width: 640px) {
+    .lightbox-dialog {
+      --gutter: 0.75rem;
+    }
+  }
+
+  .lightbox-dialog::backdrop {
+    background: rgba(5, 6, 12, 0.82);
+  }
+
+  .lightbox-polaroid {
+    /* display: grid (rather than plain block flow) plus min-width: 0 on
+       the caption below decouples the two: normally an unwrapped caption's
+       max-content width feeds into this shrink-to-fit box's own sizing,
+       stretching it past the photo. As a grid item with min-width: 0, the
+       caption no longer contributes that width — only the photo does, and
+       the caption just wraps to match whatever width the photo ends up. */
+    display: grid;
+    background: #f7f4ed;
+    padding: 1rem 1rem 1.25rem;
+    border-radius: 0.25rem;
+    box-shadow: 0 25px 60px -12px rgba(0, 0, 0, 0.6);
+  }
+
+  .lightbox-media {
+    display: block;
+    /* 100% of whatever's left inside the dialog's padding — never a raw
+       vw value, so it can't out-grow the gutters reserved for the nav
+       buttons. */
+    max-width: 100%;
+    max-height: 74vh;
+    width: auto;
+    height: auto;
+    border-radius: 2px;
+    background: #000;
+  }
+
+  .lightbox-caption {
+    color: #2a2620;
+    text-align: center;
+    font-size: 0.9rem;
+    letter-spacing: 0.03em;
+    padding: 0.85rem 0.25rem 0.15rem;
+    /* The trick that stops it stretching .lightbox-polaroid — see the
+       comment there. */
+    min-width: 0;
+  }
+
+  /* One shared size/shape/color for close, prev, and next — only
+     position differs between them. Visible circle is smaller than the
+     WCAG AAA 44px target; an invisible ::after expands the actual
+     tappable area to 44px without growing what you see, the same trick
+     used for the nav links on the homepage. */
+  .lightbox-btn {
+    position: absolute;
+    width: 2.25rem;
+    height: 2.25rem;
+    color: #f1eefb;
+    background: rgba(255, 255, 255, 0.12);
+    border: none;
+    border-radius: 9999px;
+    font-size: 1.1rem;
+    line-height: 1;
+    cursor: pointer;
+    z-index: 1;
+  }
+
+  .lightbox-btn::after {
+    content: '';
+    position: absolute;
+    inset: -0.25rem;
+  }
+
+  .lightbox-btn:hover {
+    background: rgba(255, 255, 255, 0.22);
+  }
+
+  .lightbox-btn:focus {
+    outline: none;
+  }
+
+  .lightbox-btn:focus-visible {
+    outline: 2px solid #f1eefb;
+    outline-offset: 2px;
+  }
+
+  /* Floats diagonally outside the polaroid's top-right corner. The gap
+     here is a straight-line (not per-axis) distance from the corner — so
+     each axis component is diag-gap/√2, not diag-gap itself, otherwise
+     the actual diagonal distance comes out ~1.4x too big. Half of
+     .lightbox-next's 1rem edge gap, pulled in closer per feedback. */
+  .lightbox-close {
+    --diag-gap: 0.3536rem;
+    top: calc(-1 * var(--diag-gap) - 2.25rem);
+    right: calc(var(--gutter) - var(--diag-gap) - 2.25rem);
+  }
+
+  .lightbox-prev,
+  .lightbox-next {
+    top: 50%;
+    translate: 0 -50%;
+  }
+
+  .lightbox-prev {
+    left: 0;
+  }
+
+  .lightbox-next {
+    right: 0;
+  }
+
+  /* The desktop diagonal-gap formula on .lightbox-close above assumes a
+     gutter wide enough to inset the button from the dialog edge; the
+     shrunken mobile --gutter no longer is (it'd push the button past the
+     viewport), so pin Close near the corner directly instead. Placed last
+     so it wins over the base rule's equal-specificity `right` at this
+     breakpoint. */
+  @media (max-width: 640px) {
+    .lightbox-close {
+      right: 0.25rem;
+    }
+  }
+</style>

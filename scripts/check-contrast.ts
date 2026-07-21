@@ -1,10 +1,12 @@
 /* Verifies WCAG AAA contrast across the entire sky gradient:
    - heading (large text) ink vs mid-gradient: ≥ 4.5:1
    - status/button ink vs computed chip background: ≥ 7:1
+   - top-of-page link ink (pickTopInk) vs --sky-top: ≥ 4.5:1
    Run: node scripts/check-contrast.ts */
 import {
   skyColors,
   pickInk,
+  pickTopInk,
   chipFor,
   scrimFor,
   contrast,
@@ -14,10 +16,8 @@ import {
 
 let worstHeading = Infinity;
 let worstChip = Infinity;
-let worstTopWhite = Infinity;
+let worstTopInk = Infinity;
 let failures = 0;
-
-const WHITE_INK: [number, number, number] = [255, 255, 255];
 
 for (let alt = -90; alt <= 90; alt += 0.1) {
   const { top, bottom } = skyColors(alt);
@@ -34,25 +34,27 @@ for (let alt = -90; alt <= 90; alt += 0.1) {
   const chip = chipFor(bottom, relLum(ink) > 0.5);
   const chipRatio = contrast(chip.ink, chip.bg);
 
-  // Back-links are white large-class text on the top of the sky — the top
-  // must stay dark enough for 4.5:1 at every altitude.
-  const topWhiteRatio = contrast(WHITE_INK, top);
+  // The top-of-page back-link sits on pure --sky-top, a different point
+  // in the gradient than the heading band above — pickTopInk is chosen
+  // specifically for it and must clear 4.5:1 there.
+  const topInk = pickTopInk(top);
+  const topInkRatio = contrast(topInk, top);
 
   worstHeading = Math.min(worstHeading, headingRatio);
   worstChip = Math.min(worstChip, chipRatio);
-  worstTopWhite = Math.min(worstTopWhite, topWhiteRatio);
+  worstTopInk = Math.min(worstTopInk, topInkRatio);
 
-  if (headingRatio < 4.5 || chipRatio < 7 || topWhiteRatio < 4.5) {
+  if (headingRatio < 4.5 || chipRatio < 7 || topInkRatio < 4.5) {
     failures++;
     console.error(
-      `FAIL alt=${alt.toFixed(1)}° heading=${headingRatio.toFixed(2)} chip=${chipRatio.toFixed(2)} topWhite=${topWhiteRatio.toFixed(2)}`,
+      `FAIL alt=${alt.toFixed(1)}° heading=${headingRatio.toFixed(2)} chip=${chipRatio.toFixed(2)} topInk=${topInkRatio.toFixed(2)}`,
     );
   }
 }
 
 console.log(`worst heading contrast   (needs ≥ 4.5): ${worstHeading.toFixed(2)}`);
 console.log(`worst chip contrast      (needs ≥ 7.0): ${worstChip.toFixed(2)}`);
-console.log(`worst white-on-sky-top   (needs ≥ 4.5): ${worstTopWhite.toFixed(2)}`);
+console.log(`worst top-link contrast  (needs ≥ 4.5): ${worstTopInk.toFixed(2)}`);
 if (failures > 0) {
   console.error(`${failures} altitude(s) failed AAA`);
   process.exit(1);

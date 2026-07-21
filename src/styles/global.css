@@ -135,6 +135,19 @@ body {
     color 1.6s ease;
 }
 
+/* Same shape as .sky-card, but the background is --sky-top itself rather
+   than the computed --card-bg chip — for content (the "← home" back-link)
+   whose ink is picked against pure --sky-top specifically, so the card
+   underneath it needs to actually be that color for the pairing to be the
+   one AAA verifies, not a different, unrelated pairing. */
+.sky-top-card {
+  background: var(--sky-top);
+  color: var(--top-ink, #ffffff);
+  transition:
+    background-color 1.6s ease,
+    color 1.6s ease;
+}
+
 /* Retheme Tailwind Typography to track the same computed ink color,
    rather than its fixed gray scale — otherwise prose text would ignore
    the sky entirely and could fail contrast at night. */
@@ -174,6 +187,28 @@ body {
 /* Text that sits on the horizon band. */
 .sky-caption {
   color: var(--chip-ink, #ffffff);
+}
+
+/* Text sitting directly on the bare top of the sky gradient (the "← home"
+   back-link) — a different point in the gradient than .sky-card/--ink, so
+   it needs its own computed color (sky.ts's pickTopInk) rather than
+   reusing --ink or a fixed white. */
+.sky-top-ink {
+  color: var(--top-ink, #ffffff);
+  transition: color 1.6s ease;
+}
+
+/* The one shared trait every inline text link on the site carries,
+   regardless of where it sits or what color system it uses — a wavy
+   underline, so clickable text is never confused with plain captions
+   sitting next to it (e.g. "about" vs. "daylight · san francisco").
+   Pair with whichever color/size treatment fits the context (.sky-caption
+   for horizon-band nav, plain white for top-of-page back-links, etc). */
+.link-squiggle {
+  text-decoration-line: underline;
+  text-decoration-style: wavy;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 4px;
 }
 
 /* Every so often, a shooting star (night only — it lives in #stars). */

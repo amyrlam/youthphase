@@ -101,6 +101,20 @@ export function pickInk(top: RGB, bottom: RGB): RGB {
   return worstContrast(WHITE, top, bottom) >= worstContrast(BLACK, top, bottom) ? WHITE : BLACK;
 }
 
+/* Top-of-page text (the "← home" back-link) sits on pure --sky-top, not
+   the mid-gradient band pickInk is verified against — night skies get
+   dark enough there that a fixed white can't be swapped for a fixed
+   black. Same logic as pickInk, evaluated at a single point instead of a
+   band, so it stays provably safe while still shifting color like the
+   heading does. */
+export function pickTopInk(top: RGB): RGB {
+  const soft = [INK_LIGHT, INK_DARK].filter((c) => contrast(c, top) >= 5);
+  if (soft.length) {
+    return soft.sort((a, b) => contrast(b, top) - contrast(a, top))[0];
+  }
+  return contrast(WHITE, top) >= contrast(BLACK, top) ? WHITE : BLACK;
+}
+
 /* A soft ellipse behind the center content, darkened (or lightened) just
    enough that the ink clears 4.6:1 across the whole band. Opacity is 0
    except around sunset, when mid-luminance peach defeats every ink. */
@@ -390,6 +404,7 @@ function render(place: Place, mode: Mode, at = new Date(), demo = false) {
   const inkIsLight = relLum(ink) > 0.5;
   const chip = chipFor(bottom, inkIsLight);
   const scrim = scrimFor(ink, top, bottom);
+  const topInk = pickTopInk(top);
 
   const root = document.documentElement;
   root.style.setProperty('--sky-top', css(top));
@@ -397,6 +412,7 @@ function render(place: Place, mode: Mode, at = new Date(), demo = false) {
   root.style.setProperty('--ink', css(ink));
   root.style.setProperty('--card-bg', css(chip.bg));
   root.style.setProperty('--chip-ink', css(chip.ink));
+  root.style.setProperty('--top-ink', css(topInk));
 
   const scrimEl = document.getElementById('scrim');
   if (scrimEl) {
