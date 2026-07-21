@@ -39,7 +39,17 @@ function initLightbox() {
 
     current = ((index % triggers.length) + triggers.length) % triggers.length;
     const trigger = triggers[current];
-    if (caption) caption.textContent = trigger.dataset.caption ?? '';
+    if (caption) {
+      const text = trigger.dataset.caption ?? '';
+      caption.textContent = text;
+      // Emoji-only captions get the jumbomoji treatment — see the
+      // .lightbox-caption--emoji comment in Lightbox.astro. \u200d and
+      // \ufe0f are the ZWJ and variation selector in compound emoji.
+      const emojiOnly =
+        text.trim().length > 0 &&
+        /^[\p{Extended_Pictographic}\p{Emoji_Component}\u200d\ufe0f\s]+$/u.test(text);
+      caption.classList.toggle('lightbox-caption--emoji', emojiOnly);
+    }
     dots.forEach((dot, i) => dot.classList.toggle('is-active', i === current));
 
     if (trigger.dataset.video) {
