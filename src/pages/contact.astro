@@ -89,6 +89,10 @@ import youthPhase from '../assets/contact/youth-phase-print.png';
             maxlength="254"
             class="rounded-lg border border-current/30 bg-transparent px-3 py-2 text-base focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-current"
           />
+          <!-- Inline validation, in the site's voice — no browser
+               bubbles (the form is novalidate), no semantic red (the
+               ink color is the palette). Filled by the script. -->
+          <p id="contact-email-error" data-error-for="contact-email" hidden class="text-xs lowercase tracking-wide"></p>
         </div>
 
         <div class="flex flex-col gap-1.5">
@@ -103,6 +107,7 @@ import youthPhase from '../assets/contact/youth-phase-print.png';
             maxlength="5000"
             class="resize-y rounded-lg border border-current/30 bg-transparent px-3 py-2 text-base focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-current"
           ></textarea>
+          <p id="contact-message-error" data-error-for="contact-message" hidden class="text-xs lowercase tracking-wide"></p>
         </div>
 
         <!-- Honeypot: hidden from people (and from the accessibility tree),
@@ -142,13 +147,13 @@ import youthPhase from '../assets/contact/youth-phase-print.png';
     border-radius: 0.5rem;
     background:
       radial-gradient(circle at calc(0.55 * var(--frame-w)) calc(0.55 * var(--frame-w)),
-        #f7e7b0 0 3px, #7a5c1e 4px 6px, rgba(247, 231, 176, 0.55) 7px 8px, transparent 9px),
+        #f7e7b0 0 4px, #7a5c1e 5px 7px, rgba(247, 231, 176, 0.6) 8px 10px, #8a6a24 11px 12px, transparent 13px),
       radial-gradient(circle at calc(100% - 0.55 * var(--frame-w)) calc(0.55 * var(--frame-w)),
-        #f7e7b0 0 3px, #7a5c1e 4px 6px, rgba(247, 231, 176, 0.55) 7px 8px, transparent 9px),
+        #f7e7b0 0 4px, #7a5c1e 5px 7px, rgba(247, 231, 176, 0.6) 8px 10px, #8a6a24 11px 12px, transparent 13px),
       radial-gradient(circle at calc(0.55 * var(--frame-w)) calc(100% - 0.55 * var(--frame-w)),
-        #f7e7b0 0 3px, #7a5c1e 4px 6px, rgba(247, 231, 176, 0.55) 7px 8px, transparent 9px),
+        #f7e7b0 0 4px, #7a5c1e 5px 7px, rgba(247, 231, 176, 0.6) 8px 10px, #8a6a24 11px 12px, transparent 13px),
       radial-gradient(circle at calc(100% - 0.55 * var(--frame-w)) calc(100% - 0.55 * var(--frame-w)),
-        #f7e7b0 0 3px, #7a5c1e 4px 6px, rgba(247, 231, 176, 0.55) 7px 8px, transparent 9px),
+        #f7e7b0 0 4px, #7a5c1e 5px 7px, rgba(247, 231, 176, 0.6) 8px 10px, #8a6a24 11px 12px, transparent 13px),
       repeating-linear-gradient(45deg,
         rgba(255, 243, 205, 0.16) 0 2px, rgba(90, 66, 16, 0.14) 2px 4px, transparent 4px 7px),
       linear-gradient(135deg,
@@ -173,12 +178,38 @@ import youthPhase from '../assets/contact/youth-phase-print.png';
     filter: drop-shadow(0 1px 0 rgba(58, 42, 8, 0.55));
   }
 
+  /* The gadrooned outer edge: a striped border-image reads as twisted
+     rope molding around the frame's perimeter — as close as gradients
+     get to carved relief. */
+  .gold-frame::after {
+    content: '';
+    position: absolute;
+    inset: 1px;
+    border: 0.38rem solid transparent;
+    border-image: repeating-linear-gradient(
+        45deg,
+        #f7e7b0 0 3px,
+        #8a6a24 3px 6px,
+        #c9a24a 6px 9px
+      )
+      8;
+    border-radius: 0.4rem;
+    pointer-events: none;
+    opacity: 0.85;
+  }
+
   .gold-frame img {
     border-radius: 2px;
     /* The rebate: a dark lip where the print sits in the frame. */
     box-shadow:
       inset 0 0 0 2px rgba(42, 30, 6, 0.65),
       inset 0 2px 6px rgba(0, 0, 0, 0.35);
+  }
+
+  /* An invalid field's border goes full-strength ink — state carried by
+     weight, not by a semantic red the palette doesn't have. */
+  #contact-form [aria-invalid='true'] {
+    border-color: currentColor;
   }
 </style>
 
@@ -190,14 +221,63 @@ import youthPhase from '../assets/contact/youth-phase-print.png';
   const submit = document.getElementById('contact-submit') as HTMLButtonElement | null;
   const status = document.getElementById('contact-status');
 
+  /* Inline validation in the site's voice, instead of browser bubbles.
+     Messages appear under the field; the field is marked aria-invalid
+     (which also strengthens its border, see the style block) and linked
+     to its message via aria-describedby. Errors clear as you type. */
+  const FIELD_MESSAGES: Record<string, { empty: string; invalid?: string }> = {
+    'contact-email': {
+      empty: 'i need an email to write back to',
+      invalid: "that email doesn't look complete",
+    },
+    'contact-message': {
+      empty: "don't forget the message itself",
+    },
+  };
+
+  function setError(field: HTMLInputElement | HTMLTextAreaElement, message: string | null) {
+    const note = document.querySelector<HTMLElement>(`[data-error-for="${field.id}"]`);
+    if (!note) return;
+    if (message) {
+      note.textContent = message;
+      note.hidden = false;
+      field.setAttribute('aria-invalid', 'true');
+      field.setAttribute('aria-describedby', note.id);
+    } else {
+      note.hidden = true;
+      field.removeAttribute('aria-invalid');
+      field.removeAttribute('aria-describedby');
+    }
+  }
+
+  function validate(): boolean {
+    if (!form) return false;
+    let firstInvalid: HTMLElement | null = null;
+    for (const id of Object.keys(FIELD_MESSAGES)) {
+      const field = document.getElementById(id) as HTMLInputElement | HTMLTextAreaElement;
+      const v = field.validity;
+      const msg = v.valid
+        ? null
+        : v.valueMissing
+          ? FIELD_MESSAGES[id].empty
+          : (FIELD_MESSAGES[id].invalid ?? FIELD_MESSAGES[id].empty);
+      setError(field, msg);
+      if (msg && !firstInvalid) firstInvalid = field;
+    }
+    firstInvalid?.focus();
+    return !firstInvalid;
+  }
+
+  for (const id of Object.keys(FIELD_MESSAGES)) {
+    document.getElementById(id)?.addEventListener('input', (e) => {
+      setError(e.target as HTMLInputElement, null);
+    });
+  }
+
   form?.addEventListener('submit', async (e) => {
     e.preventDefault();
 
-    // Native validation, surfaced in the site's voice.
-    if (!form.checkValidity()) {
-      form.reportValidity();
-      return;
-    }
+    if (!validate()) return;
 
     const data = Object.fromEntries(new FormData(form).entries());
     if (submit) submit.disabled = true;

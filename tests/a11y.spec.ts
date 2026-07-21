@@ -35,8 +35,13 @@ test('contact page has no axe violations', async ({ page }) => {
 
 test('contact form blocks empty submits and reports errors politely', async ({ page }) => {
   await page.goto('/contact');
-  // Empty submit: native validation stops it before any request.
+  // Empty submit: inline validation stops it before any request — the
+  // field-level messages appear, focus lands on the first invalid
+  // field, and the status line stays empty.
   await page.getByRole('button', { name: 'send' }).click();
+  await expect(page.locator('#contact-email-error')).toBeVisible();
+  await expect(page.locator('#contact-message-error')).toBeVisible();
+  await expect(page.getByRole('textbox', { name: 'email', exact: true })).toBeFocused();
   await expect(page.locator('#contact-status')).toHaveText('');
   // Filled submit against a dev server with no /api route: the error
   // state must surface in the aria-live line and keep the typed values.
