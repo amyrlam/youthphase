@@ -19,6 +19,12 @@ test('about page has no axe violations', async ({ page }) => {
   expect(results.violations).toEqual([]);
 });
 
+test('fun page has no axe violations', async ({ page }) => {
+  await page.goto('/fun');
+  const results = await new AxeBuilder({ page }).analyze();
+  expect(results.violations).toEqual([]);
+});
+
 test('open lightbox has no axe violations', async ({ page }) => {
   await page.goto('/about');
   await page.locator('[data-lightbox-trigger]').first().click();
