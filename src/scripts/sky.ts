@@ -304,19 +304,23 @@ function updateStars(place: Place, at: Date) {
 
 /* An occasional shooting star while the sky is dark. */
 let nightNow = false;
+
+function spawnShootingStar() {
+  const container = document.getElementById('stars');
+  if (!container) return;
+  const s = document.createElement('span');
+  s.className = 'shooting-star';
+  s.style.left = `${10 + Math.random() * 65}%`;
+  s.style.top = `${5 + Math.random() * 35}%`;
+  s.addEventListener('animationend', () => s.remove());
+  container.appendChild(s);
+}
+
 function scheduleShootingStar() {
   if (reducedMotion()) return;
   setTimeout(
     () => {
-      const container = document.getElementById('stars');
-      if (container && nightNow && !document.hidden && !demoRunning) {
-        const s = document.createElement('span');
-        s.className = 'shooting-star';
-        s.style.left = `${10 + Math.random() * 65}%`;
-        s.style.top = `${5 + Math.random() * 35}%`;
-        s.addEventListener('animationend', () => s.remove());
-        container.appendChild(s);
-      }
+      if (nightNow && !document.hidden && !demoRunning) spawnShootingStar();
       scheduleShootingStar();
     },
     18000 + Math.random() * 25000,
@@ -497,14 +501,24 @@ function render(place: Place, mode: Mode, at = new Date(), demo = false) {
   }
 }
 
-/* Play the next 24 hours in about 14 seconds. */
+/* Play the next 24 hours in about 14 seconds. The random real-night
+   shooting stars pause during the demo (their 18s+ cadence would almost
+   never land inside it), so the demo fires a couple deliberately while
+   its sky is dark — the time-lapse should show them off, not hide them. */
 async function playDemo(place: Place, mode: Mode) {
   if (demoRunning) return;
   demoRunning = true;
   document.documentElement.classList.add('sky-demo');
   const base = new Date();
+  let nightFrames = 0;
   for (let m = 0; m <= 24 * 60; m += 10) {
     render(place, 'auto', new Date(base.getTime() + m * 60 * 1000), true);
+    // A few frames into darkness and again deeper in — position is
+    // random, timing is guaranteed so every run shows one.
+    if (nightNow && !reducedMotion()) {
+      nightFrames++;
+      if (nightFrames === 4 || nightFrames === 22) spawnShootingStar();
+    }
     await new Promise((r) => setTimeout(r, 95));
   }
   document.documentElement.classList.remove('sky-demo');
