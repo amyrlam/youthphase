@@ -6,7 +6,10 @@ import Layout from '../layouts/Layout.astro';
   <main class="relative flex min-h-dvh flex-col items-center justify-center gap-6 px-6 text-center">
     <h1 class="text-6xl font-medium lowercase tracking-tight sm:text-8xl">404</h1>
 
-    <p class="text-sm lowercase tracking-widest sm:text-base">
+    <!-- sky.ts rewrites the destination to match the live sky: the
+         daylight, the sunrise/sunset, the dawn, the dusk. Night is the
+         SSR default since it's the line that started it. -->
+    <p id="lost-line" class="text-sm lowercase tracking-widest sm:text-base">
       this page drifted off into the night sky
     </p>
 

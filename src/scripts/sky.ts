@@ -289,21 +289,36 @@ function updateStars(place: Place, at: Date) {
       const size = Math.max(1, 3.4 - mag * 0.75);
       star.style.width = `${size.toFixed(1)}px`;
       star.style.height = `${size.toFixed(1)}px`;
-      star.style.setProperty('--o', Math.min(0.95, Math.max(0.3, 0.9 - mag * 0.18)).toFixed(2));
+      const baseO = Math.min(0.95, Math.max(0.3, 0.9 - mag * 0.18));
+      star.dataset.baseO = baseO.toFixed(2);
+      star.style.setProperty('--o', baseO.toFixed(2));
       star.style.setProperty('--d', `${(2.5 + rand() * 5).toFixed(1)}s`);
       star.style.animationDelay = `${(rand() * 6).toFixed(1)}s`;
       if (mag < 0.5) star.style.boxShadow = '0 0 4px rgba(240, 244, 255, 0.7)';
       container.appendChild(star);
     }
   }
+  // Moonlight washes out its neighbors: stars fade within ~10 screen-%
+  // of the moon, so nothing ever sits "on top of" it.
+  const moon = SunCalc.getMoonPosition(at, place.latitude, place.longitude);
+  const moonUp = moon.altitude > 0;
+  const mx = posX(moon.azimuth);
+  const my = posY(moon.altitude);
+
   const spans = container.children;
   STARS.forEach(([ra, dec], i) => {
     const el = spans[i] as HTMLElement;
     const { altDeg, azDeg } = starAltAz(ra, dec, at, place.latitude, place.longitude);
     if (altDeg > 2) {
+      const x = posX(azDeg);
+      const y = starY(altDeg);
       el.style.display = '';
-      el.style.left = `${posX(azDeg).toFixed(2)}%`;
-      el.style.top = `${starY(altDeg).toFixed(2)}%`;
+      el.style.left = `${x.toFixed(2)}%`;
+      el.style.top = `${y.toFixed(2)}%`;
+      const base = parseFloat(el.dataset.baseO ?? '0.8');
+      const dist = moonUp ? Math.hypot(x - mx, y - my) : Infinity;
+      const wash = dist >= 11 ? 1 : Math.max(0.05, (dist - 3) / 8);
+      el.style.setProperty('--o', (base * wash).toFixed(2));
     } else {
       el.style.display = 'none';
     }
@@ -503,25 +518,13 @@ function render(place: Place, mode: Mode, at = new Date(), demo = false) {
       if (moonAt) {
         moonCore.style.left = `${moonAt.x}%`;
         moonCore.style.top = `${moonAt.y}%`;
-        moonCore.style.opacity = String(0.75 + moonIllum.fraction * 0.25);
+        // Brightness follows the real phase: a full moon outshines a
+        // sliver, but even the sliver stays clearly the brightest
+        // point in the sky.
+        moonCore.style.opacity = String(0.65 + moonIllum.fraction * 0.35);
 
-        // The crescent: a mask cuts a same-size circle out of the lit
-        // disc, leaving a sliver on the lit side. Art over astronomy —
-        // thickness swells with the real illuminated fraction but is
-        // clamped so it always reads as an elegant crescent, never a
-        // pie-chart half or a plain full circle. Waxing moons light up
-        // from the right, waning from the left (real direction).
-        const d = moonCore.getBoundingClientRect().width;
-        const r = d / 2;
-        const thickness = d * (0.1 + 0.22 * moonIllum.fraction);
-        const waxing = moonIllum.phase < 0.5;
-        const holeX = waxing ? r + 1 - thickness : r - 1 + thickness;
-        const mask = `radial-gradient(circle ${(r - 1).toFixed(1)}px at ${holeX.toFixed(1)}px 50%, transparent ${(r - 2).toFixed(1)}px, #000 ${(r - 1).toFixed(1)}px)`;
-        moonCore.style.webkitMaskImage = mask;
-        moonCore.style.maskImage = mask;
-
-        // Horizon gold: under 15° the crescent and its glow warm up,
-        // like a real low moon (colors in global.css).
+        // Horizon gold: under 15° the light warms up, like a real low
+        // moon (colors in global.css).
         moonCore.classList.toggle('moon-low', qMoon.altitude < 15);
       } else {
         moonCore.style.opacity = '0';
@@ -531,11 +534,12 @@ function render(place: Place, mode: Mode, at = new Date(), demo = false) {
 
   updateStars(place, qt);
 
+  const inTenMinutes = SunCalc.getPosition(new Date(at.getTime() + 10 * 60 * 1000), latitude, longitude);
+  const rising = inTenMinutes.altitude > sun.altitude;
+  const label = skyLabel(sunAltDeg, rising, moonIllum.phase);
+
   const status = document.getElementById('sky-status');
   if (status) {
-    const inTenMinutes = SunCalc.getPosition(new Date(at.getTime() + 10 * 60 * 1000), latitude, longitude);
-    const rising = inTenMinutes.altitude > sun.altitude;
-    const label = skyLabel(sunAltDeg, rising, moonIllum.phase);
     // "your sky" is the one sentence of help the whole page needs: it
     // tells the visitor the gradient is computed from their real sky.
     // When geolocation failed we're honest about whose sky it is.
@@ -545,6 +549,24 @@ function render(place: Place, mode: Mode, at = new Date(), demo = false) {
       : mode === 'auto'
         ? `${whose} · ${label} · ${place.label}`
         : `${label} · ${place.label}`;
+  }
+
+  // The 404 page's lost-page line follows the sky too: pages drift
+  // into whatever the sky is doing right now. (Not inside the status
+  // block — the 404 page has no #sky-status.)
+  const lost = document.getElementById('lost-line');
+  if (lost) {
+    const destination =
+      label === 'daylight'
+        ? 'the daylight'
+        : label === 'golden hour'
+          ? rising
+            ? 'the sunrise'
+            : 'the sunset'
+          : label === 'dawn' || label === 'dusk'
+            ? `the ${label}`
+            : 'the night sky';
+    lost.textContent = `this page drifted off into ${destination}`;
   }
 }
 
