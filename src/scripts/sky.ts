@@ -515,13 +515,19 @@ function render(place: Place, mode: Mode, at = new Date(), demo = false) {
     }
 
     const moonTouch = document.getElementById('moon-touch');
+    const moonFace = document.getElementById('moon-face');
     if (moonTouch) {
       // The hold-the-moon easter egg's touch target rides along with the
-      // moon, and only exists while the moon is up.
+      // moon, and only exists while the moon is up. The held face (the
+      // bloomed cratered disc) tracks the same point.
       if (moonAt) {
         moonTouch.style.display = '';
         moonTouch.style.left = `${moonAt.x}%`;
         moonTouch.style.top = `${moonAt.y}%`;
+        if (moonFace) {
+          moonFace.style.left = `${moonAt.x}%`;
+          moonFace.style.top = `${moonAt.y}%`;
+        }
       } else {
         moonTouch.style.display = 'none';
       }
@@ -592,10 +598,30 @@ function render(place: Place, mode: Mode, at = new Date(), demo = false) {
    Released, the sky eases back to now. */
 let cycleRunning = false;
 
+/* The night side of the held moon face, as an SVG path. Real phase
+   geometry: the shadow is bounded by half the disc's edge plus the
+   terminator, an elliptical arc whose x-radius is R·|cos(2πp)| — it
+   collapses to a straight line at the quarters and hugs the limb at new
+   and full. Waxing moons (p < 0.5) light up from the right, waning from
+   the left, matching the northern-hemisphere sky. viewBox is 100×100
+   with the disc at r=49. */
+function moonShadowPath(phase: number): string {
+  const c = Math.cos(2 * Math.PI * phase);
+  const rx = (49 * Math.abs(c)).toFixed(2);
+  if (phase < 0.5) {
+    // Shadow on the left; terminator bulges right while the lit side is
+    // still a crescent (c > 0), left once it's gibbous.
+    return `M 50 1 A 49 49 0 0 0 50 99 A ${rx} 49 0 0 ${c > 0 ? 0 : 1} 50 1`;
+  }
+  // Shadow on the right; mirrored sweep logic.
+  return `M 50 1 A 49 49 0 0 1 50 99 A ${rx} 49 0 0 ${c < 0 ? 0 : 1} 50 1`;
+}
+
 function enableMoonHold(getPlace: () => Place, getMode: () => Mode) {
   const target = document.getElementById('moon-touch');
   const moonCore = document.getElementById('moon-core');
   const status = document.getElementById('sky-status');
+  const shadow = document.getElementById('moon-shadow');
   if (!target || !moonCore) return;
 
   let holdTimer: ReturnType<typeof setTimeout> | undefined;
@@ -623,14 +649,17 @@ function enableMoonHold(getPlace: () => Place, getMode: () => Mode) {
     // slows the month itself.
     const startPhase = SunCalc.getMoonIllumination(new Date()).phase;
     const startedAt = performance.now();
-    tick = setInterval(() => {
+    const frame = () => {
       const phase = (startPhase + (performance.now() - startedAt) / 8000) % 1;
       // Illuminated fraction from the phase angle: 0 at new, 1 at full —
       // the same brightness rule render() applies to the real moon.
       const fraction = (1 - Math.cos(2 * Math.PI * phase)) / 2;
       moonCore.style.opacity = String(0.65 + fraction * 0.35);
+      if (shadow) shadow.setAttribute('d', moonShadowPath(phase));
       if (status) status.textContent = moonPhaseName(phase);
-    }, 100);
+    };
+    frame();
+    tick = setInterval(frame, 100);
   };
 
   target.addEventListener('pointerdown', (e) => {

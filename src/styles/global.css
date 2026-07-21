@@ -300,6 +300,33 @@ html.moon-cycle #moon-core {
   transition-duration: 0.25s;
 }
 
+/* The held moon face: hidden as a pinprick behind the point of light,
+   blooming to full size while a finger holds the moon. The exponential
+   ease-out makes it feel like it surfaces rather than inflates; the
+   glow is the same family as the point's own halo so the light doesn't
+   change character, only scale. */
+#moon-face {
+  opacity: 0;
+  scale: 0.1;
+  filter: drop-shadow(0 0 14px rgba(216, 228, 255, 0.5))
+    drop-shadow(0 0 36px rgba(190, 208, 255, 0.25));
+  transition:
+    opacity 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+    scale 0.45s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+html.moon-cycle #moon-face {
+  opacity: 1;
+  scale: 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #moon-face {
+    scale: 1;
+    transition: opacity 0.3s ease;
+  }
+}
+
 /* During the 24h time-lapse, every sky transition runs fast so the day
    plays smoothly. */
 html.sky-demo body,
