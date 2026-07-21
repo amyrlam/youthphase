@@ -37,7 +37,7 @@ import Layout from '../layouts/Layout.astro';
         <svg
           viewBox="0 0 600 340"
           role="img"
-          aria-label="An illustrated white dinghy seen from the stern, Youth Phase IX lettered across the transom, riding at anchor beside a mooring buoy on water that mirrors the current sky, with a wooded shoreline and moored sailboats in the distance"
+          aria-label="An illustrated white dinghy seen from above and behind, Youth Phase IX lettered across the angled transom, riding at anchor beside a pointed mooring buoy on water that mirrors the current sky; across the harbor, a wooded shoreline with houses — one window lit — and moored sailboats"
           class="block w-full rounded-2xl"
         >
           <defs>
@@ -58,6 +58,17 @@ import Layout from '../layouts/Layout.astro';
               d="M0 170 C40 156 90 160 130 165 C180 150 240 158 290 164 C350 152 420 158 470 163 C520 154 570 160 600 166 L600 170 Z"
             ></path>
           </g>
+          <!-- Houses across the water, the way the far shore of the
+               harbor reads: gable silhouettes among the trees, one with
+               a lit window. -->
+          <g fill="currentColor" opacity="0.3">
+            <path d="M136 168 L136 152 L147 144 L158 152 L158 168 Z"></path>
+            <path d="M162 168 L162 156 L170 151 L178 156 L178 168 Z"></path>
+            <path d="M330 167 L330 148 L338 148 L338 144 L342 144 L342 148 L345 148 L358 140 L371 148 L371 167 Z"></path>
+            <path d="M508 168 L508 155 L517 149 L526 155 L526 168 Z"></path>
+          </g>
+          <!-- The lit window in the big house. -->
+          <rect x="352" y="152" width="4" height="5" fill="#ffeecf" opacity="0.85"></rect>
           <g stroke="currentColor" stroke-width="1.5" opacity="0.35" fill="none">
             <line x1="88" y1="118" x2="88" y2="168"></line>
             <line x1="480" y1="128" x2="480" y2="167"></line>
@@ -90,33 +101,61 @@ import Layout from '../layouts/Layout.astro';
             <path class="ripple ripple-3" d="M90 226 q26 -5 52 0" stroke-width="1.5" opacity="0.2"></path>
           </g>
 
-          <!-- Youth Phase, stern-on. The transom carries the name the way
-               Pop lettered it: the name across, the numeral centered
-               beneath. -->
+          <!-- Youth Phase, stern-quarter — seen a little from above and
+               to the side, like the photo: the bow points away toward the
+               far shore, the near gunwale and interior are visible, and
+               the transom (with the name lettered the way Pop laid it
+               out) faces the viewer at an angle. -->
           <g class="dinghy">
-            <!-- The gunwale rim and the sliver of interior visible over
-                 the transom edge. -->
+            <!-- Port side of the hull, receding toward the bow. -->
             <path
-              d="M246 206 Q300 194 354 206 Q300 220 246 206 Z"
+              d="M215 185 C245 200 272 216 295 226 L297 242 Q258 230 230 206 Q217 193 215 185 Z"
+              fill="#f7f4ed"
+            ></path>
+            <path d="M226 200 Q258 222 294 234" fill="none" stroke="#c3cde0" stroke-width="1.5" opacity="0.6"></path>
+
+            <!-- The interior, seen over the gunwales: floor, a thwart
+                 seat, the rim itself. -->
+            <path
+              d="M215 185 C260 187 322 196 355 210 L295 226 C272 216 245 200 215 185 Z"
               fill="#8fa0c0"
             ></path>
             <path
-              d="M252 206 Q300 197 348 206 Q300 216 252 206 Z"
+              d="M228 190 C266 192 314 200 344 210 L297 222 C276 213 252 200 228 190 Z"
               fill="#dde4f0"
-              opacity="0.55"
+              opacity="0.6"
+            ></path>
+            <!-- Thwart. -->
+            <path d="M252 196 L262 208" stroke="#8fa0c0" stroke-width="5" stroke-linecap="round"></path>
+
+            <!-- Gunwale rims. -->
+            <path
+              d="M215 185 C260 187 322 196 355 210"
+              fill="none"
+              stroke="#1e2c60"
+              stroke-width="2"
+              stroke-linecap="round"
+              opacity="0.5"
+            ></path>
+            <path
+              d="M215 185 C245 200 272 216 295 226"
+              fill="none"
+              stroke="#1e2c60"
+              stroke-width="2"
+              stroke-linecap="round"
+              opacity="0.5"
             ></path>
 
-            <!-- The transom: flat, rounded at the chine, ivory like the
-                 polaroid. -->
+            <!-- The transom, angled toward the viewer. -->
             <path
-              d="M246 206 Q300 214 354 206 Q358 208 357 214 L352 240 Q348 252 300 254 Q252 252 248 240 L243 214 Q242 208 246 206 Z"
+              d="M295 226 L355 210 Q360 212 359 218 L355 238 Q351 248 309 252 Q299 250 297 242 Z"
               fill="#f7f4ed"
             ></path>
-            <!-- Transom seams. -->
-            <path d="M250 224 Q300 231 350 224" fill="none" stroke="#c3cde0" stroke-width="1.5" opacity="0.6"></path>
-            <!-- Rub rail along the transom top. -->
+            <!-- Transom seam. -->
+            <path d="M299 238 Q328 236 355 226" fill="none" stroke="#c3cde0" stroke-width="1.5" opacity="0.6"></path>
+            <!-- Rub rail along the transom top edge. -->
             <path
-              d="M246 206 Q300 214 354 206"
+              d="M295 226 L355 210"
               fill="none"
               stroke="#1e2c60"
               stroke-width="2.5"
@@ -124,33 +163,40 @@ import Layout from '../layouts/Layout.astro';
               opacity="0.55"
             ></path>
 
-            <!-- The name, lettered across the transom. -->
+            <!-- The name, lettered on the angled transom. -->
             <text
-              x="300"
-              y="230"
+              x="328"
+              y="231"
               text-anchor="middle"
               fill="#1e2c60"
-              style="font-size: 11.5px; font-weight: 500; letter-spacing: 0.09em;"
+              transform="rotate(-13 328 231)"
+              style="font-size: 9px; font-weight: 500; letter-spacing: 0.06em;"
             >
               YOUTH PHASE
             </text>
             <text
-              x="300"
-              y="247"
+              x="327"
+              y="243"
               text-anchor="middle"
               fill="#1e2c60"
-              style="font-size: 13px; font-weight: 500; letter-spacing: 0.1em;"
+              transform="rotate(-13 327 243)"
+              style="font-size: 10px; font-weight: 500; letter-spacing: 0.08em;"
             >
               IX
             </text>
           </g>
 
-          <!-- The mooring buoy — the white ball from the photo, riding
-               its own swell beside the boat. -->
+          <!-- The mooring buoy — a cylinder with a pointed pick-up top,
+               listing a little as they do, riding its own swell. -->
           <g class="buoy">
-            <circle cx="432" cy="248" r="9" fill="#f7f4ed"></circle>
-            <path d="M423.5 250 a9 9 0 0 0 17 0" fill="#8fa0c0" opacity="0.45"></path>
-            <ellipse cx="432" cy="260" rx="12" ry="2.5" fill="#f0f4ff" opacity="0.2"></ellipse>
+            <g transform="rotate(7 432 244)">
+              <path
+                d="M424 251 Q423 242 425 237 L431 226 Q432 224 433 226 L439 237 Q441 242 440 251 Q432 256 424 251 Z"
+                fill="#f7f4ed"
+              ></path>
+              <path d="M424.5 244 Q432 247 439.5 244 L439.5 248 Q432 252 424.5 248 Z" fill="#8fa0c0" opacity="0.5"></path>
+            </g>
+            <ellipse cx="432" cy="258" rx="12" ry="2.5" fill="#f0f4ff" opacity="0.2"></ellipse>
           </g>
         </svg>
         <figcaption class="pt-3 text-center text-sm lowercase tracking-widest">
