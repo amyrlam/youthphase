@@ -25,16 +25,16 @@ import youthPhase from '../assets/contact/youth-phase-print.png';
         <p>
           I grew up with my grandparents on the Connecticut shoreline, where Pop kept a
           little dinghy in the harbor named <em>Youth Phase</em>. Each time life carried him
-          somewhere new, he'd update the letters on the hull — even in his old age, he never
+          somewhere new, he'd update the numbers on the hull. Even in his old age, he never
           stopped counting.
         </p>
       </div>
 
-      <!-- The photo itself, hung in a gold frame — a family print given
-           the heirloom treatment. The frame is layered CSS (gradient
-           gilt, beveled inset rings, a real drop shadow); the print is
-           the retouched crop. astro:assets optimizes it at build time. -->
-      <div class="gold-frame mt-8">
+      <!-- The photo as a print: matte ivory border (the polaroid's own
+           ivory — the site's one sky-independent surface), a soft float
+           shadow, and a half-degree tilt like it was laid down by hand.
+           The retouched crop is optimized by astro:assets. -->
+      <div class="photo-print mt-8">
         <Image
           src={youthPhase}
           alt="A photo print of Pop's dinghy: a small white boat floating on rippled dusk water, YOUTH PHASE 2 lettered on the bow"
@@ -134,76 +134,33 @@ import youthPhase from '../assets/contact/youth-phase-print.png';
 </Layout>
 
 <style>
-  /* The antique gilt frame, all CSS. Reading outside-in: a dark outer
-     edge, a bright fillet, the wide carved band (diagonal gradient for
-     the gilt, a repeating diagonal hatch for tooling marks, radial
-     rosettes at the corners), a beaded inner ring (dotted border on the
-     ::before), and finally the dark rebate the print sits in. Two drop
-     shadows — one deep, one tight — hang it off the card. */
-  .gold-frame {
-    --frame-w: clamp(1.1rem, 3.5vw, 1.7rem);
-    position: relative;
-    padding: var(--frame-w);
-    border-radius: 0.5rem;
-    background:
-      radial-gradient(circle at calc(0.55 * var(--frame-w)) calc(0.55 * var(--frame-w)),
-        #f7e7b0 0 4px, #7a5c1e 5px 7px, rgba(247, 231, 176, 0.6) 8px 10px, #8a6a24 11px 12px, transparent 13px),
-      radial-gradient(circle at calc(100% - 0.55 * var(--frame-w)) calc(0.55 * var(--frame-w)),
-        #f7e7b0 0 4px, #7a5c1e 5px 7px, rgba(247, 231, 176, 0.6) 8px 10px, #8a6a24 11px 12px, transparent 13px),
-      radial-gradient(circle at calc(0.55 * var(--frame-w)) calc(100% - 0.55 * var(--frame-w)),
-        #f7e7b0 0 4px, #7a5c1e 5px 7px, rgba(247, 231, 176, 0.6) 8px 10px, #8a6a24 11px 12px, transparent 13px),
-      radial-gradient(circle at calc(100% - 0.55 * var(--frame-w)) calc(100% - 0.55 * var(--frame-w)),
-        #f7e7b0 0 4px, #7a5c1e 5px 7px, rgba(247, 231, 176, 0.6) 8px 10px, #8a6a24 11px 12px, transparent 13px),
-      repeating-linear-gradient(45deg,
-        rgba(255, 243, 205, 0.16) 0 2px, rgba(90, 66, 16, 0.14) 2px 4px, transparent 4px 7px),
-      linear-gradient(135deg,
-        #6d5119, #c9a24a 16%, #f3e2a5 34%, #a8842f 52%, #e6cc7f 72%, #b8913a 88%, #6d5119);
-    box-shadow:
-      inset 0 0 0 2px rgba(58, 42, 8, 0.65),
-      inset 0 0 0 4px rgba(255, 243, 205, 0.6),
-      inset 0 0 0 6px rgba(122, 92, 30, 0.55),
-      0 24px 55px -16px rgba(0, 0, 0, 0.6),
-      0 4px 14px rgba(0, 0, 0, 0.3);
+  /* The print treatment: a matte ivory border — the polaroid's own
+     ivory, the site's one sky-independent surface — with a soft float
+     shadow and a half-degree tilt, like a print laid down by hand.
+     Straightens gently on hover, the way you'd square it on a table. */
+  .photo-print {
+    padding: clamp(0.75rem, 2.5vw, 1.1rem);
+    background: #f7f4ed;
+    border-radius: 0.25rem;
+    box-shadow: 0 20px 45px -14px rgba(0, 0, 0, 0.55);
+    transform: rotate(-0.6deg);
+    transition: transform 0.3s ease;
   }
 
-  /* The beaded ring: a dotted border reads as a chain of gilt beads
-     around the print — the classic antique-frame detail. */
-  .gold-frame::before {
-    content: '';
-    position: absolute;
-    inset: calc(var(--frame-w) - 0.5rem);
-    border: 0.26rem dotted rgba(247, 231, 176, 0.85);
-    border-radius: 0.3rem;
-    pointer-events: none;
-    filter: drop-shadow(0 1px 0 rgba(58, 42, 8, 0.55));
+  .photo-print:hover {
+    transform: rotate(0deg);
   }
 
-  /* The gadrooned outer edge: a striped border-image reads as twisted
-     rope molding around the frame's perimeter — as close as gradients
-     get to carved relief. */
-  .gold-frame::after {
-    content: '';
-    position: absolute;
-    inset: 1px;
-    border: 0.38rem solid transparent;
-    border-image: repeating-linear-gradient(
-        45deg,
-        #f7e7b0 0 3px,
-        #8a6a24 3px 6px,
-        #c9a24a 6px 9px
-      )
-      8;
-    border-radius: 0.4rem;
-    pointer-events: none;
-    opacity: 0.85;
+  @media (prefers-reduced-motion: reduce) {
+    .photo-print,
+    .photo-print:hover {
+      transform: none;
+      transition: none;
+    }
   }
 
-  .gold-frame img {
+  .photo-print img {
     border-radius: 2px;
-    /* The rebate: a dark lip where the print sits in the frame. */
-    box-shadow:
-      inset 0 0 0 2px rgba(42, 30, 6, 0.65),
-      inset 0 2px 6px rgba(0, 0, 0, 0.35);
   }
 
   /* An invalid field's border goes full-strength ink — state carried by
