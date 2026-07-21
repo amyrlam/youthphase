@@ -396,7 +396,14 @@ function fadeChipsWhileScrolling() {
 function enableSparkles() {
   if (reducedMotion()) return;
   addEventListener('pointerdown', (e) => {
-    if ((e.target as Element | null)?.closest('a, button')) return;
+    // Sparkles are the sky's easter egg, not general click feedback:
+    // only clicks that land on the open sky (the page background, or
+    // text sitting directly on it) qualify. Cards, forms, images, and
+    // anything interactive stay sparkle-free.
+    const target = e.target as Element | null;
+    if (target?.closest('a, button, input, textarea, label, dialog, form, img, video, .sky-card, .sky-top-card')) {
+      return;
+    }
     const s = document.createElement('span');
     s.className = 'sparkle';
     s.textContent = '✦';

@@ -40,12 +40,13 @@ test('contact form blocks empty submits and reports errors politely', async ({ p
   await expect(page.locator('#contact-status')).toHaveText('');
   // Filled submit against a dev server with no /api route: the error
   // state must surface in the aria-live line and keep the typed values.
-  await page.getByRole('textbox', { name: 'name', exact: true }).fill('test person');
+  // Name stays empty on purpose — it's optional; email + message carry
+  // the submission.
   await page.getByRole('textbox', { name: 'email', exact: true }).fill('test@example.com');
   await page.getByRole('textbox', { name: 'message', exact: true }).fill('hello');
   await page.getByRole('button', { name: 'send' }).click();
   await expect(page.locator('#contact-status')).toHaveText(/something went wrong/);
-  await expect(page.getByRole('textbox', { name: 'name', exact: true })).toHaveValue('test person');
+  await expect(page.getByRole('textbox', { name: 'message', exact: true })).toHaveValue('hello');
 });
 
 test('404 page has no axe violations', async ({ page }) => {

@@ -30,9 +30,11 @@ export default async function handler(req, res) {
     email: String(email).trim().slice(0, MAX.email),
     message: String(message).trim().slice(0, MAX.message),
   };
-  if (!clean.name || !clean.message || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(clean.email)) {
+  // Name is optional — email (for replying) and message are the point.
+  if (!clean.message || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(clean.email)) {
     return res.status(400).json({ error: 'missing or invalid fields' });
   }
+  if (!clean.name) clean.name = 'anonymous';
 
   const key = process.env.RESEND_API_KEY;
   const to = process.env.CONTACT_TO_EMAIL;
