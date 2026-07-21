@@ -23,8 +23,11 @@
   </button>
 
   <!-- The expanded view is styled as a polaroid: ivory card, image inset,
-       caption written in the bottom margin. The grid itself stays plain. -->
-  <div class="lightbox-polaroid">
+       caption written in the bottom margin. The grid itself stays plain.
+       tabindex="-1" lets the script focus this card on open — otherwise
+       showModal() lands focus on Close (the dialog's first focusable),
+       and the first arrow-key press paints a focus ring on it. -->
+  <div class="lightbox-polaroid" id="lightbox-polaroid" tabindex="-1">
     <img id="lightbox-img" src="" alt="" class="lightbox-media" />
     <video id="lightbox-video" hidden controls playsinline class="lightbox-media"></video>
     <p id="lightbox-caption" class="lightbox-caption"></p>
@@ -73,17 +76,24 @@
   }
 
   .lightbox-polaroid {
-    /* display: grid (rather than plain block flow) plus min-width: 0 on
-       the caption below decouples the two: normally an unwrapped caption's
-       max-content width feeds into this shrink-to-fit box's own sizing,
-       stretching it past the photo. As a grid item with min-width: 0, the
-       caption no longer contributes that width — only the photo does, and
-       the caption just wraps to match whatever width the photo ends up. */
+    /* display: grid plus width: 0 / min-width: 100% on the caption below
+       decouples the two: the photo alone sets this shrink-to-fit box's
+       width, and the caption wraps to match. (min-width: 0 by itself was
+       not enough — it zeroes the caption's min-content contribution, but
+       its unwrapped max-content width still propped the polaroid open,
+       leaving dead white space beside any photo narrower than one line
+       of caption. width: 0 removes that contribution entirely.) */
     display: grid;
     background: #f7f4ed;
     padding: 1rem 1rem 1.25rem;
     border-radius: 0.25rem;
     box-shadow: 0 25px 60px -12px rgba(0, 0, 0, 0.6);
+  }
+
+  /* Focused programmatically on open (see the markup comment); the card
+     isn't interactive, so it never shows a ring. */
+  .lightbox-polaroid:focus {
+    outline: none;
   }
 
   .lightbox-media {
@@ -107,7 +117,9 @@
     padding: 0.85rem 0.25rem 0.15rem;
     /* The trick that stops it stretching .lightbox-polaroid — see the
        comment there. */
-    min-width: 0;
+    width: 0;
+    min-width: 100%;
+    box-sizing: border-box;
   }
 
   /* One shared size/shape/color for close, prev, and next — only

@@ -67,6 +67,12 @@ function initLightbox() {
     trigger.addEventListener('click', () => {
       renderAt(i);
       dialog.showModal();
+      // showModal() focuses the dialog's first focusable child — Close —
+      // so the first ArrowLeft/ArrowRight would paint a focus ring on it
+      // (keyboard input makes the pre-existing focus :focus-visible).
+      // Park focus on the non-interactive card instead; Tab still reaches
+      // Close normally.
+      document.getElementById('lightbox-polaroid')?.focus();
     });
   });
 
