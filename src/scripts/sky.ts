@@ -579,12 +579,11 @@ function render(place: Place, mode: Mode, at = new Date(), demo = false) {
   }
 }
 
-/* Easter egg: triple-tap anywhere on the night sky and a month plays
-   out — the moon blooms into its cratered face, the light waxes and
-   wanes through one full synodic cycle (~8s), then the finale flood and
-   sparkle fireworks, before the sky settles back to tonight. Touch
-   pointers only, and only while the moon is up: the moon is the
-   performer, so daylight taps stay ordinary sparkles. */
+/* Easter egg: triple-tap anywhere on the sky and it answers with
+   whatever it has. Moon up: the cratered face docks above the status
+   line and a month of phases plays (~8s), ending in a soft moonlight
+   wash. Daylight: a sudden shower, then a rainbow off the bottom edge.
+   Moonless dark: a scatter of shooting stars. Touch pointers only. */
 let cycleRunning = false;
 let moonVisible = false;
 
@@ -607,34 +606,21 @@ function moonShadowPath(phase: number): string {
   return `M 50 1 A 49 49 0 0 1 50 99 A ${rx} 49 0 0 ${c < 0 ? 0 : 1} 50 1`;
 }
 
-/* One firework of ✦ sparkles from a sky position. The palette is the
-   site's three lights: white, moonlight blue, horizon gold. Stars are
-   appended to <body> so they fly over the page, like the tap sparkles. */
-function spawnBurst(xPct: string, yPct: string) {
-  const COLORS = ['#ffffff', '#bcd0ff', '#ffd9a0'];
-  const n = 18;
-  for (let i = 0; i < n; i++) {
-    const s = document.createElement('span');
-    s.className = 'finale-star';
-    s.textContent = Math.random() < 0.3 ? '✧' : '✦';
-    const ang = (i / n) * 2 * Math.PI + Math.random() * 0.5;
-    const dist = 60 + Math.random() * 160;
-    s.style.left = xPct;
-    s.style.top = yPct;
-    s.style.color = COLORS[i % 3];
-    s.style.fontSize = `${(10 + Math.random() * 12).toFixed(0)}px`;
-    s.style.setProperty('--dx', `${(Math.cos(ang) * dist).toFixed(0)}px`);
-    s.style.setProperty('--dy', `${(Math.sin(ang) * dist).toFixed(0)}px`);
-    s.style.setProperty('--r', `${(Math.random() * 270 - 135).toFixed(0)}deg`);
-    s.style.setProperty('--s', (0.7 + Math.random() * 0.6).toFixed(2));
-    s.style.setProperty('--t', `${(1.1 + Math.random() * 0.6).toFixed(2)}s`);
-    s.style.setProperty('--delay', `${(Math.random() * 0.15).toFixed(2)}s`);
-    s.addEventListener('animationend', () => s.remove());
-    // Backstop: animationend never fires if the animation gets paused
-    // (hidden tab, throttled renderer), and forwards-filled glyphs would
-    // linger as litter. Removing twice is harmless.
-    setTimeout(() => s.remove(), 3000);
-    document.body.appendChild(s);
+/* Day-show rain: three waves of thin streaks across the width. Each
+   drop removes itself on animationend, with a timeout backstop since
+   animationend never fires in paused/throttled renderers. */
+function spawnRain() {
+  for (let wave = 0; wave < 3; wave++) {
+    for (let i = 0; i < 16; i++) {
+      const d = document.createElement('span');
+      d.className = 'rain-drop';
+      d.style.left = `${(Math.random() * 100).toFixed(1)}%`;
+      d.style.setProperty('--t', `${(0.9 + Math.random() * 0.5).toFixed(2)}s`);
+      d.style.setProperty('--delay', `${(wave * 1.1 + Math.random() * 0.9).toFixed(2)}s`);
+      d.addEventListener('animationend', () => d.remove());
+      setTimeout(() => d.remove(), 6500);
+      document.body.appendChild(d);
+    }
   }
 }
 
@@ -657,40 +643,39 @@ function enableMoonShow(getPlace: () => Place, getMode: () => Mode) {
     render(getPlace(), getMode());
   };
 
-  /* The month ends and the sky celebrates: the moonlight floods outward
-     from the moon, sparkle fireworks burst over the page, a couple of
-     shooting stars cross — then everything settles back to tonight. */
+  /* The month ends quietly: moonlight rises softly from the stage,
+     holds a breath, recedes — then everything settles back to tonight.
+     No fireworks; the month itself was the show. */
   const finale = () => {
     if (tick !== undefined) {
       clearInterval(tick);
       tick = undefined;
     }
     const fin = document.getElementById('moon-finale');
-    const fx = moonCore.style.left || '50%';
-    const fy = moonCore.style.top || '40%';
+    const face = document.getElementById('moon-face');
     if (fin) {
-      fin.style.setProperty('--fx', fx);
-      fin.style.setProperty('--fy', fy);
+      fin.style.setProperty('--fx', face?.style.left || '50%');
+      fin.style.setProperty('--fy', face?.style.top || '80%');
       fin.classList.add('wash');
     }
     if (status) status.textContent = 'a month, all at once';
-    setTimeout(() => {
-      spawnBurst(fx, fy);
-      spawnShootingStar();
-      setTimeout(() => spawnBurst(`${(15 + Math.random() * 30).toFixed(0)}%`, `${(15 + Math.random() * 25).toFixed(0)}%`), 350);
-      setTimeout(() => {
-        spawnBurst(`${(55 + Math.random() * 30).toFixed(0)}%`, `${(20 + Math.random() * 30).toFixed(0)}%`);
-        spawnShootingStar();
-      }, 700);
-    }, 450);
-    setTimeout(() => fin?.classList.remove('wash'), 2400);
-    setTimeout(settle, 3200);
+    setTimeout(() => fin?.classList.remove('wash'), 1800);
+    setTimeout(settle, 2600);
   };
 
   const startShow = () => {
     if (demoRunning || cycleRunning) return;
     cycleRunning = true;
     document.documentElement.classList.add('moon-cycle');
+    // The face plays on a stage just above the status line, centered —
+    // disc and words tell the month together, instead of the disc
+    // floating wherever the real moon happens to ride. settle()'s
+    // render puts the position back on the moon afterwards.
+    const face = document.getElementById('moon-face');
+    if (face) {
+      face.style.left = '50%';
+      face.style.top = 'calc(100dvh - 9.5rem - env(safe-area-inset-bottom))';
+    }
     // Start from tonight's real phase, so the cycle picks up mid-story.
     // Phase is derived from elapsed time, not tick count, so a throttled
     // timer (background tab, low-power mode) costs smoothness but never
@@ -707,10 +692,8 @@ function enableMoonShow(getPlace: () => Place, getMode: () => Mode) {
         return;
       }
       const phase = (startPhase + elapsed / 8000) % 1;
-      // Illuminated fraction from the phase angle: 0 at new, 1 at full —
-      // the same brightness rule render() applies to the real moon.
-      const fraction = (1 - Math.cos(2 * Math.PI * phase)) / 2;
-      moonCore.style.opacity = String(0.65 + fraction * 0.35);
+      // The face alone carries the light (the star-point hides via
+      // .moon-cycle) — its terminator is the brightness story.
       if (shadow) shadow.setAttribute('d', moonShadowPath(phase));
       if (status) status.textContent = moonPhaseName(phase);
     };
@@ -718,10 +701,29 @@ function enableMoonShow(getPlace: () => Place, getMode: () => Mode) {
     tick = setInterval(frame, 100);
   };
 
-  // Three quick taps anywhere on the sky — links and buttons excepted —
-  // while the moon is up. Each tap still leaves its ordinary sparkle
-  // (enableSparkles), so the secret hides inside a gesture that already
-  // feels alive.
+  /* The day show: a sudden shower sweeps through, then a rainbow rises
+     from the bottom edge and fades — same quiet ending as the moon's.
+     Reduced motion skips the falling rain and keeps the crossfading
+     rainbow. */
+  const startRain = () => {
+    if (demoRunning || cycleRunning) return;
+    cycleRunning = true;
+    const rainbow = document.getElementById('rainbow');
+    if (status) status.textContent = 'a sudden shower';
+    if (!reducedMotion()) spawnRain();
+    setTimeout(() => {
+      rainbow?.classList.add('arc');
+      if (status) status.textContent = '…and a rainbow';
+    }, 3200);
+    setTimeout(() => rainbow?.classList.remove('arc'), 7000);
+    setTimeout(settle, 8400);
+  };
+
+  // Three quick taps anywhere on the sky — links and buttons excepted.
+  // Each tap still leaves its ordinary sparkle (enableSparkles), so the
+  // secret hides inside a gesture that already feels alive. What plays
+  // depends on the sky: the moon's month when it's up, rain and a
+  // rainbow by day, a scatter of shooting stars on a moonless night.
   let taps: number[] = [];
   addEventListener('pointerdown', (e) => {
     if (e.pointerType !== 'touch') return;
@@ -729,9 +731,14 @@ function enableMoonShow(getPlace: () => Place, getMode: () => Mode) {
     const now = performance.now();
     taps = taps.filter((t) => now - t < 450);
     taps.push(now);
-    if (taps.length >= 3 && moonVisible && !demoRunning && !cycleRunning) {
-      taps = [];
+    if (taps.length < 3 || demoRunning || cycleRunning) return;
+    taps = [];
+    if (moonVisible) {
       startShow();
+    } else if (!nightNow) {
+      startRain();
+    } else if (!reducedMotion()) {
+      for (const d of [0, 300, 650]) setTimeout(spawnShootingStar, d);
     }
   });
 }
