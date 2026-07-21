@@ -1,55 +1,8 @@
 ---
 import Layout from '../layouts/Layout.astro';
+import { Image } from 'astro:assets';
 
-/* The dinghy is 8-bit: an ASCII map compiled to a box-shadow pixel
-   sprite at build time, so the shipped page is pure CSS. Stern view,
-   the way the boat sits when you look out from the dock. Legend:
-   d = navy outline, i = ivory hull, g = interior, l = floor light. */
-const SPRITE = [
-  '......dddddddddddddd......',
-  '....ddiiiiiiiiiiiiiidd....',
-  '...dggggggggggggggggggd...',
-  '...dggllllllllllllllggd...',
-  '..dddddddddddddddddddddd..',
-  '..diiiiiiiiiiiiiiiiiiiid..',
-  '..diiiiiiiiiiiiiiiiiiiid..',
-  '..diiiiiiiiiiiiiiiiiiiid..',
-  '...diiiiiiiiiiiiiiiiiid...',
-  '...diiiiiiiiiiiiiiiiiid...',
-  '....diiiiiiiiiiiiiiiid....',
-  '.....diiiiiiiiiiiiiid.....',
-  '......dddddddddddddd......',
-];
-const PIXEL_COLORS: Record<string, string> = {
-  d: '#1e2c60',
-  i: '#f7f4ed',
-  g: '#8fa0c0',
-  l: '#dde4f0',
-};
-function spriteShadow(rows: string[], colors: Record<string, string>) {
-  const px: string[] = [];
-  rows.forEach((row, y) => {
-    [...row].forEach((ch, x) => {
-      if (colors[ch]) px.push(`${x}px ${y}px 0 ${colors[ch]}`);
-    });
-  });
-  return px.join(', ');
-}
-const boatShadow = spriteShadow(SPRITE, PIXEL_COLORS);
-
-/* Wave sprites: short runs of starlight pixels. */
-const WAVE = ['ssss..ssssss...ssss'];
-const waveShadow = spriteShadow(WAVE, { s: 'rgba(240, 244, 255, 0.35)' });
-
-/* The boat's dark water shadow, one row wider than the hull bottom. */
-const KEEL_SHADOW = ['ssssssssssssssssssss'];
-const keelShadow = spriteShadow(KEEL_SHADOW, { s: 'rgba(10, 16, 48, 0.4)' });
-
-/* Address letters get a tiny per-letter tilt, like they were mounted
-   one at a time. Precomputed, not random — builds are reproducible. */
-const JIGGLE = [-2, 1, -1, 2, 0, -1.5, 1.5, -1, 0.5, 2, -2, 1];
-const letterSpans = (word: string) =>
-  [...word].map((ch, i) => ({ ch, tilt: JIGGLE[i % JIGGLE.length] }));
+import youthPhase from '../assets/contact/youth-phase-2.png';
 ---
 
 <Layout title="contact — Amy Lam" description="Get in touch with Amy Lam.">
@@ -74,40 +27,16 @@ const letterSpans = (word: string) =>
         </p>
       </div>
 
-      <!-- Youth Phase in 8-bit — drawn in code, the way the site
-           draws its moon. The water is the live sky variables, so the
-           scene sits in whatever weather the visitor's sky is having;
-           the hull is polaroid ivory. The name is not pixels: it's set
-           in serif capitals like the address letters from the hardware
-           store, mounted one at a time across the transom. -->
-      <figure
-        class="pixel-scene mt-8"
-        role="img"
-        aria-label="A pixel-art dinghy seen from behind, floating on water that mirrors the current sky, YOUTH PHASE XVII in hardware-store address letters across the transom"
-      >
-        <div class="pixel-water" aria-hidden="true">
-          <div class="wave wave-a" style={`box-shadow: ${waveShadow}`}></div>
-          <div class="wave wave-b" style={`box-shadow: ${waveShadow}`}></div>
-          <div class="wave wave-c" style={`box-shadow: ${waveShadow}`}></div>
-          <div class="wave wave-d" style={`box-shadow: ${waveShadow}`}></div>
-          <div class="boat-rig">
-            <div class="keel-shadow" style={`box-shadow: ${keelShadow}`}></div>
-            <div class="boat" style={`box-shadow: ${boatShadow}`}></div>
-            <div class="transom-letters">
-              <span class="letters-line">
-                {letterSpans('YOUTH PHASE').map(({ ch, tilt }) =>
-                  ch === ' ' ? <span class="letter-gap"> </span> : <span class="letter" style={`transform: rotate(${tilt}deg)`}>{ch}</span>
-                )}
-              </span>
-              <span class="letters-line letters-numeral">
-                {letterSpans('XVII').map(({ ch, tilt }) => (
-                  <span class="letter" style={`transform: rotate(${tilt}deg)`}>{ch}</span>
-                ))}
-              </span>
-            </div>
-          </div>
-        </div>
-      </figure>
+      <!-- The photo itself — a print of the boat, rephotographed. After
+           several drawn interpretations (SVG harbor, flat-lay, 8-bit),
+           the real print carries the memory best; the artwork stays in
+           git history. astro:assets optimizes it at build time. -->
+      <Image
+        src={youthPhase}
+        alt="A photo print of Pop's dinghy: a small white boat floating on rippled water, YOUTH PHASE 2 lettered on the bow, the print propped against a window"
+        width={1200}
+        class="mt-8 w-full rounded-2xl"
+      />
 
       <!-- The handoff line: to the form, or to the code. Sentence case
            and body-sized — it's prose, not chrome. The link carries the
@@ -189,167 +118,6 @@ const letterSpans = (word: string) =>
   </main>
 </Layout>
 
-<style>
-  /* The scene: open water edge to edge, the sky's own gradient dimmed a
-     notch so the ivory hull carries. image-rendering keeps any scaling
-     of the pixel grid crisp. */
-  .pixel-scene {
-    position: relative;
-    overflow: hidden;
-    border-radius: 1rem;
-    aspect-ratio: 16 / 9;
-    background-image:
-      linear-gradient(rgba(5, 6, 12, 0.25), rgba(5, 6, 12, 0.25)),
-      linear-gradient(180deg, var(--sky-bottom, #1e2c60), var(--sky-top, #0a1030));
-    image-rendering: pixelated;
-  }
-
-  .pixel-water {
-    position: absolute;
-    inset: 0;
-    /* One pixel = --px screen pixels; sprites are 1px grids scaled up. */
-    --px: 8;
-  }
-
-  @media (max-width: 640px) {
-    .pixel-water {
-      --px: 6;
-    }
-  }
-
-  /* Every sprite is a 1px div whose box-shadow is the artwork; scaling
-     happens in the transform so the squares stay sharp. */
-  .boat,
-  .keel-shadow,
-  .wave {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    transform-origin: 0 0;
-  }
-
-  .boat-rig {
-    position: absolute;
-    left: calc(50% - 13px * var(--px));
-    top: 30%;
-    /* The photo's diagonal: the boat rides at a slight list, never
-       square to the frame. The static transform matches the keyframes'
-       rotation so reduced-motion keeps the tilt without the bob. */
-    transform: rotate(-6deg);
-    transform-origin: calc(13px * var(--px)) calc(7px * var(--px));
-    animation: pixel-bob 7s ease-in-out infinite;
-  }
-
-  .boat {
-    transform: scale(var(--px));
-  }
-
-  /* The dark water under the hull, one sprite-row below the keel. */
-  .keel-shadow {
-    transform: translate(calc(3px * var(--px)), calc(13px * var(--px))) scale(var(--px));
-  }
-
-  /* The address letters, mounted across the transom (sprite rows 5-11,
-     x 3-23 → scaled into screen units). Serif capitals like the ones
-     from the hardware store, each with its own slight tilt. */
-  .transom-letters {
-    position: absolute;
-    left: calc(3px * var(--px));
-    top: calc(5.5px * var(--px));
-    width: calc(20px * var(--px));
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: calc(0.4px * var(--px));
-    font-family: Georgia, 'Times New Roman', serif;
-    color: #1e2c60;
-    text-transform: uppercase;
-  }
-
-  .letters-line {
-    display: flex;
-    letter-spacing: 0;
-  }
-
-  .letter {
-    display: inline-block;
-    font-size: calc(1.9px * var(--px));
-    font-weight: 700;
-    line-height: 1;
-    /* Raised-letter shading: light catches the top, shadow falls under —
-       the screwed-on hardware look. */
-    text-shadow:
-      0 calc(-0.08px * var(--px)) 0 rgba(255, 255, 255, 0.55),
-      0 calc(0.14px * var(--px)) 0 rgba(10, 16, 48, 0.3);
-    margin-inline: calc(0.14px * var(--px));
-  }
-
-  .letter-gap {
-    width: calc(0.8px * var(--px));
-  }
-
-  .letters-numeral .letter {
-    font-size: calc(2.2px * var(--px));
-  }
-
-  /* Waves drift on offset weather-speed periods. */
-  .wave {
-    transform: scale(var(--px));
-  }
-
-  .wave-a {
-    left: 12%;
-    top: 22%;
-    animation: wave-drift 11s ease-in-out infinite;
-  }
-
-  .wave-b {
-    left: 68%;
-    top: 34%;
-    animation: wave-drift 14s ease-in-out -4s infinite;
-  }
-
-  .wave-c {
-    left: 8%;
-    top: 72%;
-    animation: wave-drift 17s ease-in-out -9s infinite;
-  }
-
-  .wave-d {
-    left: 62%;
-    top: 82%;
-    animation: wave-drift 13s ease-in-out -6s infinite;
-  }
-
-  /* The swell: whole-pixel steps, like the boat was animated on a
-     sprite sheet. */
-  @keyframes pixel-bob {
-    0%,
-    100% {
-      transform: rotate(-6deg) translateY(0);
-    }
-    50% {
-      transform: rotate(-5deg) translateY(calc(1px * var(--px)));
-    }
-  }
-
-  @keyframes wave-drift {
-    0%,
-    100% {
-      translate: 0 0;
-    }
-    50% {
-      translate: calc(1.5px * var(--px)) 0;
-    }
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    .boat-rig,
-    .wave {
-      animation: none;
-    }
-  }
-</style>
 
 <script>
   /* Progressive enhancement over /api/contact (a Vercel function — under

@@ -1,9 +1,8 @@
 # youthphase.dev
 
 Personal site of Amy Lam. Built with [Astro](https://astro.build) and
-[Tailwind CSS](https://tailwindcss.com). Not looking for contributors —
-this README exists to explain how the site works, because the fun is in
-the details.
+[Tailwind CSS](https://tailwindcss.com). This README exists to explain
+how the site works, because the fun is in the details.
 
 ## The sky
 
