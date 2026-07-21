@@ -153,12 +153,14 @@ import Layout from '../layouts/Layout.astro';
         Inputs (see <code>/contact</code>): transparent background on a <code>.sky-card</code> with
         <code>border-current/30</code> and <code>rounded-lg</code>, plus a
         current-color focus outline —
-        the ink/card pairing already guarantees contrast, so fields inherit it. Labels are
-        chrome (lowercase, <code>text-xs tracking-widest</code>), sit above the field, and
-        there are no placeholders. Required fields carry an asterisk in the label (visual
-        only — <code>aria-hidden</code>, since the <code>required</code> attribute already
-        announces it); optional fields are simply unmarked. Submit is the bordered-pill
-        button. Status messages go in an <code>aria-live="polite"</code> line next to the
+        the ink/card pairing already guarantees contrast, so fields inherit it. Form chrome
+        is the one sentence-case exception to the lowercase register: labels
+        (<code>text-xs tracking-widest</code>, above the field, no placeholders), the
+        submit button ("Send"), and validation/status messages are all sentence case —
+        which also keeps form actions from reading as sky chips. Required fields carry an
+        asterisk in the label (visual only — <code>aria-hidden</code>, since the
+        <code>required</code> attribute already announces it); optional fields are simply
+        unmarked. Submit is the bordered-pill button. Status messages go in an <code>aria-live="polite"</code> line next to the
         submit, written in the site's voice. Validation is inline, not browser bubbles
         (forms are <code>novalidate</code>): a lowercase line appears under the field, the
         field gets <code>aria-invalid</code> + <code>aria-describedby</code> and a
@@ -166,8 +168,8 @@ import Layout from '../layouts/Layout.astro';
         Errors clear as you type. Every form gets a hidden honeypot field the server checks.
       </p>
       <div class="flex flex-col gap-1.5">
-        <label for="ds-input" class="text-xs lowercase tracking-widest">
-          email <span aria-hidden="true">*</span>
+        <label for="ds-input" class="text-xs tracking-widest">
+          Email <span aria-hidden="true">*</span>
         </label>
         <input
           id="ds-input"

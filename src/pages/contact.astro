@@ -30,13 +30,17 @@ import youthPhase from '../assets/contact/youth-phase-print.png';
         </p>
       </div>
 
-      <!-- The photo as a print, taped to the page: matte ivory border
-           (the polaroid's own ivory — the site's one sky-independent
-           surface), a soft float shadow, a half-degree tilt, and a
-           single translucent tape strip across the top edge — the
-           scrapbook gesture, after Pinterest's photo-editor "Tape"
-           border. The retouched crop is optimized by astro:assets. -->
+      <!-- The photo as a print, taped to the page at all four corners:
+           matte ivory border (the polaroid's own ivory — the site's one
+           sky-independent surface), a soft float shadow, a half-degree
+           tilt, and translucent tape strips across each corner — the
+           scrapbook gesture. The retouched crop is optimized by
+           astro:assets. -->
       <div class="photo-print mt-10">
+        <span class="tape tape-tl" aria-hidden="true"></span>
+        <span class="tape tape-tr" aria-hidden="true"></span>
+        <span class="tape tape-bl" aria-hidden="true"></span>
+        <span class="tape tape-br" aria-hidden="true"></span>
         <Image
           src={youthPhase}
           alt="A photo print of Pop's dinghy: a small white boat floating on rippled dusk water, YOUTH PHASE 2 lettered on the bow"
@@ -65,7 +69,7 @@ import youthPhase from '../assets/contact/youth-phase-print.png';
     <section class="sky-card rounded-2xl px-6 py-8 sm:px-10 sm:py-10">
       <form id="contact-form" class="flex flex-col gap-5" novalidate>
         <div class="flex flex-col gap-1.5">
-          <label for="contact-name" class="text-xs lowercase tracking-widest">name</label>
+          <label for="contact-name" class="text-xs tracking-widest">Name</label>
           <input
             id="contact-name"
             name="name"
@@ -79,8 +83,8 @@ import youthPhase from '../assets/contact/youth-phase-print.png';
         <div class="flex flex-col gap-1.5">
           <!-- The asterisk is visual shorthand; assistive tech already
                announces required from the input's own attribute. -->
-          <label for="contact-email" class="text-xs lowercase tracking-widest">
-            email <span aria-hidden="true">*</span>
+          <label for="contact-email" class="text-xs tracking-widest">
+            Email <span aria-hidden="true">*</span>
           </label>
           <input
             id="contact-email"
@@ -94,12 +98,12 @@ import youthPhase from '../assets/contact/youth-phase-print.png';
           <!-- Inline validation, in the site's voice — no browser
                bubbles (the form is novalidate), no semantic red (the
                ink color is the palette). Filled by the script. -->
-          <p id="contact-email-error" data-error-for="contact-email" hidden class="text-xs lowercase tracking-wide"></p>
+          <p id="contact-email-error" data-error-for="contact-email" hidden class="text-xs tracking-wide"></p>
         </div>
 
         <div class="flex flex-col gap-1.5">
-          <label for="contact-message" class="text-xs lowercase tracking-widest">
-            message <span aria-hidden="true">*</span>
+          <label for="contact-message" class="text-xs tracking-widest">
+            Message <span aria-hidden="true">*</span>
           </label>
           <textarea
             id="contact-message"
@@ -109,7 +113,7 @@ import youthPhase from '../assets/contact/youth-phase-print.png';
             maxlength="5000"
             class="resize-y rounded-lg border border-current/30 bg-transparent px-3 py-2 text-base focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-current"
           ></textarea>
-          <p id="contact-message-error" data-error-for="contact-message" hidden class="text-xs lowercase tracking-wide"></p>
+          <p id="contact-message-error" data-error-for="contact-message" hidden class="text-xs tracking-wide"></p>
         </div>
 
         <!-- Honeypot: hidden from people (and from the accessibility tree),
@@ -123,11 +127,11 @@ import youthPhase from '../assets/contact/youth-phase-print.png';
           <button
             type="submit"
             id="contact-submit"
-            class="relative w-fit rounded-full border border-current/30 px-4 py-1.5 text-xs lowercase tracking-widest transition-transform duration-300 after:absolute after:-inset-2 after:content-[''] hover:-translate-y-0.5 hover:border-current/80 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-current disabled:opacity-60 disabled:hover:translate-y-0 disabled:hover:border-current/30"
+            class="relative w-fit rounded-full border border-current/30 px-4 py-1.5 text-xs tracking-widest transition-transform duration-300 after:absolute after:-inset-2 after:content-[''] hover:-translate-y-0.5 hover:border-current/80 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-current disabled:opacity-60 disabled:hover:translate-y-0 disabled:hover:border-current/30"
           >
-            send
+            Send
           </button>
-          <p id="contact-status" aria-live="polite" class="text-sm lowercase tracking-wide"></p>
+          <p id="contact-status" aria-live="polite" class="text-sm tracking-wide"></p>
         </div>
       </form>
 
@@ -141,6 +145,7 @@ import youthPhase from '../assets/contact/youth-phase-print.png';
      shadow and a half-degree tilt, like a print laid down by hand.
      Straightens gently on hover, the way you'd square it on a table. */
   .photo-print {
+    position: relative;
     padding: clamp(0.75rem, 2.5vw, 1.1rem);
     background: #f7f4ed;
     border-radius: 0.25rem;
@@ -153,22 +158,42 @@ import youthPhase from '../assets/contact/youth-phase-print.png';
     transform: rotate(0deg);
   }
 
-  /* The tape: one translucent strip over the top edge, hanging onto
-     the card behind it. Slightly irregular quad + soft shadow; the
-     print's edge ghosts through the translucency, which is what sells
-     it as tape rather than a label. */
-  .photo-print::before {
-    content: '';
+  /* The tape: translucent strips laid diagonally across each corner,
+     hanging onto the card behind. Slightly irregular quads + soft
+     shadows; the print's edge ghosts through the translucency, which
+     is what sells it as tape rather than a sticker. */
+  .tape {
     position: absolute;
-    top: -0.7rem;
-    left: 50%;
-    width: clamp(5rem, 24%, 7.5rem);
-    height: 1.7rem;
-    transform: translateX(-50%) rotate(-2.5deg);
+    width: clamp(4.2rem, 22%, 6rem);
+    height: 1.55rem;
     background: linear-gradient(rgba(244, 240, 225, 0.72), rgba(231, 224, 200, 0.66));
     clip-path: polygon(2% 6%, 97% 0, 100% 92%, 0 100%);
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
     pointer-events: none;
+  }
+
+  .tape-tl {
+    top: -0.2rem;
+    left: -1.5rem;
+    transform: rotate(-45deg);
+  }
+
+  .tape-tr {
+    top: -0.2rem;
+    right: -1.5rem;
+    transform: rotate(45deg);
+  }
+
+  .tape-bl {
+    bottom: -0.2rem;
+    left: -1.5rem;
+    transform: rotate(45deg);
+  }
+
+  .tape-br {
+    bottom: -0.2rem;
+    right: -1.5rem;
+    transform: rotate(-45deg);
   }
 
   @media (prefers-reduced-motion: reduce) {
@@ -204,11 +229,11 @@ import youthPhase from '../assets/contact/youth-phase-print.png';
      to its message via aria-describedby. Errors clear as you type. */
   const FIELD_MESSAGES: Record<string, { empty: string; invalid?: string }> = {
     'contact-email': {
-      empty: 'i need an email to write back to',
-      invalid: "that email doesn't look complete",
+      empty: 'I need an email to write back to',
+      invalid: "That email doesn't look complete",
     },
     'contact-message': {
-      empty: "don't forget the message itself",
+      empty: "Don't forget the message itself",
     },
   };
 
@@ -258,7 +283,7 @@ import youthPhase from '../assets/contact/youth-phase-print.png';
 
     const data = Object.fromEntries(new FormData(form).entries());
     if (submit) submit.disabled = true;
-    if (submit) submit.textContent = 'sending…';
+    if (submit) submit.textContent = 'Sending…';
     if (status) status.textContent = '';
 
     try {
@@ -269,13 +294,13 @@ import youthPhase from '../assets/contact/youth-phase-print.png';
       });
       if (!res.ok) throw new Error(`send failed: ${res.status}`);
       form.reset();
-      if (status) status.textContent = "message sent — i'll write back soon";
+      if (status) status.textContent = "Message sent — I'll write back soon";
     } catch {
-      if (status) status.textContent = 'something went wrong — mind trying again?';
+      if (status) status.textContent = 'Something went wrong — mind trying again?';
     } finally {
       if (submit) {
         submit.disabled = false;
-        submit.textContent = 'send';
+        submit.textContent = 'Send';
       }
     }
   });
