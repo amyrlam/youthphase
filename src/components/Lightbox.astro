@@ -29,6 +29,11 @@
     <video id="lightbox-video" hidden controls playsinline class="lightbox-media"></video>
     <p id="lightbox-caption" class="lightbox-caption"></p>
   </div>
+
+  <!-- Instagram-style position dots, mobile only — populated by the script
+       (one per trigger). Purely visual; swipe is the navigation there, so
+       hide from assistive tech. -->
+  <div id="lightbox-dots" class="lightbox-dots" aria-hidden="true"></div>
 </dialog>
 
 <script src="../scripts/lightbox.ts"></script>
@@ -55,8 +60,8 @@
     overflow: visible;
   }
 
-  /* Mobile screens can't spare a full gutter — let prev/next overlap the
-     photo's outer edge instead so the image itself gets the width back. */
+  /* Mobile screens can't spare a full gutter — prev/next are hidden there
+     (swipe + dots take over), so the gutter collapses to a slim margin. */
   @media (max-width: 640px) {
     .lightbox-dialog {
       --gutter: 0.75rem;
@@ -168,6 +173,29 @@
     right: 0;
   }
 
+  /* Hidden on desktop, shown by the mobile media query below — which
+     must stay after this rule in source order to win the equal-specificity
+     `display` tie. Sits on the backdrop below the polaroid, like
+     Instagram's multi-photo indicator. Dots are created by the script,
+     so they need :global() to escape Astro's style scoping. */
+  .lightbox-dots {
+    display: none;
+    justify-content: center;
+    gap: 0.4rem;
+    padding-top: 0.85rem;
+  }
+
+  .lightbox-dots :global(.lightbox-dot) {
+    width: 6px;
+    height: 6px;
+    border-radius: 9999px;
+    background: rgba(255, 255, 255, 0.35);
+  }
+
+  .lightbox-dots :global(.lightbox-dot.is-active) {
+    background: #f1eefb;
+  }
+
   /* The desktop diagonal-gap formula on .lightbox-close above assumes a
      gutter wide enough to inset the button from the dialog edge; the
      shrunken mobile --gutter no longer is (it'd push the button past the
@@ -177,6 +205,15 @@
   @media (max-width: 640px) {
     .lightbox-close {
       right: 0.25rem;
+    }
+
+    .lightbox-prev,
+    .lightbox-next {
+      display: none;
+    }
+
+    .lightbox-dots {
+      display: flex;
     }
   }
 </style>

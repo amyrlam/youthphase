@@ -17,6 +17,19 @@ function initLightbox() {
 
   let current = 0;
 
+  // Mobile position indicator (hidden on desktop via CSS) — one dot per
+  // trigger, active one highlighted in renderAt.
+  const dotsContainer = document.getElementById('lightbox-dots');
+  const dots: HTMLElement[] = [];
+  if (dotsContainer && triggers.length > 1) {
+    for (const _ of triggers) {
+      const dot = document.createElement('span');
+      dot.className = 'lightbox-dot';
+      dotsContainer.appendChild(dot);
+      dots.push(dot);
+    }
+  }
+
   function renderAt(index: number) {
     // Hiding the previously-visible <video> (or <img>) while it holds focus
     // forces the browser to hand focus to the dialog's first focusable
@@ -27,6 +40,7 @@ function initLightbox() {
     current = ((index % triggers.length) + triggers.length) % triggers.length;
     const trigger = triggers[current];
     if (caption) caption.textContent = trigger.dataset.caption ?? '';
+    dots.forEach((dot, i) => dot.classList.toggle('is-active', i === current));
 
     if (trigger.dataset.video) {
       if (img) img.hidden = true;
@@ -78,8 +92,8 @@ function initLightbox() {
     if (e.target === dialog) dialog.close();
   });
 
-  // Touch swipe — the primary way mobile visitors will actually carousel
-  // through photos, since the nav buttons shrink to an edge overlay there.
+  // Touch swipe — the only way mobile visitors carousel through photos,
+  // since the nav buttons are hidden there in favor of the dots.
   const SWIPE_THRESHOLD = 40;
   let touchStartX = 0;
   let touchStartY = 0;
