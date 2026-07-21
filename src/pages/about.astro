@@ -82,8 +82,10 @@ const fullSizes = await Promise.all(
 
 <Layout title="about — Amy Lam" description="About Amy Lam.">
   <!-- pb clears the fixed horizon band (h-40) plus the control chips, so
-       text at rest never sits under them; the chips also fade while the
-       page is actively scrolling (see sky.ts). -->
+       text at rest never sits under them. On mobile the chips are anchored
+       to the bottom of the page (absolute, Layout.astro) and rest in this
+       padding; on desktop they're viewport-fixed and fade while the page
+       is actively scrolling (see sky.ts). -->
   <main class="relative mx-auto flex min-h-dvh max-w-2xl flex-col gap-6 px-6 pt-20 pb-48">
     <a
       href="/"
