@@ -17,17 +17,20 @@ function initLightbox() {
 
   let current = 0;
 
-  // Mobile position indicator (hidden on desktop via CSS) — one dot per
-  // trigger, active one highlighted in renderAt.
+  // Touch-phone position indicator (hidden elsewhere via CSS) — one
+  // tappable dot button per trigger, active one highlighted in renderAt.
   const dotsContainer = document.getElementById('lightbox-dots');
   const dots: HTMLElement[] = [];
   if (dotsContainer && triggers.length > 1) {
-    for (const _ of triggers) {
-      const dot = document.createElement('span');
+    triggers.forEach((_, i) => {
+      const dot = document.createElement('button');
+      dot.type = 'button';
       dot.className = 'lightbox-dot';
+      dot.setAttribute('aria-label', `photo ${i + 1} of ${triggers.length}`);
+      dot.addEventListener('click', () => renderAt(i));
       dotsContainer.appendChild(dot);
       dots.push(dot);
-    }
+    });
   }
 
   function renderAt(index: number) {
@@ -52,10 +55,21 @@ function initLightbox() {
     }
     dots.forEach((dot, i) => dot.classList.toggle('is-active', i === current));
 
+    // Announce the swap to assistive tech — focus stays parked on the
+    // card, so without this, arrow/swipe navigation is silent.
+    const status = document.getElementById('lightbox-status');
+    if (status) {
+      const name = trigger.dataset.caption || trigger.dataset.alt || '';
+      status.textContent = `photo ${current + 1} of ${triggers.length}${name ? ` — ${name}` : ''}`;
+    }
+
     if (trigger.dataset.video) {
       if (img) img.hidden = true;
       video!.hidden = false;
       video!.src = trigger.dataset.video;
+      // Start muted: autoplay-with-sound is a startle in quiet contexts.
+      // The controls are visible, so unmuting is one tap away.
+      video!.muted = true;
       video!.play().catch(() => {});
     } else {
       video!.hidden = true;

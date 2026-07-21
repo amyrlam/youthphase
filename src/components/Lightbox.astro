@@ -33,10 +33,13 @@
     <p id="lightbox-caption" class="lightbox-caption"></p>
   </div>
 
-  <!-- Instagram-style position dots, mobile only — populated by the script
-       (one per trigger). Purely visual; swipe is the navigation there, so
-       hide from assistive tech. -->
-  <div id="lightbox-dots" class="lightbox-dots" aria-hidden="true"></div>
+  <!-- Instagram-style position dots, touch-mobile only — populated by the
+       script (one tappable button per trigger). -->
+  <div id="lightbox-dots" class="lightbox-dots"></div>
+
+  <!-- Announces photo changes to assistive tech: arrows/swipe swap the
+       image silently otherwise, since focus stays parked on the card. -->
+  <p id="lightbox-status" class="sr-only" aria-live="polite"></p>
 </dialog>
 
 <script src="../scripts/lightbox.ts"></script>
@@ -55,9 +58,11 @@
     overflow: visible;
   }
 
-  /* Mobile hides prev/next (swipe + dots take over), so no side
-     reservation — just a slim margin so the polaroid isn't edge-to-edge. */
-  @media (max-width: 640px) {
+  /* Touch phones hide prev/next (swipe + dots take over), so no side
+     reservation — just a slim margin so the polaroid isn't edge-to-edge.
+     Gated on pointer, not just width: a mouse user in a narrow window
+     has no swipe, so they keep the arrows and the desktop layout. */
+  @media (pointer: coarse) and (max-width: 640px) {
     .lightbox-dialog {
       max-width: 96vw;
       padding-inline: 0.75rem;
@@ -200,27 +205,47 @@
     right: max(1.25rem, calc(50vw - 33.5rem));
   }
 
-  /* Hidden on desktop, shown by the mobile media query below — which
+  /* Hidden except on touch phones, shown by the media query below — which
      must stay after this rule in source order to win the equal-specificity
      `display` tie. Sits on the backdrop below the polaroid, like
      Instagram's multi-photo indicator. Dots are created by the script,
-     so they need :global() to escape Astro's style scoping. */
+     so they need :global() to escape Astro's style scoping. Each dot is
+     a real button (tap to jump); the visible 6px dot is a ::before inside
+     a larger transparent hit area. */
   .lightbox-dots {
     display: none;
     justify-content: center;
-    gap: 0.4rem;
-    padding-top: 0.85rem;
+    gap: 0.1rem;
+    padding-top: 0.6rem;
   }
 
   .lightbox-dots :global(.lightbox-dot) {
+    width: 1.4rem;
+    height: 1.4rem;
+    padding: 0;
+    border: none;
+    background: transparent;
+    display: grid;
+    place-items: center;
+    cursor: pointer;
+  }
+
+  .lightbox-dots :global(.lightbox-dot)::before {
+    content: '';
     width: 6px;
     height: 6px;
     border-radius: 9999px;
     background: rgba(255, 255, 255, 0.35);
   }
 
-  .lightbox-dots :global(.lightbox-dot.is-active) {
+  .lightbox-dots :global(.lightbox-dot.is-active)::before {
     background: #f1eefb;
+  }
+
+  .lightbox-dots :global(.lightbox-dot:focus-visible) {
+    outline: 2px solid #f1eefb;
+    outline-offset: -2px;
+    border-radius: 9999px;
   }
 
   /* The desktop diagonal-gap formula on .lightbox-close above assumes a
@@ -229,7 +254,7 @@
      viewport), so pin Close near the corner directly instead. Placed last
      so it wins over the base rule's equal-specificity `right` at this
      breakpoint. */
-  @media (max-width: 640px) {
+  @media (pointer: coarse) and (max-width: 640px) {
     .lightbox-close {
       right: 0.25rem;
     }

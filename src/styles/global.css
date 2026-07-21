@@ -66,6 +66,18 @@ body {
     background-color 1.6s ease;
 }
 
+/* While the page is actively scrolling, the fixed control chips fade so
+   they never sit opaquely on top of passing text (sky.ts toggles the
+   class and restores them ~200ms after scrolling stops). */
+#sky-controls {
+  transition: opacity 0.25s ease;
+}
+
+#sky-controls.is-scrolling {
+  opacity: 0.15;
+  pointer-events: none;
+}
+
 /* Stars are planted by sky.ts with per-star base opacity (--o) and
    twinkle period (--d). */
 .star {

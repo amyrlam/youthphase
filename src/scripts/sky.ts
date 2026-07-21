@@ -6,9 +6,17 @@ interface Place {
   latitude: number;
   longitude: number;
   label: string;
+  /* False when the IP lookup failed and we're showing San Francisco's sky
+     instead of the visitor's — the status line says so ("borrowed sky"). */
+  located: boolean;
 }
 
-const FALLBACK: Place = { latitude: 37.7749, longitude: -122.4194, label: 'san francisco' };
+const FALLBACK: Place = {
+  latitude: 37.7749,
+  longitude: -122.4194,
+  label: 'san francisco',
+  located: false,
+};
 
 /* Manual override for accessibility: 'auto' follows the real sky,
    'day'/'night' pin the palette. */
@@ -327,6 +335,24 @@ function scheduleShootingStar() {
   );
 }
 
+/* The fixed control chips fade while the page scrolls so bio text never
+   passes under an opaque pill — occlusion is a readability bug just like
+   contrast. They return ~200ms after scrolling stops. */
+function fadeChipsWhileScrolling() {
+  const chips = document.getElementById('sky-controls');
+  if (!chips) return;
+  let timer: ReturnType<typeof setTimeout> | undefined;
+  addEventListener(
+    'scroll',
+    () => {
+      chips.classList.add('is-scrolling');
+      clearTimeout(timer);
+      timer = setTimeout(() => chips.classList.remove('is-scrolling'), 200);
+    },
+    { passive: true },
+  );
+}
+
 /* Tap/click anywhere (except links and buttons) leaves a tiny sparkle. */
 function enableSparkles() {
   if (reducedMotion()) return;
@@ -352,6 +378,7 @@ async function locate(): Promise<Place> {
         latitude: data.latitude,
         longitude: data.longitude,
         label: (data.city || FALLBACK.label).toLowerCase(),
+        located: true,
       };
     }
   } catch {
@@ -495,23 +522,36 @@ function render(place: Place, mode: Mode, at = new Date(), demo = false) {
     const inTenMinutes = SunCalc.getPosition(new Date(at.getTime() + 10 * 60 * 1000), latitude, longitude);
     const rising = inTenMinutes.altitude > sun.altitude;
     const label = skyLabel(sunAltDeg, rising, moonIllum.phase);
+    // "your sky" is the one sentence of help the whole page needs: it
+    // tells the visitor the gradient is computed from their real sky.
+    // When geolocation failed we're honest about whose sky it is.
+    const whose = place.located ? 'your sky' : 'borrowed sky';
     status.textContent = demo
       ? `${formatTime(at)} · ${label}`
-      : `${label} · ${place.label}`;
+      : mode === 'auto'
+        ? `${whose} · ${label} · ${place.label}`
+        : `${label} · ${place.label}`;
   }
 }
 
 /* Play the next 24 hours in about 14 seconds. The random real-night
    shooting stars pause during the demo (their 18s+ cadence would almost
    never land inside it), so the demo fires a couple deliberately while
-   its sky is dark — the time-lapse should show them off, not hide them. */
-async function playDemo(place: Place, mode: Mode) {
+   its sky is dark — the time-lapse should show them off, not hide them.
+   Cancellable: clicking the button again (it reads "◼ stop" while
+   running) or pressing Escape bails out and restores the real sky. */
+let demoAbort = false;
+
+async function playDemo(place: Place, mode: Mode, syncButton: () => void) {
   if (demoRunning) return;
   demoRunning = true;
+  demoAbort = false;
+  syncButton();
   document.documentElement.classList.add('sky-demo');
   const base = new Date();
   let nightFrames = 0;
   for (let m = 0; m <= 24 * 60; m += 10) {
+    if (demoAbort) break;
     render(place, 'auto', new Date(base.getTime() + m * 60 * 1000), true);
     // A few frames into darkness and again deeper in — position is
     // random, timing is guaranteed so every run shows one.
@@ -523,6 +563,7 @@ async function playDemo(place: Place, mode: Mode) {
   }
   document.documentElement.classList.remove('sky-demo');
   demoRunning = false;
+  syncButton();
   render(place, mode);
 }
 
@@ -532,11 +573,15 @@ async function start() {
 
   enableSparkles();
   scheduleShootingStar();
+  fadeChipsWhileScrolling();
 
   const button = document.getElementById('sky-mode');
+  // Monochrome text glyphs, not color emoji — they read at chip size and
+  // stay in the site's single-ink voice.
+  const MODE_LABELS: Record<Mode, string> = { auto: 'auto', day: '☀︎ day', night: '☾ night' };
   const syncButton = () => {
     if (!button) return;
-    button.textContent = `sky: ${mode}`;
+    button.textContent = `sky: ${MODE_LABELS[mode]}`;
     button.setAttribute('aria-label', `Sky theme: ${mode}. Click to change.`);
   };
 
@@ -551,7 +596,25 @@ async function start() {
     if (!demoRunning) render(place, mode);
   });
 
-  document.getElementById('sky-demo')?.addEventListener('click', () => playDemo(place, mode));
+  const demoButton = document.getElementById('sky-demo');
+  const syncDemoButton = () => {
+    if (!demoButton) return;
+    demoButton.textContent = demoRunning ? '◼ stop' : '▶ 24h';
+    demoButton.setAttribute(
+      'aria-label',
+      demoRunning ? 'Stop the sky time-lapse' : 'Play a 24-hour sky time-lapse',
+    );
+  };
+  demoButton?.addEventListener('click', () => {
+    if (demoRunning) {
+      demoAbort = true;
+    } else {
+      playDemo(place, mode, syncDemoButton);
+    }
+  });
+  addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && demoRunning) demoAbort = true;
+  });
 
   // Dev console hook: preview the sky at any moment, e.g.
   // __skyAt('2026-07-16T20:30'). Call with no argument to return to now.

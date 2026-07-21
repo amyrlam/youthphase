@@ -1,4 +1,4 @@
-import { test, expect, type Page } from '@playwright/test';
+import { test, expect, devices, type Page } from '@playwright/test';
 
 /* Regression tests for the about-page lightbox. Both bugs below shipped
    twice before these tests existed:
@@ -60,18 +60,55 @@ test('caption wraps to the photo width instead of widening the polaroid', async 
   expect(captionHeight).toBeGreaterThan(45);
 });
 
-test('mobile shows position dots instead of prev/next buttons', async ({ page }) => {
-  await page.setViewportSize({ width: 375, height: 812 });
+test.describe('touch phone', () => {
+  // The dots/arrows swap is gated on (pointer: coarse) and (max-width:
+  // 640px) — emulate a real touch phone, not just a narrow window.
+  // (Explicit options rather than a devices[] spread: defaultBrowserType
+  // can't be used inside a describe group.)
+  test.use({
+    viewport: devices['iPhone 13'].viewport,
+    userAgent: devices['iPhone 13'].userAgent,
+    hasTouch: true,
+    isMobile: true,
+    deviceScaleFactor: devices['iPhone 13'].deviceScaleFactor,
+  });
+
+  test('shows tappable position dots instead of prev/next buttons', async ({ page }) => {
+    await openLightbox(page);
+
+    await expect(page.locator('#lightbox-prev')).toBeHidden();
+    await expect(page.locator('#lightbox-next')).toBeHidden();
+
+    const dots = page.locator('.lightbox-dot');
+    await expect(dots).toHaveCount(9);
+    await expect(dots.nth(0)).toHaveClass(/is-active/);
+
+    await page.keyboard.press('ArrowRight');
+    await expect(dots.nth(1)).toHaveClass(/is-active/);
+    await expect(dots.nth(0)).not.toHaveClass(/is-active/);
+
+    // Dots are buttons: tapping one jumps straight to that photo.
+    await dots.nth(4).click();
+    await expect(dots.nth(4)).toHaveClass(/is-active/);
+  });
+});
+
+test('narrow window with a mouse keeps the arrow buttons', async ({ page }) => {
+  // A desktop browser resized narrow has no swipe — arrows must survive.
+  await page.setViewportSize({ width: 500, height: 800 });
   await openLightbox(page);
 
-  await expect(page.locator('#lightbox-prev')).toBeHidden();
-  await expect(page.locator('#lightbox-next')).toBeHidden();
+  await expect(page.locator('#lightbox-prev')).toBeVisible();
+  await expect(page.locator('#lightbox-next')).toBeVisible();
+  await expect(page.locator('#lightbox-dots')).toBeHidden();
+});
 
-  const dots = page.locator('.lightbox-dot');
-  await expect(dots).toHaveCount(9);
-  await expect(dots.nth(0)).toHaveClass(/is-active/);
+test('photo changes are announced to assistive tech', async ({ page }) => {
+  await openLightbox(page);
+
+  const status = page.locator('#lightbox-status');
+  await expect(status).toHaveText(/photo 1 of 9/);
 
   await page.keyboard.press('ArrowRight');
-  await expect(dots.nth(1)).toHaveClass(/is-active/);
-  await expect(dots.nth(0)).not.toHaveClass(/is-active/);
+  await expect(status).toHaveText(/photo 2 of 9 — camouflage/);
 });
