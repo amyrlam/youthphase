@@ -44,24 +44,19 @@ const ogImage = new URL('/og.png', Astro.site);
     >
     </div>
 
-    <!-- The moon: a small, nearly-crisp disc. Stars render as sharp
-         points, and the real moon is also a hard-edged object — heavy
-         blur here made it read as an accidental smudge (that bug
-         shipped twice, at 18px blur on both a 26px and a 56px core).
-         Only a 3px soften remains; the faint moonlight halo is the
-         separate #glow above, shrunk via .glow-moon.
-
-         Inside it, #moon-shadow is a sky-colored circle sky.ts slides
-         sideways by the real illuminated fraction — the classic
-         two-circle phase model. A uniformly lit perfect circle read as
-         a ping-pong ball; the actual crescent/gibbous shape is what
-         makes it read as the moon. -->
+    <!-- The moon: a sharp crescent, art over astronomy. A mask cuts the
+         shadowed part of the disc away entirely (no navy "pie chart"
+         circle — that shipped and read as fake), and the glow is a
+         drop-shadow that follows the crescent's shape rather than a
+         round halo blob. sky.ts sets the mask (crescent thickness
+         swells with the real phase, lit side follows waxing/waning)
+         and swaps the glow gold when the moon rides low — see
+         #moon-core in global.css. -->
     <div
       id="moon-core"
       aria-hidden="true"
-      class="pointer-events-none fixed h-[10vw] w-[10vw] -translate-x-1/2 -translate-y-1/2 overflow-hidden rounded-full bg-[#eef2ff] opacity-0 blur-[3px] sm:h-[5.5vmin] sm:w-[5.5vmin] sm:blur-[3px]"
+      class="pointer-events-none fixed h-[10vw] w-[10vw] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[#eef2ff] opacity-0 sm:h-[5.5vmin] sm:w-[5.5vmin]"
     >
-      <div id="moon-shadow" class="absolute inset-0 rounded-full"></div>
     </div>
 
     <!-- The real night sky: sky.ts positions the brightest stars for the

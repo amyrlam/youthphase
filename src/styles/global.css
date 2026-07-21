@@ -52,30 +52,26 @@ body {
     filter 2s ease;
 }
 
-/* The sun's halo is huge and formless on purpose — it's glare, all
-   scattered light. The moon is an object you look AT: a small defined
-   disc among pinpoint stars. Sharing the sun's 45vmin halo made it a
-   sun-sized cloud at night, wildly out of proportion to the 1-3px
-   stars, so sky.ts swaps this class in when the moon is the body up. */
-#glow.glow-moon {
-  width: 36vw;
-  height: 36vw;
-  filter: blur(30px);
-}
-
-@media (min-width: 640px) {
-  #glow.glow-moon {
-    width: 24vmin;
-    height: 24vmin;
-    filter: blur(45px);
-  }
-}
-
+/* The moon's glow follows the crescent's own shape (drop-shadow tracks
+   the mask's alpha), so there's no round halo blob at night — the
+   sun's big #glow stays a daytime-only glare. When the moon rides low
+   (.moon-low, set by sky.ts under 15° altitude), crescent and glow
+   warm to horizon gold, cooling back to white as it climbs. */
 #moon-core {
+  filter: drop-shadow(0 0 10px rgba(226, 236, 255, 0.65))
+    drop-shadow(0 0 26px rgba(200, 216, 255, 0.35));
   transition:
     left 2s ease,
     top 2s ease,
-    opacity 2s ease;
+    opacity 2s ease,
+    background-color 2s ease,
+    filter 2s ease;
+}
+
+#moon-core.moon-low {
+  background-color: #f6ddb2;
+  filter: drop-shadow(0 0 10px rgba(255, 214, 150, 0.5))
+    drop-shadow(0 0 26px rgba(255, 200, 130, 0.28));
 }
 
 #stars {

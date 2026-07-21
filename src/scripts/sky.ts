@@ -487,18 +487,9 @@ function render(place: Place, mode: Mode, at = new Date(), demo = false) {
       moonAt = { x: posX(qMoon.azimuth), y: posY(qMoon.altitude) };
     }
 
-    if (moonAt) {
-      // Much fainter than the sun's glare: the moon's halo is a whisper
-      // of moonlight around a crisp disc, not a light source of its own.
-      body = {
-        ...moonAt,
-        color: 'rgba(214, 224, 252, 0.3)',
-        opacity: 0.18 + moonIllum.fraction * 0.3,
-      };
-    }
-    // The halo also shrinks for the moon — see .glow-moon in global.css.
-    glow.classList.toggle('glow-moon', Boolean(moonAt));
-
+    // The round #glow halo is the SUN's glare only. The moon carries
+    // its own crescent-shaped glow via drop-shadow (global.css), so at
+    // night the big halo stays dark.
     if (body) {
       glow.style.left = `${body.x}%`;
       glow.style.top = `${body.y}%`;
@@ -512,24 +503,26 @@ function render(place: Place, mode: Mode, at = new Date(), demo = false) {
       if (moonAt) {
         moonCore.style.left = `${moonAt.x}%`;
         moonCore.style.top = `${moonAt.y}%`;
-        // Floor high enough that even a thin crescent reads as a
-        // deliberate disc rather than a stray glow.
-        moonCore.style.opacity = String(0.55 + moonIllum.fraction * 0.4);
+        moonCore.style.opacity = String(0.75 + moonIllum.fraction * 0.25);
 
-        // Phase shape: slide a sky-colored shadow disc across the lit
-        // one (two-circle model). Offset 0 = new moon (fully covered),
-        // one diameter = full moon (clear). Waxing moons light up from
-        // the right, waning from the left. The parent's blur softens
-        // the terminator into something atmospheric.
-        const shadow = document.getElementById('moon-shadow');
-        if (shadow) {
-          const diameter = moonCore.getBoundingClientRect().width;
-          const waxing = moonIllum.phase < 0.5;
-          const dx = moonIllum.fraction * diameter * (waxing ? -1 : 1);
-          shadow.style.transform = `translateX(${dx.toFixed(1)}px)`;
-          const behind = mix(top, bottom, Math.min(1, Math.max(0, moonAt.y / 100)));
-          shadow.style.backgroundColor = css(behind);
-        }
+        // The crescent: a mask cuts a same-size circle out of the lit
+        // disc, leaving a sliver on the lit side. Art over astronomy —
+        // thickness swells with the real illuminated fraction but is
+        // clamped so it always reads as an elegant crescent, never a
+        // pie-chart half or a plain full circle. Waxing moons light up
+        // from the right, waning from the left (real direction).
+        const d = moonCore.getBoundingClientRect().width;
+        const r = d / 2;
+        const thickness = d * (0.1 + 0.22 * moonIllum.fraction);
+        const waxing = moonIllum.phase < 0.5;
+        const holeX = waxing ? r + 1 - thickness : r - 1 + thickness;
+        const mask = `radial-gradient(circle ${(r - 1).toFixed(1)}px at ${holeX.toFixed(1)}px 50%, transparent ${(r - 2).toFixed(1)}px, #000 ${(r - 1).toFixed(1)}px)`;
+        moonCore.style.webkitMaskImage = mask;
+        moonCore.style.maskImage = mask;
+
+        // Horizon gold: under 15° the crescent and its glow warm up,
+        // like a real low moon (colors in global.css).
+        moonCore.classList.toggle('moon-low', qMoon.altitude < 15);
       } else {
         moonCore.style.opacity = '0';
       }
