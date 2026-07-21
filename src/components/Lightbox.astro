@@ -178,7 +178,13 @@
      photo's aspect ratio, and edge-anchored buttons let you park the
      mouse and click through without re-aiming — same pattern as Google
      Photos / Instagram's desktop lightbox. Fixed positioning resolves
-     against the viewport even in the top layer. */
+     against the viewport even in the top layer.
+
+     On very wide screens the max() clamps them to just outside the
+     dialog's 60rem maximum footprint (30rem half-width + 1.25rem gap +
+     2.25rem button = 33.5rem from center) instead of drifting to distant
+     monitor edges. The two expressions meet exactly at a 69.5rem
+     viewport, so the switchover is seamless. */
   .lightbox-prev,
   .lightbox-next {
     position: fixed;
@@ -187,11 +193,11 @@
   }
 
   .lightbox-prev {
-    left: 1.25rem;
+    left: max(1.25rem, calc(50vw - 33.5rem));
   }
 
   .lightbox-next {
-    right: 1.25rem;
+    right: max(1.25rem, calc(50vw - 33.5rem));
   }
 
   /* Hidden on desktop, shown by the mobile media query below — which
