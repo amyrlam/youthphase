@@ -25,213 +25,143 @@ import Layout from '../layouts/Layout.astro';
       </div>
 
       <!-- Youth Phase, drawn rather than photographed — the same
-           one-exception move as the moon face. The water is filled with
-           the live sky variables, so the harbor sits in whatever weather
-           the visitor's sky is having; the hull is polaroid ivory, the
-           site's one deliberately sky-independent color. Stern-on, the
-           way the boat sits when you look out from the dock: name and
-           numeral lettered across the transom, the mooring buoy floating
-           alongside. A slow bob and drifting ripples — weather-speed
-           motion, stilled under prefers-reduced-motion. -->
+           one-exception move as the moon face. A flat-lay interpretation
+           of the family photo: the boat seen from above at the photo's
+           diagonal, lettered at the bow, on rippled water that fills the
+           whole frame. The water is the live sky variables, so the scene
+           sits in whatever weather the visitor's sky is having; the hull
+           is polaroid ivory, the site's one deliberately sky-independent
+           color. A slow ride on the swell, ripples drifting — stilled
+           under prefers-reduced-motion. -->
       <figure class="dinghy-scene mt-8">
         <svg
           viewBox="0 0 600 340"
           role="img"
-          aria-label="An illustrated white dinghy seen from above and behind, Youth Phase IX lettered across the angled transom, riding at anchor beside a pointed mooring buoy on water that mirrors the current sky; across the harbor, a wooded shoreline with houses — one window lit — and moored sailboats"
+          aria-label="An illustrated overhead view of a small white dinghy, YOUTH PHASE IX lettered at the bow, floating on rippled water that mirrors the current sky — drawn after a family photo"
           class="block w-full rounded-2xl"
         >
           <defs>
-            <!-- The sea inverts the sky gradient — near water carries the
-                 horizon color, deep water the zenith color — like a real
-                 reflection. -->
             <linearGradient id="sea" x1="0" y1="0" x2="0" y2="1">
               <stop offset="0" stop-color="var(--sky-bottom, #1e2c60)"></stop>
               <stop offset="1" stop-color="var(--sky-top, #0a1030)"></stop>
             </linearGradient>
           </defs>
 
-          <!-- Above the horizon the card background is the sky. Distant
-               shoreline and moored neighbors in currentColor, so they
-               keep contrast whatever ink the sky computes. -->
-          <g fill="currentColor" opacity="0.22">
-            <path
-              d="M0 170 C40 156 90 160 130 165 C180 150 240 158 290 164 C350 152 420 158 470 163 C520 154 570 160 600 166 L600 170 Z"
-            ></path>
-          </g>
-          <!-- Houses across the water, the way the far shore of the
-               harbor reads: gable silhouettes among the trees, one with
-               a lit window. -->
-          <g fill="currentColor" opacity="0.3">
-            <path d="M136 168 L136 152 L147 144 L158 152 L158 168 Z"></path>
-            <path d="M162 168 L162 156 L170 151 L178 156 L178 168 Z"></path>
-            <path d="M330 167 L330 148 L338 148 L338 144 L342 144 L342 148 L345 148 L358 140 L371 148 L371 167 Z"></path>
-            <path d="M508 168 L508 155 L517 149 L526 155 L526 168 Z"></path>
-          </g>
-          <!-- The lit window in the big house. -->
-          <rect x="352" y="152" width="4" height="5" fill="#ffeecf" opacity="0.85"></rect>
-          <g stroke="currentColor" stroke-width="1.5" opacity="0.35" fill="none">
-            <line x1="88" y1="118" x2="88" y2="168"></line>
-            <line x1="480" y1="128" x2="480" y2="167"></line>
-            <line x1="540" y1="140" x2="540" y2="168"></line>
-          </g>
-          <!-- One neighbor keeps her sail up — without at least one sail
-               silhouette the distant masts read as pilings. -->
-          <path d="M480 130 L480 164 L462 164 Z" fill="currentColor" opacity="0.25"></path>
-          <g fill="currentColor" opacity="0.35">
-            <path d="M74 168 q14 8 30 0 z"></path>
-            <path d="M468 167 q12 7 26 0 z"></path>
-            <path d="M529 168 q11 6 23 0 z"></path>
-          </g>
+          <!-- Open water, edge to edge — no horizon, like the photo. -->
+          <rect x="0" y="0" width="600" height="340" fill="url(#sea)"></rect>
+          <rect x="0" y="0" width="600" height="340" fill="#0a1030" opacity="0.22"></rect>
 
-          <!-- The water. A whisper of night-navy keeps the ivory hull
-               legible even under a pale midday sky. -->
-          <rect x="0" y="170" width="600" height="170" fill="url(#sea)"></rect>
-          <rect x="0" y="170" width="600" height="170" fill="#0a1030" opacity="0.18"></rect>
+          <!-- The patch of reflected light the photo catches at the top
+               left — horizon gold, barely there. -->
+          <ellipse cx="150" cy="80" rx="150" ry="70" fill="#ffeecf" opacity="0.035"></ellipse>
+          <ellipse cx="470" cy="270" rx="120" ry="55" fill="#f0f4ff" opacity="0.025"></ellipse>
 
-          <!-- The reflection: a soft ivory smudge right at the hull, so
-               the boat sits in the water instead of hovering over it. -->
-          <ellipse class="dinghy-reflection" cx="292" cy="276" rx="74" ry="8" fill="#f7f4ed" opacity="0.14">
-          </ellipse>
-
-          <!-- Ripples in moonlight, each drifting on its own period. -->
+          <!-- Ripple texture, drifting on offset periods. -->
           <g stroke="#f0f4ff" fill="none" stroke-linecap="round">
-            <path class="ripple ripple-1" d="M120 262 q30 -6 62 0" stroke-width="2" opacity="0.28"></path>
-            <path class="ripple ripple-2" d="M400 278 q38 -7 78 0" stroke-width="2" opacity="0.22"></path>
-            <path class="ripple ripple-3" d="M180 300 q44 -8 90 0" stroke-width="2.5" opacity="0.18"></path>
-            <path class="ripple ripple-2" d="M420 316 q30 -6 60 0" stroke-width="2" opacity="0.14"></path>
-            <path class="ripple ripple-3" d="M90 226 q26 -5 52 0" stroke-width="1.5" opacity="0.2"></path>
+            <path class="ripple ripple-1" d="M40 52 q34 -6 70 0" stroke-width="2" opacity="0.16"></path>
+            <path class="ripple ripple-2" d="M420 46 q40 -7 82 0" stroke-width="2" opacity="0.14"></path>
+            <path class="ripple ripple-3" d="M120 118 q30 -5 60 0" stroke-width="1.5" opacity="0.18"></path>
+            <path class="ripple ripple-2" d="M478 140 q32 -6 64 0" stroke-width="2" opacity="0.16"></path>
+            <path class="ripple ripple-1" d="M60 220 q36 -7 74 0" stroke-width="2" opacity="0.15"></path>
+            <path class="ripple ripple-3" d="M470 230 q28 -5 56 0" stroke-width="1.5" opacity="0.13"></path>
+            <path class="ripple ripple-2" d="M130 296 q40 -7 80 0" stroke-width="2.5" opacity="0.12"></path>
+            <path class="ripple ripple-1" d="M400 306 q34 -6 68 0" stroke-width="2" opacity="0.14"></path>
+            <path class="ripple ripple-3" d="M280 40 q26 -5 52 0" stroke-width="1.5" opacity="0.12"></path>
           </g>
 
-          <!-- Youth Phase, stern-quarter — seen a little from above and
-               to the side, like the photo: the bow points away toward the
-               far shore, the near gunwale and interior are visible, and
-               the transom (with the name lettered the way Pop laid it
-               out) faces the viewer at an angle. The static translate
-               grounds the boat lower in the water field — nearer the
-               viewer, well clear of the horizon — and stays separate
-               from .dinghy because the bob animation owns that group's
-               transform. -->
-          <g transform="translate(0 20)">
-          <g class="dinghy">
-            <!-- Port side of the hull, receding toward the bow. -->
-            <path
-              d="M215 185 C245 200 272 216 295 226 L297 242 Q258 230 230 206 Q217 193 215 185 Z"
-              fill="#f7f4ed"
-            ></path>
-            <path d="M226 200 Q258 222 294 234" fill="none" stroke="#c3cde0" stroke-width="1.5" opacity="0.6"></path>
-
-            <!-- The interior, seen over the gunwales: floor, a thwart
-                 seat, the rim itself. -->
-            <path
-              d="M215 185 C260 187 322 196 355 210 L295 226 C272 216 245 200 215 185 Z"
-              fill="#8fa0c0"
-            ></path>
-            <path
-              d="M228 190 C266 192 314 200 344 210 L297 222 C276 213 252 200 228 190 Z"
-              fill="#dde4f0"
-              opacity="0.6"
-            ></path>
-            <!-- Thwart. -->
-            <path d="M252 196 L262 208" stroke="#8fa0c0" stroke-width="5" stroke-linecap="round"></path>
-
-            <!-- Gunwale rims. -->
-            <path
-              d="M215 185 C260 187 322 196 355 210"
-              fill="none"
-              stroke="#1e2c60"
-              stroke-width="2"
-              stroke-linecap="round"
-              opacity="0.5"
-            ></path>
-            <path
-              d="M215 185 C245 200 272 216 295 226"
-              fill="none"
-              stroke="#1e2c60"
-              stroke-width="2"
-              stroke-linecap="round"
-              opacity="0.5"
-            ></path>
-
-            <!-- The transom, angled toward the viewer. -->
-            <path
-              d="M295 226 L355 210 Q360 212 359 218 L355 238 Q351 248 309 252 Q299 250 297 242 Z"
-              fill="#f7f4ed"
-            ></path>
-            <!-- Transom seam. -->
-            <path d="M299 238 Q328 236 355 226" fill="none" stroke="#c3cde0" stroke-width="1.5" opacity="0.6"></path>
-            <!-- Rub rail along the transom top edge. -->
-            <path
-              d="M295 226 L355 210"
-              fill="none"
-              stroke="#1e2c60"
-              stroke-width="2.5"
-              stroke-linecap="round"
-              opacity="0.55"
-            ></path>
-
-            <!-- The waterline: light catching where the hull meets the
-                 water, tracing the bottom edge — this contact line is
-                 what keeps the boat from reading as airborne. Inside the
-                 bob group so it rides with the hull. -->
-            <path
-              d="M217 190 Q245 218 296 244"
-              fill="none"
-              stroke="#f0f4ff"
-              stroke-width="2"
-              stroke-linecap="round"
-              opacity="0.45"
-            ></path>
-            <path
-              d="M298 248 Q330 254 355 238"
-              fill="none"
-              stroke="#f0f4ff"
-              stroke-width="2"
-              stroke-linecap="round"
-              opacity="0.4"
-            ></path>
-
-            <!-- The name, lettered on the angled transom. -->
-            <text
-              x="328"
-              y="231"
-              text-anchor="middle"
-              fill="#1e2c60"
-              transform="rotate(-13 328 231)"
-              style="font-size: 9px; font-weight: 500; letter-spacing: 0.06em;"
-            >
-              YOUTH PHASE
-            </text>
-            <text
-              x="327"
-              y="243"
-              text-anchor="middle"
-              fill="#1e2c60"
-              transform="rotate(-13 327 243)"
-              style="font-size: 10px; font-weight: 500; letter-spacing: 0.08em;"
-            >
-              IX
-            </text>
-          </g>
-          </g>
-
-          <!-- The mooring buoy — cylinder up, tapering to the point that
-               sits down in the water, striped around the middle, listing
-               a little as they do. -->
-          <g class="buoy">
-            <g transform="rotate(7 432 240)">
+          <!-- The boat, tilted at the photo's diagonal. Everything that
+               rides with the hull — shadow, contact ripples, lettering —
+               lives inside the bob group so the swell moves it as one. -->
+          <g transform="rotate(-14 300 175)">
+            <g class="dinghy">
+              <!-- Cast shadow on the water, offset toward the lower
+                   right. -->
               <path
-                d="M424 229 Q432 224 440 229 L440 238 Q439 247 434 253 Q432 255 430 253 Q425 247 424 238 Z"
+                d="M270 78 Q312 70 344 82 Q366 106 366 160 Q366 218 318 286 Q312 294 306 286 Q262 218 260 160 Q260 106 270 78 Z"
+                transform="translate(12 12)"
+                fill="#0a1030"
+                opacity="0.3"
+              ></path>
+
+              <!-- Contact ripples hugging the hull. -->
+              <g stroke="#f0f4ff" fill="none" stroke-linecap="round" opacity="0.35">
+                <path d="M250 120 Q244 170 252 214" stroke-width="2"></path>
+                <path d="M376 116 Q384 168 374 216" stroke-width="2"></path>
+                <path d="M290 300 Q312 312 334 296" stroke-width="2"></path>
+              </g>
+
+              <!-- Hull: ivory, rounded transom at the stern (top),
+                   tapering to the bow point (bottom). -->
+              <path
+                d="M266 76 Q312 66 346 80 Q368 106 368 160 Q368 220 318 290 Q312 298 306 290 Q258 220 258 160 Q258 106 266 76 Z"
                 fill="#f7f4ed"
               ></path>
-              <path d="M424 233 Q432 237 440 233 L440 238 Q432 242 424 238 Z" fill="#8fa0c0" opacity="0.55"></path>
+
+              <!-- Interior: gunwale rim, floor, thwarts — stopping short
+                   of the bow so the foredeck stays ivory for the name. -->
+              <path
+                d="M274 88 Q312 80 340 90 Q356 112 356 160 Q356 196 322 238 Q312 244 304 238 Q270 196 270 160 Q270 112 274 88 Z"
+                fill="#8fa0c0"
+              ></path>
+              <path
+                d="M280 96 Q312 89 334 97 Q348 116 348 160 Q348 190 318 228 Q312 233 306 228 Q278 190 278 160 Q278 116 280 96 Z"
+                fill="#dde4f0"
+                opacity="0.55"
+              ></path>
+              <!-- Stern seat and the middle thwart. -->
+              <path d="M276 106 Q312 98 350 104 L350 122 Q312 114 276 122 Z" fill="#f7f4ed" opacity="0.85"></path>
+              <path d="M271 168 L355 168 L355 186 L271 186 Z" fill="#f7f4ed" opacity="0.85"></path>
+              <!-- The round fender resting on the thwart, from the
+                   photo. -->
+              <circle cx="330" cy="177" r="9" fill="#f7f4ed"></circle>
+              <circle cx="330" cy="177" r="3.5" fill="#8fa0c0" opacity="0.6"></circle>
+              <!-- An oar laid across, blade over the side. -->
+              <path d="M262 208 L352 150" stroke="#f7f4ed" stroke-width="4" stroke-linecap="round"></path>
+              <path d="M352 150 Q366 138 372 144 Q376 150 362 158 Z" fill="#f7f4ed"></path>
+
+              <!-- The name on the foredeck, the way Pop laid it out:
+                   name across, numeral beneath. -->
+              <text
+                x="312"
+                y="253"
+                text-anchor="middle"
+                fill="#1e2c60"
+                style="font-size: 9px; font-weight: 500; letter-spacing: 0.03em;"
+              >
+                YOUTH PHASE
+              </text>
+              <text
+                x="310"
+                y="265"
+                text-anchor="middle"
+                fill="#1e2c60"
+                style="font-size: 10px; font-weight: 500; letter-spacing: 0.08em;"
+              >
+                IX
+              </text>
             </g>
-            <ellipse cx="432" cy="251" rx="12" ry="2.5" fill="#f0f4ff" opacity="0.25"></ellipse>
           </g>
         </svg>
         <figcaption class="pt-3 text-center text-sm lowercase tracking-widest">
-          youth phase, at anchor · phase ix
+          youth phase · phase ix
         </figcaption>
       </figure>
+
+      <!-- The handoff line: to the form, or to the code for the
+           engineers who got curious. The link carries the full system
+           treatment: squiggle underline plus the hover lift
+           (inline-block so the transform actually applies). -->
+      <p class="mt-8 text-sm lowercase tracking-wide">
+        send me a message below, or read about
+        <a
+          href="https://github.com/amyrlam/youthphase"
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label="how this site is built (opens in new tab)"
+          class="link-squiggle inline-block transition-transform duration-300 hover:-translate-y-0.5 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-current"
+          >how this site is built</a
+        > on github.
+      </p>
     </section>
 
     <section class="sky-card rounded-2xl px-6 py-8 sm:px-10 sm:py-10">
@@ -293,37 +223,17 @@ import Layout from '../layouts/Layout.astro';
         </div>
       </form>
 
-      <!-- For the engineers who got curious about the sky. -->
-      <p class="mt-8 text-sm lowercase tracking-wide">
-        prefer reading code to writing messages? this site is
-        <a
-          href="https://github.com/amyrlam/youthphase"
-          target="_blank"
-          rel="noopener noreferrer"
-          class="link-squiggle">open source</a
-        >.
-      </p>
     </section>
   </main>
 </Layout>
 
 <style>
   /* At anchor: the whole boat rides a slow swell — a couple of pixels of
-     lift and a degree of heel, never more. Weather-speed (7s+), matching
-     the sky's own unhurried transitions. */
+     drift and a fraction of a degree of swing, never more. Weather-speed
+     (7s+), matching the sky's own unhurried transitions. */
   .dinghy {
-    transform-origin: 300px 232px;
+    transform-origin: 312px 180px;
     animation: dinghy-bob 7s ease-in-out infinite;
-  }
-
-  /* The buoy rides the same water on its own period, out of phase with
-     the boat so they never move in lockstep. */
-  .buoy {
-    animation: buoy-bob 5.5s ease-in-out -2s infinite;
-  }
-
-  .dinghy-reflection {
-    animation: reflection-shimmer 7s ease-in-out infinite;
   }
 
   .ripple {
@@ -343,32 +253,10 @@ import Layout from '../layouts/Layout.astro';
   @keyframes dinghy-bob {
     0%,
     100% {
-      transform: translateY(0) rotate(0deg);
+      transform: translate(0, 0) rotate(0deg);
     }
     50% {
-      transform: translateY(3px) rotate(-1.1deg);
-    }
-  }
-
-  @keyframes buoy-bob {
-    0%,
-    100% {
-      transform: translateY(0);
-    }
-    50% {
-      transform: translateY(2.5px);
-    }
-  }
-
-  @keyframes reflection-shimmer {
-    0%,
-    100% {
-      opacity: 0.14;
-      transform: scaleX(1);
-    }
-    50% {
-      opacity: 0.09;
-      transform: scaleX(0.96);
+      transform: translate(2px, 3px) rotate(-0.8deg);
     }
   }
 
@@ -384,8 +272,6 @@ import Layout from '../layouts/Layout.astro';
 
   @media (prefers-reduced-motion: reduce) {
     .dinghy,
-    .buoy,
-    .dinghy-reflection,
     .ripple {
       animation: none;
     }
