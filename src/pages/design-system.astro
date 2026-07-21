@@ -112,6 +112,27 @@ import Layout from '../layouts/Layout.astro';
       </p>
     </section>
 
+    <section class="sky-card flex flex-col gap-4 rounded-2xl px-6 py-6">
+      <h2 class="text-xl font-medium lowercase">forms</h2>
+      <p class="text-sm">
+        Inputs (see <code>/contact</code>): transparent background on a <code>.sky-card</code>,
+        <code>border-current/30</code>, <code>rounded-lg</code>, current-color focus outline —
+        the ink/card pairing already guarantees contrast, so fields inherit it. Labels are
+        chrome (lowercase, <code>text-xs tracking-widest</code>), sit above the field, and
+        there are no placeholders. Submit is the bordered-pill button. Status messages go in
+        an <code>aria-live="polite"</code> line next to the submit, written in the site's
+        voice. Every form gets a hidden honeypot field the server checks.
+      </p>
+      <div class="flex flex-col gap-1.5">
+        <label for="ds-input" class="text-xs lowercase tracking-widest">name</label>
+        <input
+          id="ds-input"
+          type="text"
+          class="rounded-lg border border-current/30 bg-transparent px-3 py-2 text-base focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-current"
+        />
+      </div>
+    </section>
+
     <section class="sky-card flex flex-col gap-3 rounded-2xl px-6 py-6">
       <h2 class="text-xl font-medium lowercase">motion</h2>
       <ul class="list-inside list-disc text-sm">

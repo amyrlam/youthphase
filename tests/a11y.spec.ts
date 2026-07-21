@@ -27,6 +27,27 @@ test('open lightbox has no axe violations', async ({ page }) => {
   expect(results.violations).toEqual([]);
 });
 
+test('contact page has no axe violations', async ({ page }) => {
+  await page.goto('/contact');
+  const results = await new AxeBuilder({ page }).analyze();
+  expect(results.violations).toEqual([]);
+});
+
+test('contact form blocks empty submits and reports errors politely', async ({ page }) => {
+  await page.goto('/contact');
+  // Empty submit: native validation stops it before any request.
+  await page.getByRole('button', { name: 'send' }).click();
+  await expect(page.locator('#contact-status')).toHaveText('');
+  // Filled submit against a dev server with no /api route: the error
+  // state must surface in the aria-live line and keep the typed values.
+  await page.getByRole('textbox', { name: 'name', exact: true }).fill('test person');
+  await page.getByRole('textbox', { name: 'email', exact: true }).fill('test@example.com');
+  await page.getByRole('textbox', { name: 'message', exact: true }).fill('hello');
+  await page.getByRole('button', { name: 'send' }).click();
+  await expect(page.locator('#contact-status')).toHaveText(/something went wrong/);
+  await expect(page.getByRole('textbox', { name: 'name', exact: true })).toHaveValue('test person');
+});
+
 test('404 page has no axe violations', async ({ page }) => {
   await page.goto('/404');
   const results = await new AxeBuilder({ page }).analyze();

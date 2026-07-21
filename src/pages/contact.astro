@@ -1,0 +1,205 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { Image, getImage } from 'astro:assets';
+import Lightbox from '../components/Lightbox.astro';
+
+import youthPhase from '../assets/contact/youth-phase-2.png';
+import harborDusk from '../assets/contact/harbor-dusk.jpg';
+import harborSummer from '../assets/contact/harbor-summer.jpg';
+
+/* The dinghy is the hero — she's who the site is named after — with the
+   two harbor shots beneath. Same lightbox contract as the about grid. */
+const photos = [
+  {
+    src: youthPhase,
+    alt: "A small white dinghy named Youth Phase 2 floating on rippled water, photographed from above — a print of Pop's boat",
+    caption: "pop's dinghy, youth phase 2",
+  },
+  {
+    src: harborDusk,
+    alt: 'Sailboats moored in a Connecticut harbor at dusk, masts silhouetted against a peach and violet sky',
+    caption: 'the harbor at dusk',
+  },
+  {
+    src: harborSummer,
+    alt: 'The same harbor in summer: sailboats at anchor, kids paddling a yellow kayak near a wooden dock under big clouds',
+    caption: 'summer in the harbor',
+  },
+];
+
+const fullSizes = await Promise.all(photos.map((p) => getImage({ src: p.src, width: 1600 })));
+---
+
+<Layout title="contact — Amy Lam" description="Get in touch with Amy Lam.">
+  <!-- pb clears the fixed horizon band + chips, same as the about page. -->
+  <main class="relative mx-auto flex min-h-dvh max-w-2xl flex-col gap-6 px-6 pt-20 pb-48">
+    <a
+      href="/"
+      class="link-squiggle sky-top-ink relative self-start text-[19px] font-bold lowercase tracking-wide transition-transform duration-300 after:absolute after:-inset-3 after:content-[''] hover:-translate-y-0.5 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-current"
+    >
+      ← home
+    </a>
+
+    <h1 class="text-4xl font-medium lowercase tracking-tight sm:text-5xl">contact</h1>
+
+    <section class="sky-card rounded-2xl px-6 py-8 sm:px-10 sm:py-10">
+      <div class="prose sm:prose-lg max-w-none">
+        <p>
+          I grew up with my grandparents on the Connecticut shoreline, where Pop kept a
+          little dinghy in the harbor named <em>Youth Phase</em>. Each time life carried him
+          somewhere new, he'd repaint the numeral on her hull — even in his old age, he
+          never stopped counting. This site is named for her.
+        </p>
+      </div>
+
+      <!-- The dinghy full-width, the two harbor shots side by side under
+           her — a deliberate hierarchy, not a uniform grid. -->
+      <div class="mt-8 flex flex-col gap-3">
+        <button
+          type="button"
+          data-lightbox-trigger
+          data-full={fullSizes[0].src}
+          data-alt={photos[0].alt}
+          data-caption={photos[0].caption}
+          class="group relative overflow-hidden rounded-2xl focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-current"
+          aria-label={`View larger: ${photos[0].alt}`}
+        >
+          <Image
+            src={photos[0].src}
+            alt={photos[0].alt}
+            width={900}
+            height={900}
+            class="aspect-square w-full object-cover transition-transform duration-300 group-hover:scale-105"
+          />
+        </button>
+        <div class="grid grid-cols-2 gap-3">
+          {
+            photos.slice(1).map((photo, i) => (
+              <button
+                type="button"
+                data-lightbox-trigger
+                data-full={fullSizes[i + 1].src}
+                data-alt={photo.alt}
+                data-caption={photo.caption}
+                class="group relative overflow-hidden rounded-2xl focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-current"
+                aria-label={`View larger: ${photo.alt}`}
+              >
+                <Image
+                  src={photo.src}
+                  alt={photo.alt}
+                  width={600}
+                  height={400}
+                  class="aspect-[3/2] w-full object-cover transition-transform duration-300 group-hover:scale-105"
+                />
+              </button>
+            ))
+          }
+        </div>
+      </div>
+    </section>
+
+    <section class="sky-card rounded-2xl px-6 py-8 sm:px-10 sm:py-10">
+      <form id="contact-form" class="flex flex-col gap-5" novalidate>
+        <div class="flex flex-col gap-1.5">
+          <label for="contact-name" class="text-xs lowercase tracking-widest">name</label>
+          <input
+            id="contact-name"
+            name="name"
+            type="text"
+            required
+            autocomplete="name"
+            maxlength="200"
+            class="rounded-lg border border-current/30 bg-transparent px-3 py-2 text-base focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-current"
+          />
+        </div>
+
+        <div class="flex flex-col gap-1.5">
+          <label for="contact-email" class="text-xs lowercase tracking-widest">email</label>
+          <input
+            id="contact-email"
+            name="email"
+            type="email"
+            required
+            autocomplete="email"
+            maxlength="254"
+            class="rounded-lg border border-current/30 bg-transparent px-3 py-2 text-base focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-current"
+          />
+        </div>
+
+        <div class="flex flex-col gap-1.5">
+          <label for="contact-message" class="text-xs lowercase tracking-widest">message</label>
+          <textarea
+            id="contact-message"
+            name="message"
+            required
+            rows="5"
+            maxlength="5000"
+            class="resize-y rounded-lg border border-current/30 bg-transparent px-3 py-2 text-base focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-current"
+          ></textarea>
+        </div>
+
+        <!-- Honeypot: hidden from people (and from the accessibility tree),
+             irresistible to bots. The server treats any value here as spam. -->
+        <div class="hidden" aria-hidden="true">
+          <label for="contact-website">leave this field empty</label>
+          <input id="contact-website" name="website" type="text" tabindex="-1" autocomplete="off" />
+        </div>
+
+        <div class="flex items-center gap-4">
+          <button
+            type="submit"
+            id="contact-submit"
+            class="relative w-fit rounded-full border border-current/30 px-4 py-1.5 text-xs lowercase tracking-widest transition-transform duration-300 after:absolute after:-inset-2 after:content-[''] hover:-translate-y-0.5 hover:border-current/80 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-current disabled:opacity-60 disabled:hover:translate-y-0 disabled:hover:border-current/30"
+          >
+            send
+          </button>
+          <p id="contact-status" aria-live="polite" class="text-sm lowercase tracking-wide"></p>
+        </div>
+      </form>
+    </section>
+  </main>
+
+  <Lightbox />
+</Layout>
+
+<script>
+  /* Progressive enhancement over /api/contact (a Vercel function — under
+     plain `astro dev` it doesn't exist, so local testing needs `vercel
+     dev`; the error state covers the 404 gracefully). */
+  const form = document.getElementById('contact-form') as HTMLFormElement | null;
+  const submit = document.getElementById('contact-submit') as HTMLButtonElement | null;
+  const status = document.getElementById('contact-status');
+
+  form?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    // Native validation, surfaced in the site's voice.
+    if (!form.checkValidity()) {
+      form.reportValidity();
+      return;
+    }
+
+    const data = Object.fromEntries(new FormData(form).entries());
+    if (submit) submit.disabled = true;
+    if (submit) submit.textContent = 'sending…';
+    if (status) status.textContent = '';
+
+    try {
+      const res = await fetch('/api/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+      });
+      if (!res.ok) throw new Error(`send failed: ${res.status}`);
+      form.reset();
+      if (status) status.textContent = "message sent — i'll write back soon";
+    } catch {
+      if (status) status.textContent = 'something went wrong — mind trying again?';
+    } finally {
+      if (submit) {
+        submit.disabled = false;
+        submit.textContent = 'send';
+      }
+    }
+  });
+</script>
