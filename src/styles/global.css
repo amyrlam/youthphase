@@ -320,6 +320,20 @@ html.moon-cycle #moon-core {
 html.moon-cycle #moon-face {
   opacity: 1;
   scale: 1;
+  /* Show size: the face fills the stage (sky.ts centers it), capped so
+     desktop never gets a planetarium dome. */
+  width: min(58vw, 15rem);
+  height: min(58vw, 15rem);
+}
+
+/* While the moon show plays, the hero text (marked .show-dim in the
+   page) bows out so the stage is clear; it returns as the show ends. */
+.show-dim {
+  transition: opacity 0.6s ease;
+}
+
+html.moon-cycle .show-dim {
+  opacity: 0;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -362,42 +376,45 @@ html.moon-cycle #moon-face {
   animation: rain-fall var(--t, 1.1s) linear var(--delay, 0s) forwards;
 }
 
+/* The streak's tilt and its drift describe the same 4° vector — when
+   they disagree the rain reads as pasted-on rather than falling. */
 @keyframes rain-fall {
   0% {
-    transform: translate3d(0, 0, 0) rotate(9deg);
+    transform: translate3d(0, 0, 0) rotate(4deg);
     opacity: 0;
   }
   8% {
     opacity: 0.8;
   }
   100% {
-    transform: translate3d(-48px, 115vh, 0) rotate(9deg);
+    transform: translate3d(-65px, 115vh, 0) rotate(4deg);
     opacity: 0.5;
   }
 }
 
-/* Day-show rainbow: a huge soft ring whose center sits at the bottom
-   edge, so only the upper arc rises into the sky — red outermost,
-   violet-blue inner, like the real thing, blurred and translucent so
-   it reads as light rather than clipart. */
+/* Day-show rainbow: not the postcard arc — a broad band climbing
+   diagonally up and to the right, as if you're standing near the foot
+   of one far too big to fit the screen. Red on the upper edge (the
+   outer edge of a bow's lower limb), blurred and translucent so it
+   reads as light rather than clipart. Wider than the viewport, so no
+   ends are ever visible. */
 #rainbow {
   left: 50%;
-  top: 100dvh;
-  width: 170vmin;
-  height: 170vmin;
-  transform: translate(-50%, -50%);
-  border-radius: 50%;
-  background: radial-gradient(
-    circle,
-    transparent 54%,
-    rgba(140, 180, 255, 0.3) 58%,
-    rgba(140, 220, 190, 0.32) 61.5%,
-    rgba(255, 235, 150, 0.34) 65%,
-    rgba(255, 185, 125, 0.32) 68.5%,
-    rgba(255, 135, 135, 0.3) 72%,
-    transparent 76%
+  top: 60dvh;
+  width: 240vw;
+  height: 90px;
+  transform: translate(-50%, -50%) rotate(-18deg);
+  background: linear-gradient(
+    180deg,
+    transparent,
+    rgba(255, 135, 135, 0.3) 12%,
+    rgba(255, 185, 125, 0.32) 32%,
+    rgba(255, 235, 150, 0.34) 52%,
+    rgba(140, 220, 190, 0.32) 72%,
+    rgba(140, 180, 255, 0.3) 90%,
+    transparent
   );
-  filter: blur(5px);
+  filter: blur(6px);
   opacity: 0;
   transition: opacity 1.4s ease;
 }

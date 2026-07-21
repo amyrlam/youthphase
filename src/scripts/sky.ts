@@ -580,10 +580,12 @@ function render(place: Place, mode: Mode, at = new Date(), demo = false) {
 }
 
 /* Easter egg: triple-tap anywhere on the sky and it answers with
-   whatever it has. Moon up: the cratered face docks above the status
-   line and a month of phases plays (~8s), ending in a soft moonlight
-   wash. Daylight: a sudden shower, then a rainbow off the bottom edge.
-   Moonless dark: a scatter of shooting stars. Touch pointers only. */
+   whatever it has. Moon up: the hero text bows out and the cratered
+   face takes the center of the page — "a month, all at once" — playing
+   a full cycle of phases (~8s) before a soft moonlight wash returns
+   the sky to tonight. Daylight: a sudden shower, then a rainbow band
+   climbing across the page. Moonless dark: a scatter of shooting
+   stars. Touch pointers only. */
 let cycleRunning = false;
 let moonVisible = false;
 
@@ -655,10 +657,10 @@ function enableMoonShow(getPlace: () => Place, getMode: () => Mode) {
     const face = document.getElementById('moon-face');
     if (fin) {
       fin.style.setProperty('--fx', face?.style.left || '50%');
-      fin.style.setProperty('--fy', face?.style.top || '80%');
+      fin.style.setProperty('--fy', face?.style.top || '42%');
       fin.classList.add('wash');
     }
-    if (status) status.textContent = 'a month, all at once';
+    if (status) status.textContent = '…and back to tonight';
     setTimeout(() => fin?.classList.remove('wash'), 1800);
     setTimeout(settle, 2600);
   };
@@ -667,15 +669,19 @@ function enableMoonShow(getPlace: () => Place, getMode: () => Mode) {
     if (demoRunning || cycleRunning) return;
     cycleRunning = true;
     document.documentElement.classList.add('moon-cycle');
-    // The face plays on a stage just above the status line, centered —
-    // disc and words tell the month together, instead of the disc
-    // floating wherever the real moon happens to ride. settle()'s
-    // render puts the position back on the moon afterwards.
+    // Full-page staging: the hero text bows out (.show-dim) and the
+    // face takes the center of the sky, large. settle()'s render puts
+    // the position back on the real moon afterwards; the size returns
+    // with the .moon-cycle class.
     const face = document.getElementById('moon-face');
     if (face) {
       face.style.left = '50%';
-      face.style.top = 'calc(100dvh - 9.5rem - env(safe-area-inset-bottom))';
+      face.style.top = '42%';
     }
+    // The title card comes first — "a month, all at once" names what
+    // you're about to watch, instead of arriving after it happened.
+    const INTRO_MS = 1400;
+    if (status) status.textContent = 'a month, all at once';
     // Start from tonight's real phase, so the cycle picks up mid-story.
     // Phase is derived from elapsed time, not tick count, so a throttled
     // timer (background tab, low-power mode) costs smoothness but never
@@ -684,18 +690,20 @@ function enableMoonShow(getPlace: () => Place, getMode: () => Mode) {
     const startedAt = performance.now();
     const frame = () => {
       const elapsed = performance.now() - startedAt;
-      if (elapsed >= 8000) {
-        // One month exactly, then the celebration — or, under reduced
-        // motion, a quiet return to tonight.
+      if (elapsed >= INTRO_MS + 8000) {
+        // One month exactly, then the quiet ending — or, under reduced
+        // motion, straight back to tonight.
         if (reducedMotion()) settle();
         else finale();
         return;
       }
-      const phase = (startPhase + elapsed / 8000) % 1;
+      // During the title card the face holds tonight's phase.
+      const phase =
+        elapsed < INTRO_MS ? startPhase : (startPhase + (elapsed - INTRO_MS) / 8000) % 1;
       // The face alone carries the light (the star-point hides via
       // .moon-cycle) — its terminator is the brightness story.
       if (shadow) shadow.setAttribute('d', moonShadowPath(phase));
-      if (status) status.textContent = moonPhaseName(phase);
+      if (status && elapsed >= INTRO_MS) status.textContent = moonPhaseName(phase);
     };
     frame();
     tick = setInterval(frame, 100);
@@ -728,6 +736,9 @@ function enableMoonShow(getPlace: () => Place, getMode: () => Mode) {
   addEventListener('pointerdown', (e) => {
     if (e.pointerType !== 'touch') return;
     if ((e.target as Element | null)?.closest('a, button')) return;
+    // The shows narrate through the status line; pages without one
+    // (about, blog) would play mute over their content. Home only.
+    if (!status) return;
     const now = performance.now();
     taps = taps.filter((t) => now - t < 450);
     taps.push(now);
