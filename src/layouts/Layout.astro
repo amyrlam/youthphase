@@ -151,9 +151,14 @@ const ogImage = new URL('/og.png', Astro.site);
 
     <slot />
 
+    <!-- Mobile: anchored to the bottom of the page (absolute against the
+         relative body), so on scrollable pages the chips rest below the
+         content instead of floating over text and photos mid-scroll.
+         Desktop keeps them viewport-fixed, with the scroll-fade in sky.ts
+         handling overlap. -->
     <div
       id="sky-controls"
-      class="fixed right-5 bottom-[calc(1.25rem+env(safe-area-inset-bottom))] flex items-center gap-4"
+      class="absolute right-5 bottom-[calc(1.25rem+env(safe-area-inset-bottom))] flex items-center gap-4 sm:fixed"
     >
       <button
         id="sky-demo"
