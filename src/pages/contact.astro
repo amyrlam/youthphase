@@ -232,6 +232,11 @@ const letterSpans = (word: string) =>
     position: absolute;
     left: calc(50% - 13px * var(--px));
     top: 30%;
+    /* The photo's diagonal: the boat rides at a slight list, never
+       square to the frame. The static transform matches the keyframes'
+       rotation so reduced-motion keeps the tilt without the bob. */
+    transform: rotate(-6deg);
+    transform-origin: calc(13px * var(--px)) calc(7px * var(--px));
     animation: pixel-bob 7s ease-in-out infinite;
   }
 
@@ -321,10 +326,10 @@ const letterSpans = (word: string) =>
   @keyframes pixel-bob {
     0%,
     100% {
-      transform: translateY(0);
+      transform: rotate(-6deg) translateY(0);
     }
     50% {
-      transform: translateY(calc(1px * var(--px)));
+      transform: rotate(-5deg) translateY(calc(1px * var(--px)));
     }
   }
 
