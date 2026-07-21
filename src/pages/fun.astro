@@ -1,14 +1,16 @@
 ---
 import Layout from '../layouts/Layout.astro';
 
-/* Gallup's four domain colors, brightened to clear 3:1 against the dark
-   sky-card so the dots stay visible at night. Domain names ride along in
-   visually-hidden text so the information is never color-only. */
+/* Gallup's four domain colors, close to the report's own palette — they sit
+   on a white circle badge (tee-proportioned: the dot fills ~65% of the white
+   field) so they stay saturated and legible whatever the sky is doing.
+   Domain names ride along in visually-hidden text so the information is
+   never color-only. */
 const domains = {
-  executing: { label: 'executing', color: '#b98ae8' },
-  influencing: { label: 'influencing', color: '#f2a45c' },
-  relationship: { label: 'relationship building', color: '#7fb0ff' },
-  strategic: { label: 'strategic thinking', color: '#63c893' },
+  executing: { label: 'Executing', color: '#7b3fa0' },
+  influencing: { label: 'Influencing', color: '#c96a1a' },
+  relationship: { label: 'Relationship building', color: '#3272c8' },
+  strategic: { label: 'Strategic thinking', color: '#2e8f5a' },
 } as const;
 
 type DomainKey = keyof typeof domains;
@@ -21,61 +23,61 @@ interface Strength {
 
 const strengths2015: Strength[] = [
   {
-    name: 'futuristic',
+    name: 'Futuristic',
     domain: 'strategic',
-    blurb: 'inspired by the future and what could be — energizing others with visions of it.',
+    blurb: 'Inspired by the future and what could be — energizing others with visions of it.',
   },
   {
-    name: 'restorative',
+    name: 'Restorative',
     domain: 'executing',
-    blurb: 'adept at dealing with problems: figuring out what is wrong and resolving it.',
+    blurb: 'Adept at dealing with problems: figuring out what is wrong and resolving it.',
   },
   {
-    name: 'activator',
+    name: 'Activator',
     domain: 'influencing',
-    blurb: 'turning thoughts into action — do things now, rather than simply talk about them.',
+    blurb: 'Turning thoughts into action — do things now, rather than simply talk about them.',
   },
   {
-    name: 'communication',
+    name: 'Communication',
     domain: 'influencing',
-    blurb: 'putting thoughts into words easily; a good conversationalist and presenter.',
+    blurb: 'Putting thoughts into words easily; a good conversationalist and presenter.',
   },
   {
-    name: 'individualization',
+    name: 'Individualization',
     domain: 'relationship',
-    blurb: 'intrigued by the unique qualities of each person, and how they work together.',
+    blurb: 'Intrigued by the unique qualities of each person, and how they work together.',
   },
 ];
 
 const strengths2025: Strength[] = [
   {
-    name: 'empathy',
+    name: 'Empathy',
     domain: 'relationship',
-    blurb: "sensing other people's feelings by imagining yourself in their situations.",
+    blurb: "Sensing other people's feelings by imagining yourself in their situations.",
   },
   {
-    name: 'relator',
+    name: 'Relator',
     domain: 'relationship',
-    blurb: 'close relationships — deep satisfaction in working hard with friends toward a goal.',
+    blurb: 'Close relationships — deep satisfaction in working hard with friends toward a goal.',
   },
   {
-    name: 'ideation',
+    name: 'Ideation',
     domain: 'strategic',
-    blurb: 'fascinated by ideas; finding connections between seemingly disparate phenomena.',
+    blurb: 'Fascinated by ideas; finding connections between seemingly disparate phenomena.',
   },
   {
-    name: 'individualization',
+    name: 'Individualization',
     domain: 'relationship',
-    blurb: 'intrigued by the unique qualities of each person, and how they work together.',
+    blurb: 'Intrigued by the unique qualities of each person, and how they work together.',
   },
   {
-    name: 'communication',
+    name: 'Communication',
     domain: 'influencing',
-    blurb: 'putting thoughts into words easily; a good conversationalist and presenter.',
+    blurb: 'Putting thoughts into words easily; a good conversationalist and presenter.',
   },
 ];
 
-/* Themes that survived the decade get a little star. */
+/* Themes that survived the decade get a little gold star. */
 const keepers = new Set(
   strengths2015.map((s) => s.name).filter((n) => strengths2025.some((s) => s.name === n)),
 );
@@ -114,8 +116,8 @@ const eras = [
               rel="noopener noreferrer"
               class="link-squiggle"
             >
-              linkedin tarot<span class="sr-only"> (opens in new tab)</span></a
-            >&nbsp;— my career, read as tarot cards. shockingly on the nose.
+              LinkedIn Tarot<span class="sr-only"> (opens in new tab)</span></a
+            >&nbsp;— my career, read as tarot cards. Shockingly on the nose.
           </li>
           <li>
             <a
@@ -124,17 +126,17 @@ const eras = [
               rel="noopener noreferrer"
               class="link-squiggle"
             >
-              enneagram type 4<span class="sr-only"> (opens in new tab)</span></a
-            >&nbsp;— the individualist. checks out.
+              My Enneagram<span class="sr-only"> (opens in new tab)</span></a
+            >&nbsp;— Type 4, The Individualist. Checks out.
           </li>
         </ul>
       </div>
 
-      <h2 class="mt-10 text-2xl font-medium lowercase tracking-tight">
-        cliftonstrengths, a decade apart
+      <h2 class="mt-10 text-2xl font-medium tracking-tight">
+        CliftonStrengths, a decade apart
       </h2>
       <p class="mt-2 text-base">
-        my gallup top 5, taken ten years apart. starred themes survived the decade.
+        My Gallup Top 5, taken ten years apart. Starred themes survived the decade.
       </p>
 
       <div class="mt-6 grid gap-8 sm:grid-cols-2">
@@ -149,19 +151,23 @@ const eras = [
                       {i + 1}
                     </span>
                     <div>
-                      <span class="flex items-center gap-2 font-bold lowercase">
-                        <span
-                          class="h-2 w-2 shrink-0 rounded-full"
-                          style={`background: ${domains[s.domain].color}`}
-                          aria-hidden="true"
-                        />
+                      <span class="flex items-center gap-2 font-bold">
                         {s.name}
                         {keepers.has(s.name) && (
-                          <span title="in both top 5s">
-                            <span aria-hidden="true">✦</span>
-                            <span class="sr-only">in both top 5s</span>
+                          <span title="In both Top 5s">
+                            <span aria-hidden="true" style="color: #ffd166">✦</span>
+                            <span class="sr-only">In both Top 5s</span>
                           </span>
                         )}
+                        <span
+                          class="inline-flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-white"
+                          aria-hidden="true"
+                        >
+                          <span
+                            class="h-2.5 w-2.5 rounded-full"
+                            style={`background: ${domains[s.domain].color}`}
+                          />
+                        </span>
                         <span class="sr-only">({domains[s.domain].label})</span>
                       </span>
                       <p class="mt-1 text-sm leading-relaxed">{s.blurb}</p>
@@ -174,15 +180,16 @@ const eras = [
         }
       </div>
 
-      <ul class="mt-8 flex flex-wrap gap-x-5 gap-y-2 text-xs lowercase tracking-widest" aria-label="CliftonStrengths domains">
+      <ul class="mt-8 flex flex-wrap gap-x-5 gap-y-2 text-xs tracking-widest" aria-label="CliftonStrengths domains">
         {
           Object.values(domains).map((d) => (
             <li class="flex items-center gap-2">
               <span
-                class="h-2 w-2 shrink-0 rounded-full"
-                style={`background: ${d.color}`}
+                class="inline-flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-white"
                 aria-hidden="true"
-              />
+              >
+                <span class="h-2.5 w-2.5 rounded-full" style={`background: ${d.color}`} />
+              </span>
               {d.label}
             </li>
           ))
