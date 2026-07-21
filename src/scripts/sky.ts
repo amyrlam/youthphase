@@ -488,12 +488,16 @@ function render(place: Place, mode: Mode, at = new Date(), demo = false) {
     }
 
     if (moonAt) {
+      // Much fainter than the sun's glare: the moon's halo is a whisper
+      // of moonlight around a crisp disc, not a light source of its own.
       body = {
         ...moonAt,
         color: 'rgba(214, 224, 252, 0.3)',
-        opacity: 0.35 + moonIllum.fraction * 0.5,
+        opacity: 0.18 + moonIllum.fraction * 0.3,
       };
     }
+    // The halo also shrinks for the moon — see .glow-moon in global.css.
+    glow.classList.toggle('glow-moon', Boolean(moonAt));
 
     if (body) {
       glow.style.left = `${body.x}%`;

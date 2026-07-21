@@ -46,7 +46,29 @@ body {
     left 2s ease,
     top 2s ease,
     background-color 2s ease,
-    opacity 2s ease;
+    opacity 2s ease,
+    width 2s ease,
+    height 2s ease,
+    filter 2s ease;
+}
+
+/* The sun's halo is huge and formless on purpose — it's glare, all
+   scattered light. The moon is an object you look AT: a small defined
+   disc among pinpoint stars. Sharing the sun's 45vmin halo made it a
+   sun-sized cloud at night, wildly out of proportion to the 1-3px
+   stars, so sky.ts swaps this class in when the moon is the body up. */
+#glow.glow-moon {
+  width: 36vw;
+  height: 36vw;
+  filter: blur(30px);
+}
+
+@media (min-width: 640px) {
+  #glow.glow-moon {
+    width: 24vmin;
+    height: 24vmin;
+    filter: blur(45px);
+  }
 }
 
 #moon-core {

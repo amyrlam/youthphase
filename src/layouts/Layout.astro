@@ -44,11 +44,12 @@ const ogImage = new URL('/og.png', Astro.site);
     >
     </div>
 
-    <!-- The moon's luminous core: a bright disc inside the wide halo
-         above. The blur must stay small relative to the disc (≲1/5 of
-         its width) or the edge dissolves and the moon reads as an
-         accidental smudge — that bug shipped twice, first on phones
-         (26px core, 18px blur), then on desktop (56px core, same 18px).
+    <!-- The moon: a small, nearly-crisp disc. Stars render as sharp
+         points, and the real moon is also a hard-edged object — heavy
+         blur here made it read as an accidental smudge (that bug
+         shipped twice, at 18px blur on both a 26px and a 56px core).
+         Only a 3px soften remains; the faint moonlight halo is the
+         separate #glow above, shrunk via .glow-moon.
 
          Inside it, #moon-shadow is a sky-colored circle sky.ts slides
          sideways by the real illuminated fraction — the classic
@@ -58,7 +59,7 @@ const ogImage = new URL('/og.png', Astro.site);
     <div
       id="moon-core"
       aria-hidden="true"
-      class="pointer-events-none fixed h-[13vw] w-[13vw] -translate-x-1/2 -translate-y-1/2 overflow-hidden rounded-full bg-[#eef2ff] opacity-0 blur-[10px] sm:h-[7vmin] sm:w-[7vmin] sm:blur-[11px]"
+      class="pointer-events-none fixed h-[10vw] w-[10vw] -translate-x-1/2 -translate-y-1/2 overflow-hidden rounded-full bg-[#eef2ff] opacity-0 blur-[3px] sm:h-[5.5vmin] sm:w-[5.5vmin] sm:blur-[3px]"
     >
       <div id="moon-shadow" class="absolute inset-0 rounded-full"></div>
     </div>
