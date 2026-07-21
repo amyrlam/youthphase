@@ -62,6 +62,15 @@
       "env": {
         "PATH": "/Users/amyrlam/.local/opt/node/bin:/usr/bin:/bin:/usr/sbin:/sbin"
       }
+    },
+    {
+      "name": "worktree-4",
+      "runtimeExecutable": "/Users/amyrlam/.local/opt/node/bin/npm",
+      "runtimeArgs": ["run", "dev", "--", "--port", "4334"],
+      "port": 4334,
+      "env": {
+        "PATH": "/Users/amyrlam/.local/opt/node/bin:/usr/bin:/bin:/usr/sbin:/sbin"
+      }
     }
   ]
 }

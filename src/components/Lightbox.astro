@@ -236,10 +236,22 @@
     height: 6px;
     border-radius: 9999px;
     background: rgba(255, 255, 255, 0.35);
+    /* The active dot grows and brightens in step with the card swiping
+       in, instead of snapping — same ease-out family as the swipe. */
+    transition:
+      background-color 200ms cubic-bezier(0.25, 1, 0.5, 1),
+      transform 200ms cubic-bezier(0.25, 1, 0.5, 1);
   }
 
   .lightbox-dots :global(.lightbox-dot.is-active)::before {
     background: #f1eefb;
+    transform: scale(1.35);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .lightbox-dots :global(.lightbox-dot)::before {
+      transition: none;
+    }
   }
 
   .lightbox-dots :global(.lightbox-dot:focus-visible) {
