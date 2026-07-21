@@ -1,3 +1,7 @@
+## Design Context
+
+Before any UI work, consult [PRODUCT.md](PRODUCT.md) (register, audience, brand personality, anti-references) and [DESIGN.md](DESIGN.md) (the visual system: sky-computed palette, typography registers, named rules). The unlisted page `src/pages/design-system.astro` shows the live patterns; keep all three in sync when a new shared pattern lands.
+
 ## Development
 
 When starting the dev server, use background mode:
