@@ -293,7 +293,7 @@ body {
   }
 }
 
-/* While the hold-the-moon phase cycle plays (mobile easter egg, sky.ts),
+/* While the triple-tap moon show plays (mobile easter egg, sky.ts),
    the moonlight breathes at cycle speed — its usual 2s ease would smear
    the waxing and waning into mush. */
 html.moon-cycle #moon-core {
@@ -301,7 +301,7 @@ html.moon-cycle #moon-core {
 }
 
 /* The held moon face: hidden as a pinprick behind the point of light,
-   blooming to full size while a finger holds the moon. The exponential
+   blooming to full size while the show plays. The exponential
    ease-out makes it feel like it surfaces rather than inflates; the
    glow is the same family as the point's own halo so the light doesn't
    change character, only scale. */
@@ -348,7 +348,7 @@ html.moon-cycle #moon-face {
 /* Firework stars: the site's own tap-sparkle glyphs, thrown outward.
    Each gets a direction (--dx/--dy), spin (--r), duration (--t) and
    stagger (--delay) from sky.ts. Spawned only when motion is welcome —
-   reduced-motion holds skip the finale entirely and just keep cycling. */
+   reduced-motion shows end with a quiet return to tonight instead. */
 .finale-star {
   position: fixed;
   line-height: 1;

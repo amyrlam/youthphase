@@ -60,9 +60,10 @@ const ogImage = new URL('/og.png', Astro.site);
     >
     </div>
 
-    <!-- The moon's held face: the one place the "never a picture" rule
-         breaks, on purpose. While a finger holds the moon (sky.ts), the
-         point of light blooms into a small cratered disc whose lit shape
+    <!-- The moon's revealed face: the one place the "never a picture"
+         rule breaks, on purpose. While the triple-tap show plays
+         (sky.ts), the point of light blooms into a small cratered disc
+         whose lit shape
          is the real phase geometry — the terminator is an elliptical arc,
          so crescents are crescents and gibbous is gibbous, not a circle
          sliding off another circle. sky.ts positions it with the moon and
@@ -106,30 +107,17 @@ const ogImage = new URL('/og.png', Astro.site);
       </svg>
     </div>
 
-    <!-- The finale wash: when a hold survives a full month of phases,
+    <!-- The finale wash: when the show's month of phases completes,
          moonlight floods the sky from the moon's position before the
          sparkle bursts (sky.ts). Sits below the page content in DOM
          order so the flood stays behind the text. -->
     <div id="moon-finale" aria-hidden="true" class="pointer-events-none fixed inset-0 opacity-0">
     </div>
 
-    <!-- Easter egg: an invisible 44px touch target riding on the moon
-         (sky.ts keeps it positioned and shows it only while the moon is
-         up). Hold a finger on it and the month plays out — the light
-         waxes and wanes while the status line names each phase. Touch
-         pointers only, and hidden from AT: it duplicates nothing
-         functional, it's a secret for wandering fingers. z-10 is
-         load-bearing: the page's <main> is positioned and later in the
-         DOM, so without it the content surface sits on top and real
-         touches never reach this target (long-pressing the moon would
-         text-select the heading instead). -->
-    <div
-      id="moon-touch"
-      aria-hidden="true"
-      style="display: none"
-      class="fixed z-10 h-11 w-11 -translate-x-1/2 -translate-y-1/2 touch-none rounded-full select-none"
-    >
-    </div>
+    <!-- The easter egg's trigger is a triple-tap anywhere on the sky
+         (sky.ts) — no dedicated touch target needed, so nothing ever
+         sits above the page content stealing taps. -->
+
 
     <!-- The real night sky: sky.ts positions the brightest stars for the
          visitor's location and time. -->
