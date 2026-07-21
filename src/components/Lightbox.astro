@@ -220,8 +220,12 @@
   }
 
   .lightbox-dots :global(.lightbox-dot) {
-    width: 1.4rem;
-    height: 1.4rem;
+    /* 24px (1.5rem) meets the WCAG 2.5.8 target-size floor; the full
+       44px doctrine used elsewhere can't apply here — adjacent dots
+       would overlap. Height alone stretches to 2.75rem so the row is
+       thumb-friendly vertically, where there's nothing to collide with. */
+    width: 1.5rem;
+    height: 2.75rem;
     padding: 0;
     border: none;
     background: transparent;

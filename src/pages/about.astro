@@ -97,7 +97,10 @@ const fullSizes = await Promise.all(
     <h1 class="text-4xl font-medium lowercase tracking-tight sm:text-5xl">about</h1>
 
     <section class="sky-card rounded-2xl px-6 py-8 sm:px-10 sm:py-10">
-      <div class="prose prose-lg max-w-none">
+      <!-- prose-lg only from sm up: at 375px the card's inner width fits
+           ~30ch of 18px text, which reads as a wall; base 16px buys back
+           a few characters per line where they're scarcest. -->
+      <div class="prose sm:prose-lg max-w-none">
         <p>
           I'm a frontend software engineer and engineering manager with over a decade of
           experience. I thrive at the intersection of engineering, design, and product. I'm
