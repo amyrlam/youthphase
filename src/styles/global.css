@@ -91,9 +91,10 @@ body {
 
 /* While the page is actively scrolling, the control chips fade so they
    never sit opaquely on top of passing text (sky.ts toggles the class and
-   restores them ~200ms after scrolling stops). Only desktop needs this —
-   on mobile the chips are anchored to the bottom of the page rather than
-   the viewport (Layout.astro) — but the class is harmless there. */
+   restores them ~200ms after scrolling stops). Desktop-only: on mobile
+   the chips are anchored to the bottom of the page rather than the
+   viewport (Layout.astro), so sky.ts skips the class entirely there —
+   fading in-flow chips would just disable the buttons for no reason. */
 #sky-controls {
   transition: opacity 0.25s ease;
 }
