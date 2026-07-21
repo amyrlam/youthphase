@@ -1,0 +1,154 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { Image, getImage } from 'astro:assets';
+import Lightbox from '../components/Lightbox.astro';
+
+import peonies from '../assets/about/peonies.jpg';
+import tessyBookshelf from '../assets/about/tessy-bookshelf.jpg';
+import fastlySoccer from '../assets/about/fastly-soccer.jpg';
+import arches from '../assets/about/arches.jpg';
+import mimosaSelfie from '../assets/about/mimosa-selfie.jpg';
+import cactusCouple from '../assets/about/cactus-couple.jpg';
+import basketballSiblings from '../assets/about/basketball-siblings.jpg';
+import starSculpture from '../assets/about/star-sculpture.jpg';
+import skiVideoPoster from '../assets/about/ski-poster.jpg';
+import skiVideo from '../assets/about/ski-video.mp4';
+
+/* One grid, Instagram-style — the video is a tile like any other, poster
+   image showing until clicked open in the lightbox. */
+const media = [
+  {
+    type: 'image' as const,
+    src: cactusCouple,
+    alt: "Amy and James standing in front of a large cactus tree at Sanchita and Forrest's wedding in Kauai",
+    caption: 'kauai wedding',
+  },
+  {
+    type: 'image' as const,
+    src: tessyBookshelf,
+    alt: "Amy's dog Tessy lying on a sheepskin rug in front of a bookshelf with design books",
+    caption: 'camouflage',
+  },
+  {
+    type: 'image' as const,
+    src: mimosaSelfie,
+    alt: 'Amy smiling and holding up a mimosa in front of palm leaves',
+    caption: '✨',
+  },
+  {
+    type: 'image' as const,
+    src: peonies,
+    alt: 'Pink peonies in bloom, a gardening glove visible at the edge',
+    caption: "you know it's a good bloom when your neighbor comes by, clippers in hand",
+  },
+  {
+    type: 'video' as const,
+    poster: skiVideoPoster,
+    video: skiVideo,
+    alt: 'Amy in ski gear and goggles as snow falls around her',
+    caption: 'alta magic',
+  },
+  {
+    type: 'image' as const,
+    src: arches,
+    alt: 'Red rock arch formations under a blue sky at Arches National Park',
+    caption: 'arches national park #nofilter',
+  },
+  {
+    type: 'image' as const,
+    src: basketballSiblings,
+    alt: 'Amy and her siblings courtside at a Utah Jazz basketball game',
+    caption: '🎷',
+  },
+  {
+    type: 'image' as const,
+    src: starSculpture,
+    alt: "A black star-shaped wire sculpture, 'Vertical Expander' by Jonathan Muecke, from the Open Objects exhibit",
+    caption: 'open objects exhibit · vertical expander by jonathan muecke',
+  },
+  {
+    type: 'image' as const,
+    src: fastlySoccer,
+    alt: 'Amy and Fastly coworkers in red team t-shirts on a soccer field, one holding a golden retriever puppy',
+    caption: '2 fastly 2 furious',
+  },
+];
+
+const posterOptimized = await getImage({ src: skiVideoPoster, width: 900 });
+const fullSizes = await Promise.all(
+  media.map((m) => getImage({ src: m.type === 'video' ? m.poster : m.src, width: 1800 })),
+);
+---
+
+<Layout title="about — Amy Lam" description="About Amy Lam.">
+  <main class="relative mx-auto flex min-h-dvh max-w-2xl flex-col gap-6 px-6 pt-20 pb-32">
+    <a
+      href="/"
+      class="link-squiggle sky-top-ink relative self-start text-[19px] font-bold lowercase tracking-wide transition-transform duration-300 after:absolute after:-inset-3 after:content-[''] hover:-translate-y-0.5 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-current"
+    >
+      ← home
+    </a>
+
+    <h1 class="text-4xl font-medium lowercase tracking-tight sm:text-5xl">about</h1>
+
+    <section class="sky-card rounded-2xl px-6 py-8 sm:px-10 sm:py-10">
+      <div class="prose prose-lg max-w-none">
+        <p>
+          I'm a frontend software engineer and engineering manager with over a decade of
+          experience. I thrive at the intersection of engineering, design, and product. I'm
+          especially interested in design systems, design engineering, and frontend
+          platform & infrastructure work, with a through line of problem-solving around
+          user experience (UX) and developer experience (DX).
+        </p>
+        <p>
+          I currently live in Salt Lake City, Utah, with my partner, James. James is a tech
+          recruiter focused on web3. After eight years in San Francisco, we moved to Utah
+          during peak pandemic, drawn to the skiing and "the greatest snow on earth." My
+          favorite resort is Alta — I still can't believe it's so close to town! I'm
+          genuinely excited about what AI means for our industry, and that's part of why
+          I'm now looking to relocate back to the San Francisco Bay Area. What am I looking
+          for in my next role? Good product and good people. I do my best work on teams that
+          like to riff off each other's ideas, digging into hard, interesting problems
+          together. As the saying goes, creativity is intelligence having fun.
+        </p>
+        <p>
+          As much as I've enjoyed the outdoors here, Utah has been rough on my knees. I had
+          knee surgery that ended up failing in 2026. The silver lining is that the graft
+          failure finally explained a three-year medical mystery. I've become a bit of a gym
+          rat since, working toward returning to sport as what's called an "ACL coper." For
+          now, skiing, pickleball, and dodgeball are benched.
+        </p>
+      </div>
+
+      <div class="mt-8 grid grid-cols-2 gap-3 sm:grid-cols-3">
+        {
+          media.map((item, i) => (
+            <button
+              type="button"
+              data-lightbox-trigger
+              data-full={fullSizes[i].src}
+              data-video={item.type === 'video' ? item.video : undefined}
+              data-alt={item.alt}
+              data-caption={item.caption}
+              class="group relative overflow-hidden rounded-2xl focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-current"
+              aria-label={item.type === 'video' ? `Play video: ${item.alt}` : `View larger: ${item.alt}`}
+            >
+              <Image
+                src={item.type === 'video' ? item.poster : item.src}
+                alt={item.alt}
+                width={500}
+                height={500}
+                class="aspect-square w-full object-cover transition-transform duration-300 group-hover:scale-105"
+              />
+              <span class="pointer-events-none absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/60 to-transparent px-2 pt-6 pb-1.5 text-left text-[11px] leading-tight text-white opacity-0 transition-opacity duration-300 group-hover:opacity-100 group-focus-visible:opacity-100">
+                {item.caption}
+              </span>
+            </button>
+          ))
+        }
+      </div>
+    </section>
+  </main>
+
+  <Lightbox />
+</Layout>

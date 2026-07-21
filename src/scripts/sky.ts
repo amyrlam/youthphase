@@ -48,8 +48,8 @@ const SUN_GLOW: { alt: number; rgb: RGB; a: number }[] = [
   { alt: -3, rgb: [255, 76, 40], a: 0.65 },
   { alt: 0, rgb: [255, 98, 48], a: 0.72 },
   { alt: 6, rgb: [255, 156, 90], a: 0.62 },
-  { alt: 20, rgb: [255, 216, 156], a: 0.55 },
-  { alt: 60, rgb: [255, 246, 220], a: 0.5 },
+  { alt: 20, rgb: [255, 205, 120], a: 0.58 },
+  { alt: 60, rgb: [255, 228, 158], a: 0.55 },
 ];
 
 const MOONLIGHT: RGB = [126, 142, 180];
@@ -99,6 +99,20 @@ export function pickInk(top: RGB, bottom: RGB): RGB {
     return soft.sort((a, b) => worstContrast(b, top, bottom) - worstContrast(a, top, bottom))[0];
   }
   return worstContrast(WHITE, top, bottom) >= worstContrast(BLACK, top, bottom) ? WHITE : BLACK;
+}
+
+/* Top-of-page text (the "← home" back-link) sits on pure --sky-top, not
+   the mid-gradient band pickInk is verified against — night skies get
+   dark enough there that a fixed white can't be swapped for a fixed
+   black. Same logic as pickInk, evaluated at a single point instead of a
+   band, so it stays provably safe while still shifting color like the
+   heading does. */
+export function pickTopInk(top: RGB): RGB {
+  const soft = [INK_LIGHT, INK_DARK].filter((c) => contrast(c, top) >= 5);
+  if (soft.length) {
+    return soft.sort((a, b) => contrast(b, top) - contrast(a, top))[0];
+  }
+  return contrast(WHITE, top) >= contrast(BLACK, top) ? WHITE : BLACK;
 }
 
 /* A soft ellipse behind the center content, darkened (or lightened) just
@@ -390,11 +404,15 @@ function render(place: Place, mode: Mode, at = new Date(), demo = false) {
   const inkIsLight = relLum(ink) > 0.5;
   const chip = chipFor(bottom, inkIsLight);
   const scrim = scrimFor(ink, top, bottom);
+  const topInk = pickTopInk(top);
 
   const root = document.documentElement;
   root.style.setProperty('--sky-top', css(top));
   root.style.setProperty('--sky-bottom', css(bottom));
   root.style.setProperty('--ink', css(ink));
+  root.style.setProperty('--card-bg', css(chip.bg));
+  root.style.setProperty('--chip-ink', css(chip.ink));
+  root.style.setProperty('--top-ink', css(topInk));
 
   const scrimEl = document.getElementById('scrim');
   if (scrimEl) {
@@ -413,33 +431,36 @@ function render(place: Place, mode: Mode, at = new Date(), demo = false) {
   const stars = document.getElementById('stars');
   if (stars) stars.style.opacity = String(starOpacity * 0.9);
 
-  // One soft glow tracks whichever body is up: the sun by day (reddening
-  // toward the horizon), a whisper of cool moonlight by night — brighter
-  // when the moon is fuller.
+  // One soft glow tracks whichever body is up: the sun by day (golden
+  // overhead, reddening toward the horizon), cool moonlight by night. At
+  // night a second, smaller luminous core sits inside the halo — the
+  // sense of a moon behind thin atmosphere, brighter when fuller.
   const glow = document.getElementById('glow');
+  const moonCore = document.getElementById('moon-core');
   if (glow) {
     const moonUp = qMoon.altitude > 0;
     let body: { x: number; y: number; color: string; opacity: number } | null = null;
+    let moonAt: { x: number; y: number } | null = null;
     if (mode === 'day') {
       body =
         sunAltDeg > 0
           ? { x: posX(qSun.azimuth), y: posY(qSun.altitude), color: sunGlowColor(sunAltDeg), opacity: 1 }
           : { x: 66, y: 30, color: sunGlowColor(45), opacity: 1 };
     } else if (mode === 'night') {
-      body = {
-        x: moonUp ? posX(qMoon.azimuth) : 72,
-        y: moonUp ? posY(qMoon.altitude) : 26,
-        color: 'rgba(214, 224, 252, 0.3)',
-        opacity: 0.3 + moonIllum.fraction * 0.5,
-      };
+      moonAt = moonUp
+        ? { x: posX(qMoon.azimuth), y: posY(qMoon.altitude) }
+        : { x: 72, y: 26 };
     } else if (sunAltDeg > -6) {
       body = { x: posX(qSun.azimuth), y: posY(qSun.altitude), color: sunGlowColor(sunAltDeg), opacity: 1 };
     } else if (moonUp) {
+      moonAt = { x: posX(qMoon.azimuth), y: posY(qMoon.altitude) };
+    }
+
+    if (moonAt) {
       body = {
-        x: posX(qMoon.azimuth),
-        y: posY(qMoon.altitude),
+        ...moonAt,
         color: 'rgba(214, 224, 252, 0.3)',
-        opacity: 0.3 + moonIllum.fraction * 0.5,
+        opacity: 0.35 + moonIllum.fraction * 0.5,
       };
     }
 
@@ -450,6 +471,16 @@ function render(place: Place, mode: Mode, at = new Date(), demo = false) {
       glow.style.opacity = String(body.opacity);
     } else {
       glow.style.opacity = '0';
+    }
+
+    if (moonCore) {
+      if (moonAt) {
+        moonCore.style.left = `${moonAt.x}%`;
+        moonCore.style.top = `${moonAt.y}%`;
+        moonCore.style.opacity = String(0.45 + moonIllum.fraction * 0.45);
+      } else {
+        moonCore.style.opacity = '0';
+      }
     }
   }
 

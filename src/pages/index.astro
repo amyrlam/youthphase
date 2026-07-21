@@ -48,9 +48,21 @@ import Layout from '../layouts/Layout.astro';
       </a>
     </nav>
 
+    <nav
+      aria-label="Site pages"
+      class="fixed left-5 bottom-[calc(1.25rem+env(safe-area-inset-bottom))] flex items-center gap-5"
+    >
+      <a
+        href="/about"
+        class="link-squiggle sky-caption relative text-sm lowercase tracking-widest transition-transform duration-300 after:absolute after:-inset-3 after:content-[''] hover:-translate-y-0.5 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-current"
+      >
+        about
+      </a>
+    </nav>
+
     <p
       id="sky-status"
-      class="sky-chip absolute bottom-[calc(4.25rem+env(safe-area-inset-bottom))] rounded-full px-3 py-1.5 text-sm lowercase tracking-widest sm:bottom-[calc(1.75rem+env(safe-area-inset-bottom))]"
+      class="sky-caption absolute bottom-[calc(3.5rem+env(safe-area-inset-bottom))] text-sm lowercase tracking-widest sm:bottom-[calc(1.75rem+env(safe-area-inset-bottom))]"
     >
     </p>
   </main>

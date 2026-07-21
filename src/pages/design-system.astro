@@ -1,0 +1,134 @@
+---
+/* Not linked from anywhere on purpose — a reference for whoever's
+   editing this site (human or otherwise) so established patterns get
+   reused instead of quietly re-invented per page. Update this whenever
+   a new shared pattern gets added. */
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout title="design system — Amy Lam" description="Internal reference, not linked from the site.">
+  <main class="relative mx-auto flex min-h-dvh max-w-2xl flex-col gap-8 px-6 pt-20 pb-32">
+    <a
+      href="/"
+      class="link-squiggle sky-top-ink relative self-start text-[19px] font-bold lowercase tracking-wide transition-transform duration-300 after:absolute after:-inset-3 after:content-[''] hover:-translate-y-0.5 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-current"
+    >
+      ← home
+    </a>
+
+    <h1 class="text-4xl font-medium lowercase tracking-tight sm:text-5xl">design system</h1>
+    <p class="sky-card rounded-2xl px-5 py-4 text-sm">
+      Reference only — this page is not linked from the site. If you add a new shared
+      pattern (a class, a component, a spacing rule), add it here too.
+    </p>
+
+    <section class="sky-card flex flex-col gap-3 rounded-2xl px-6 py-6">
+      <h2 class="text-xl font-medium lowercase">color</h2>
+      <p class="text-sm">
+        Everything is computed at runtime by <code>src/scripts/sky.ts</code> from the sun/moon
+        position — nothing here is a fixed hex value. The variables: <code>--sky-top</code>,
+        <code>--sky-bottom</code> (the gradient), <code>--ink</code> (body text, chosen per
+        frame for ≥4.5:1 against the mid-gradient band — not the extremes), <code>--card-bg</code>
+        / <code>--chip-ink</code> (the "chip" background, chosen for ≥7:1 — used by
+        <code>.sky-chip</code>, <code>.sky-card</code>, <code>.sky-caption</code>),
+        <code>--top-ink</code> (<code>.sky-top-ink</code> — chosen for ≥4.5:1 against pure
+        <code>--sky-top</code> specifically, for text like the "← home" link that sits above
+        any card). Never hardcode a color that's meant to track the sky; use these.
+      </p>
+      <p class="text-sm">
+        <code>npm run check:contrast</code> sweeps every sun altitude and fails the build if
+        any of this drops below AAA. Run it after touching sky.ts or the palette.
+      </p>
+    </section>
+
+    <div class="flex flex-col gap-4">
+      <section class="sky-card flex flex-col gap-4 rounded-2xl px-6 py-6">
+        <h2 class="text-xl font-medium lowercase">links</h2>
+        <p class="text-sm">
+          Every inline text link gets <code>.link-squiggle</code> (wavy underline, 1px, 4px
+          offset) — it's the one trait that must stay consistent regardless of context, so
+          clickable text is never confused with plain captions next to it. Pair it with
+          whichever color/size treatment the context calls for:
+        </p>
+        <a href="/" class="link-squiggle sky-caption w-fit text-sm lowercase tracking-widest">
+          horizon-band nav style
+        </a>
+      </section>
+
+      <!-- .sky-top-card's background is --sky-top itself (not --card-bg),
+           so --top-ink sits on exactly the pairing check-contrast.ts
+           verifies — a real card, just a different one than .sky-card,
+           since --top-ink was never checked against --card-bg. -->
+      <section class="sky-top-card flex flex-col gap-4 rounded-2xl px-6 py-6">
+        <p class="text-sm">
+          top-of-page back-link style — <code>.sky-top-ink</code> on
+          <code>.sky-top-card</code> (background: <code>--sky-top</code> itself, not
+          <code>--card-bg</code>) — a different verified pairing than the card above:
+        </p>
+        <a
+          href="/"
+          class="link-squiggle w-fit text-[19px] font-bold lowercase tracking-wide"
+        >
+          ← back-link style
+        </a>
+      </section>
+    </div>
+
+    <section class="sky-card flex flex-col gap-4 rounded-2xl px-6 py-6">
+      <h2 class="text-xl font-medium lowercase">buttons</h2>
+      <p class="text-sm">
+        <code>.sky-chip</code> — bordered pill, 7:1-contrast background. Hover lifts (same
+        <code>-translate-y-0.5</code> as links/icons) and brightens the border; focus gets a
+        current-color outline. Content color never shifts on hover/focus — only decorative
+        chrome (border, position) does, so the AAA contrast guarantee never depends on
+        interaction state.
+      </p>
+      <button
+        type="button"
+        class="sky-chip relative w-fit rounded-full border border-current/30 px-3 py-1.5 text-xs lowercase tracking-widest transition-transform duration-300 after:absolute after:-inset-2 after:content-[''] hover:-translate-y-0.5 hover:border-current/80 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-current"
+      >
+        sky: auto
+      </button>
+    </section>
+
+    <section class="sky-card flex flex-col gap-4 rounded-2xl px-6 py-6">
+      <h2 class="text-xl font-medium lowercase">icon buttons + touch targets</h2>
+      <p class="text-sm">
+        WCAG AAA wants a 44×44px tap target. When the button should <em>look</em> smaller
+        than that (social icons, lightbox controls), keep the visible element small and
+        expand the real hit area with an invisible <code>::after</code> at
+        <code>inset: -Npx</code> — never shrink the actual clickable region to match the
+        visual size.
+      </p>
+      <pre class="overflow-x-auto rounded-lg border border-current/20 p-3 text-xs">.btn::after {'{'} content: ''; position: absolute; inset: -4px; {'}'}</pre>
+    </section>
+
+    <section class="sky-card flex flex-col gap-3 rounded-2xl px-6 py-6">
+      <h2 class="text-xl font-medium lowercase">cards</h2>
+      <p class="text-sm">
+        <code>.sky-card</code> for any block of content sitting directly on the sky
+        (paragraphs, blog cards). <code>.lightbox-polaroid</code> is the one exception — a
+        fixed warm-ivory card, deliberately <em>not</em> sky-tied, used only for the expanded
+        photo view.
+      </p>
+    </section>
+
+    <section class="sky-card flex flex-col gap-3 rounded-2xl px-6 py-6">
+      <h2 class="text-xl font-medium lowercase">motion</h2>
+      <ul class="list-inside list-disc text-sm">
+        <li>Interactive hover/focus feedback: 300ms.</li>
+        <li>Sky color transitions (gradient, ink, chip): 1.6–2s, so they read as weather, not UI.</li>
+        <li><code>prefers-reduced-motion</code> disables star twinkle, shooting stars, and tap sparkles.</li>
+      </ul>
+    </section>
+
+    <section class="sky-card flex flex-col gap-3 rounded-2xl px-6 py-6">
+      <h2 class="text-xl font-medium lowercase">type</h2>
+      <p class="text-sm">
+        Space Grotesk everywhere. UI chrome (nav, buttons, captions, headings) is lowercase by
+        design — body prose (bio paragraphs, blog posts) uses normal sentence case for
+        readability. Don't lowercase prose to force consistency with the chrome; they're
+        different registers on purpose.
+      </p>
+    </section>
+  </main>
+</Layout>
