@@ -43,31 +43,24 @@
 
 <style>
   .lightbox-dialog {
-    /* box-sizing: border-box so the gutter padding below is included in
-       this cap, not added on top of it — otherwise narrow viewports
-       overflow and the nav buttons end up sitting on the photo instead
-       of beside it. */
     box-sizing: border-box;
-    max-width: min(96vw, 60rem);
+    /* The side reservation (9rem total) keeps the widest photo clear of
+       the viewport-edge prev/next buttons: 1.25rem inset + 2.25rem button
+       + ~1rem breathing room per side. */
+    max-width: min(calc(100vw - 9rem), 60rem);
     max-height: 90vh;
     margin: auto;
     border: none;
     background: transparent;
-    /* Side gutters give the prev/next buttons their own space instead of
-       sitting on top of the photo. Equal to the visible button size
-       (2.25rem) + a 1rem gap to the polaroid. .lightbox-close reads this
-       same variable, so the two stay in sync automatically — including
-       under the mobile override below. */
-    --gutter: 3.25rem;
-    padding-inline: var(--gutter);
     overflow: visible;
   }
 
-  /* Mobile screens can't spare a full gutter — prev/next are hidden there
-     (swipe + dots take over), so the gutter collapses to a slim margin. */
+  /* Mobile hides prev/next (swipe + dots take over), so no side
+     reservation — just a slim margin so the polaroid isn't edge-to-edge. */
   @media (max-width: 640px) {
     .lightbox-dialog {
-      --gutter: 0.75rem;
+      max-width: 96vw;
+      padding-inline: 0.75rem;
     }
   }
 
@@ -173,26 +166,32 @@
   /* Floats diagonally outside the polaroid's top-right corner. The gap
      here is a straight-line (not per-axis) distance from the corner — so
      each axis component is diag-gap/√2, not diag-gap itself, otherwise
-     the actual diagonal distance comes out ~1.4x too big. Half of
-     .lightbox-next's 1rem edge gap, pulled in closer per feedback. */
+     the actual diagonal distance comes out ~1.4x too big. */
   .lightbox-close {
     --diag-gap: 0.3536rem;
     top: calc(-1 * var(--diag-gap) - 2.25rem);
-    right: calc(var(--gutter) - var(--diag-gap) - 2.25rem);
+    right: calc(-1 * var(--diag-gap) - 2.25rem);
   }
 
+  /* Pinned to the viewport edges (fixed, not absolute) so they're a
+     stable target across photos: the dialog's width changes with each
+     photo's aspect ratio, and edge-anchored buttons let you park the
+     mouse and click through without re-aiming — same pattern as Google
+     Photos / Instagram's desktop lightbox. Fixed positioning resolves
+     against the viewport even in the top layer. */
   .lightbox-prev,
   .lightbox-next {
+    position: fixed;
     top: 50%;
     translate: 0 -50%;
   }
 
   .lightbox-prev {
-    left: 0;
+    left: 1.25rem;
   }
 
   .lightbox-next {
-    right: 0;
+    right: 1.25rem;
   }
 
   /* Hidden on desktop, shown by the mobile media query below — which
