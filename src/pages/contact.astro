@@ -1,33 +1,5 @@
 ---
 import Layout from '../layouts/Layout.astro';
-import { Image, getImage } from 'astro:assets';
-import Lightbox from '../components/Lightbox.astro';
-
-import youthPhase from '../assets/contact/youth-phase-2.png';
-import harborDusk from '../assets/contact/harbor-dusk.jpg';
-import harborSummer from '../assets/contact/harbor-summer.jpg';
-
-/* The dinghy is the hero — she's who the site is named after — with the
-   two harbor shots beneath. Same lightbox contract as the about grid. */
-const photos = [
-  {
-    src: youthPhase,
-    alt: "A small white dinghy named Youth Phase 2 floating on rippled water, photographed from above — a print of Pop's boat",
-    caption: "pop's dinghy, youth phase 2",
-  },
-  {
-    src: harborDusk,
-    alt: 'Sailboats moored in a Connecticut harbor at dusk, masts silhouetted against a peach and violet sky',
-    caption: 'the harbor at dusk',
-  },
-  {
-    src: harborSummer,
-    alt: 'The same harbor in summer: sailboats at anchor, kids paddling a yellow kayak near a wooden dock under big clouds',
-    caption: 'summer in the harbor',
-  },
-];
-
-const fullSizes = await Promise.all(photos.map((p) => getImage({ src: p.src, width: 1600 })));
 ---
 
 <Layout title="contact — Amy Lam" description="Get in touch with Amy Lam.">
@@ -52,50 +24,133 @@ const fullSizes = await Promise.all(photos.map((p) => getImage({ src: p.src, wid
         </p>
       </div>
 
-      <!-- The dinghy full-width, the two harbor shots side by side under
-           her — a deliberate hierarchy, not a uniform grid. -->
-      <div class="mt-8 flex flex-col gap-3">
-        <button
-          type="button"
-          data-lightbox-trigger
-          data-full={fullSizes[0].src}
-          data-alt={photos[0].alt}
-          data-caption={photos[0].caption}
-          class="group relative overflow-hidden rounded-2xl focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-current"
-          aria-label={`View larger: ${photos[0].alt}`}
+      <!-- Youth Phase herself, drawn rather than photographed — the same
+           one-exception move as the moon face. The water is filled with
+           the live sky variables, so the harbor sits in whatever weather
+           the visitor's sky is having; the hull is polaroid ivory, the
+           site's one deliberately sky-independent color. She rides at
+           anchor: a slow bob, drifting ripples, a drooping pennant —
+           weather-speed motion, stilled under prefers-reduced-motion. -->
+      <figure class="dinghy-scene mt-8">
+        <svg
+          viewBox="0 0 600 340"
+          role="img"
+          aria-label="An illustrated white dinghy named Youth Phase, the numeral IX on her hull, riding at anchor on water that mirrors the current sky, with a wooded shoreline and moored sailboats in the distance"
+          class="block w-full rounded-2xl"
         >
-          <Image
-            src={photos[0].src}
-            alt={photos[0].alt}
-            width={900}
-            height={900}
-            class="aspect-square w-full object-cover transition-transform duration-300 group-hover:scale-105"
-          />
-        </button>
-        <div class="grid grid-cols-2 gap-3">
-          {
-            photos.slice(1).map((photo, i) => (
-              <button
-                type="button"
-                data-lightbox-trigger
-                data-full={fullSizes[i + 1].src}
-                data-alt={photo.alt}
-                data-caption={photo.caption}
-                class="group relative overflow-hidden rounded-2xl focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-current"
-                aria-label={`View larger: ${photo.alt}`}
-              >
-                <Image
-                  src={photo.src}
-                  alt={photo.alt}
-                  width={600}
-                  height={400}
-                  class="aspect-[3/2] w-full object-cover transition-transform duration-300 group-hover:scale-105"
-                />
-              </button>
-            ))
-          }
-        </div>
-      </div>
+          <defs>
+            <!-- The sea inverts the sky gradient — near water carries the
+                 horizon color, deep water the zenith color — like a real
+                 reflection. -->
+            <linearGradient id="sea" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0" stop-color="var(--sky-bottom, #1e2c60)"></stop>
+              <stop offset="1" stop-color="var(--sky-top, #0a1030)"></stop>
+            </linearGradient>
+          </defs>
+
+          <!-- Above the horizon the card background is the sky. Distant
+               shoreline and moored neighbors in currentColor, so they
+               keep contrast whatever ink the sky computes. -->
+          <g fill="currentColor" opacity="0.22">
+            <path
+              d="M0 170 C40 156 90 160 130 165 C180 150 240 158 290 164 C350 152 420 158 470 163 C520 154 570 160 600 166 L600 170 Z"
+            ></path>
+          </g>
+          <g stroke="currentColor" stroke-width="1.5" opacity="0.35" fill="none">
+            <line x1="88" y1="118" x2="88" y2="168"></line>
+            <line x1="480" y1="128" x2="480" y2="167"></line>
+            <line x1="540" y1="140" x2="540" y2="168"></line>
+          </g>
+          <!-- One neighbor keeps her sail up — without at least one sail
+               silhouette the distant masts read as pilings. -->
+          <path d="M480 130 L480 164 L462 164 Z" fill="currentColor" opacity="0.25"></path>
+          <g fill="currentColor" opacity="0.35">
+            <path d="M74 168 q14 8 30 0 z"></path>
+            <path d="M468 167 q12 7 26 0 z"></path>
+            <path d="M529 168 q11 6 23 0 z"></path>
+          </g>
+
+          <!-- The water. A whisper of night-navy keeps the ivory hull
+               legible even under a pale midday sky. -->
+          <rect x="0" y="170" width="600" height="170" fill="url(#sea)"></rect>
+          <rect x="0" y="170" width="600" height="170" fill="#0a1030" opacity="0.18"></rect>
+
+          <!-- Her reflection: a soft ivory smudge, shimmering slowly. -->
+          <ellipse class="dinghy-reflection" cx="300" cy="268" rx="92" ry="10" fill="#f7f4ed" opacity="0.14">
+          </ellipse>
+
+          <!-- Ripples in moonlight, each drifting on its own period. -->
+          <g stroke="#f0f4ff" fill="none" stroke-linecap="round">
+            <path class="ripple ripple-1" d="M120 262 q30 -6 62 0" stroke-width="2" opacity="0.28"></path>
+            <path class="ripple ripple-2" d="M400 278 q38 -7 78 0" stroke-width="2" opacity="0.22"></path>
+            <path class="ripple ripple-3" d="M180 300 q44 -8 90 0" stroke-width="2.5" opacity="0.18"></path>
+            <path class="ripple ripple-2" d="M420 316 q30 -6 60 0" stroke-width="2" opacity="0.14"></path>
+            <path class="ripple ripple-3" d="M90 226 q26 -5 52 0" stroke-width="1.5" opacity="0.2"></path>
+          </g>
+
+          <!-- Youth Phase. Side profile, bow to the right, like she's
+               swung on her mooring to face the tide. -->
+          <g class="dinghy">
+            <!-- Mast stub and the drooping pennant from the photo. -->
+            <line x1="286" y1="212" x2="282" y2="102" stroke="#8fa0c0" stroke-width="3" stroke-linecap="round"
+            ></line>
+            <path
+              class="pennant"
+              d="M282 102 q20 4 34 14 q-16 10 -30 6 q-3 -10 -4 -20 z"
+              fill="#f7f4ed"
+              opacity="0.95"
+            ></path>
+
+            <!-- Hull: ivory sides, a navy waterline stroke, the sheer
+                 dipping amidships like a real lapstrake dinghy. -->
+            <path
+              d="M196 212 C240 220 360 220 404 208 C412 206 418 210 414 218 C404 240 380 252 300 252 C228 252 206 240 198 224 C195 218 193 212 196 212 Z"
+              fill="#f7f4ed"
+            ></path>
+            <!-- Interior shadow along the sheer. -->
+            <path
+              d="M204 214 C244 221 356 221 400 210 C396 218 380 224 300 224 C240 224 216 220 204 214 Z"
+              fill="#8fa0c0"
+              opacity="0.5"
+            ></path>
+            <!-- Rub rail. -->
+            <path
+              d="M196 212 C240 220 360 220 404 208"
+              fill="none"
+              stroke="#1e2c60"
+              stroke-width="2.5"
+              stroke-linecap="round"
+              opacity="0.55"
+            ></path>
+            <!-- Lapstrake plank lines. -->
+            <path d="M206 230 C250 238 352 238 402 226" fill="none" stroke="#c3cde0" stroke-width="1.5" opacity="0.7"></path>
+            <path d="M214 241 C256 247 346 247 394 237" fill="none" stroke="#c3cde0" stroke-width="1.5" opacity="0.5"></path>
+
+            <!-- Her name, painted the way Pop painted it. -->
+            <text
+              x="300"
+              y="243"
+              text-anchor="middle"
+              fill="#1e2c60"
+              style="font-size: 15px; font-weight: 500; letter-spacing: 0.18em;"
+            >
+              YOUTH PHASE
+            </text>
+            <text
+              x="384"
+              y="238"
+              text-anchor="middle"
+              fill="#1e2c60"
+              style="font-size: 14px; font-weight: 500; letter-spacing: 0.08em;"
+            >
+              IX
+            </text>
+          </g>
+        </svg>
+        <figcaption class="pt-3 text-center text-sm lowercase tracking-widest">
+          youth phase, at anchor · phase ix
+        </figcaption>
+      </figure>
     </section>
 
     <section class="sky-card rounded-2xl px-6 py-8 sm:px-10 sm:py-10">
@@ -158,9 +213,91 @@ const fullSizes = await Promise.all(photos.map((p) => getImage({ src: p.src, wid
       </form>
     </section>
   </main>
-
-  <Lightbox />
 </Layout>
+
+<style>
+  /* At anchor: the whole boat rides a slow swell — a couple of pixels of
+     lift and a degree of heel, never more. Weather-speed (7s+), matching
+     the sky's own unhurried transitions. */
+  .dinghy {
+    transform-origin: 300px 232px;
+    animation: dinghy-bob 7s ease-in-out infinite;
+  }
+
+  .pennant {
+    transform-origin: 282px 102px;
+    animation: pennant-sway 5s ease-in-out infinite;
+  }
+
+  .dinghy-reflection {
+    animation: reflection-shimmer 7s ease-in-out infinite;
+  }
+
+  .ripple {
+    animation: ripple-drift 11s ease-in-out infinite;
+  }
+
+  .ripple-2 {
+    animation-duration: 14s;
+    animation-delay: -4s;
+  }
+
+  .ripple-3 {
+    animation-duration: 17s;
+    animation-delay: -9s;
+  }
+
+  @keyframes dinghy-bob {
+    0%,
+    100% {
+      transform: translateY(0) rotate(0deg);
+    }
+    50% {
+      transform: translateY(3px) rotate(-1.1deg);
+    }
+  }
+
+  @keyframes pennant-sway {
+    0%,
+    100% {
+      transform: skewY(0deg);
+    }
+    50% {
+      transform: skewY(-4deg);
+    }
+  }
+
+  @keyframes reflection-shimmer {
+    0%,
+    100% {
+      opacity: 0.14;
+      transform: scaleX(1);
+    }
+    50% {
+      opacity: 0.09;
+      transform: scaleX(0.96);
+    }
+  }
+
+  @keyframes ripple-drift {
+    0%,
+    100% {
+      transform: translateX(0);
+    }
+    50% {
+      transform: translateX(14px);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .dinghy,
+    .pennant,
+    .dinghy-reflection,
+    .ripple {
+      animation: none;
+    }
+  }
+</style>
 
 <script>
   /* Progressive enhancement over /api/contact (a Vercel function — under
