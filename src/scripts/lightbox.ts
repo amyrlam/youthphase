@@ -67,9 +67,6 @@ function initLightbox() {
       if (img) img.hidden = true;
       video!.hidden = false;
       video!.src = trigger.dataset.video;
-      // Start muted: autoplay-with-sound is a startle in quiet contexts.
-      // The controls are visible, so unmuting is one tap away.
-      video!.muted = true;
       video!.play().catch(() => {});
     } else {
       video!.hidden = true;

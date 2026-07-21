@@ -511,6 +511,21 @@ function render(place: Place, mode: Mode, at = new Date(), demo = false) {
         // Floor high enough that even a thin crescent reads as a
         // deliberate disc rather than a stray glow.
         moonCore.style.opacity = String(0.55 + moonIllum.fraction * 0.4);
+
+        // Phase shape: slide a sky-colored shadow disc across the lit
+        // one (two-circle model). Offset 0 = new moon (fully covered),
+        // one diameter = full moon (clear). Waxing moons light up from
+        // the right, waning from the left. The parent's blur softens
+        // the terminator into something atmospheric.
+        const shadow = document.getElementById('moon-shadow');
+        if (shadow) {
+          const diameter = moonCore.getBoundingClientRect().width;
+          const waxing = moonIllum.phase < 0.5;
+          const dx = moonIllum.fraction * diameter * (waxing ? -1 : 1);
+          shadow.style.transform = `translateX(${dx.toFixed(1)}px)`;
+          const behind = mix(top, bottom, Math.min(1, Math.max(0, moonAt.y / 100)));
+          shadow.style.backgroundColor = css(behind);
+        }
       } else {
         moonCore.style.opacity = '0';
       }

@@ -48,12 +48,19 @@ const ogImage = new URL('/og.png', Astro.site);
          above. The blur must stay small relative to the disc (≲1/5 of
          its width) or the edge dissolves and the moon reads as an
          accidental smudge — that bug shipped twice, first on phones
-         (26px core, 18px blur), then on desktop (56px core, same 18px). -->
+         (26px core, 18px blur), then on desktop (56px core, same 18px).
+
+         Inside it, #moon-shadow is a sky-colored circle sky.ts slides
+         sideways by the real illuminated fraction — the classic
+         two-circle phase model. A uniformly lit perfect circle read as
+         a ping-pong ball; the actual crescent/gibbous shape is what
+         makes it read as the moon. -->
     <div
       id="moon-core"
       aria-hidden="true"
-      class="pointer-events-none fixed h-[13vw] w-[13vw] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[#eef2ff] opacity-0 blur-[10px] sm:h-[7vmin] sm:w-[7vmin] sm:blur-[11px]"
+      class="pointer-events-none fixed h-[13vw] w-[13vw] -translate-x-1/2 -translate-y-1/2 overflow-hidden rounded-full bg-[#eef2ff] opacity-0 blur-[10px] sm:h-[7vmin] sm:w-[7vmin] sm:blur-[11px]"
     >
+      <div id="moon-shadow" class="absolute inset-0 rounded-full"></div>
     </div>
 
     <!-- The real night sky: sky.ts positions the brightest stars for the
