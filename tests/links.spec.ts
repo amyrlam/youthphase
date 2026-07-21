@@ -13,8 +13,11 @@ for (const path of PAGES) {
     const links = await page.locator('a[href^="http"]').all();
     for (const link of links) {
       // The dev toolbar injects its own links under `astro dev`; they
-      // aren't site content and don't ship in the build.
-      if (await link.evaluate((el) => Boolean(el.closest('astro-dev-toolbar')))) continue;
+      // aren't site content and don't ship in the build. Its UI lives in
+      // shadow DOM (which Playwright pierces but closest() won't cross),
+      // so filter on the root node: site content is always in the
+      // document proper.
+      if (await link.evaluate((el) => el.getRootNode() !== document)) continue;
       const href = await link.getAttribute('href');
       if (href?.startsWith('https://youthphase.dev')) continue; // own domain: same tab is fine
       const target = await link.getAttribute('target');

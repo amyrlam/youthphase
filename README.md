@@ -59,6 +59,9 @@ the geo lookup resolves, and re-renders every minute.
 - `/design-system` — unlisted page showing the live shared patterns.
   [PRODUCT.md](PRODUCT.md) (voice, audience) and [DESIGN.md](DESIGN.md)
   (the visual system) are the written half.
+- Design work happens in [Claude Code](https://claude.com/claude-code)
+  with the Impeccable plugin (its commands read PRODUCT.md and DESIGN.md
+  as context), with the Mobbin MCP on hand for interaction reference.
 
 ## Development
 
