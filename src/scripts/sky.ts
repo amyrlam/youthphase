@@ -820,7 +820,9 @@ async function start() {
   const demoButton = document.getElementById('sky-demo');
   const syncDemoButton = () => {
     if (!demoButton) return;
-    demoButton.textContent = demoRunning ? '◼ stop' : '▶ 24h';
+    // U+FE0E forces text presentation — without it, ◼ and ▶ can render
+    // as color emoji (a stuck-black square on iOS) that ignore `color`.
+    demoButton.textContent = demoRunning ? '◼︎ stop' : '▶︎ 24h';
     demoButton.setAttribute(
       'aria-label',
       demoRunning ? 'Stop the sky time-lapse' : 'Play a 24-hour sky time-lapse',
