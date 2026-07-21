@@ -722,9 +722,13 @@ function enableMoonShow(getPlace: () => Place, getMode: () => Mode) {
     if (demoRunning || cycleRunning) return;
     cycleRunning = true;
     const rainbow = document.getElementById('rainbow');
+    const cloud = document.getElementById('cloud-dim');
     if (status) status.textContent = 'a sudden shower';
+    cloud?.classList.add('on');
     if (!reducedMotion()) spawnRain();
     setTimeout(() => {
+      // The sun comes back out: the cloud lifts as the rainbow arrives.
+      cloud?.classList.remove('on');
       rainbow?.classList.add('arc');
       if (status) status.textContent = '…and a rainbow';
     }, 3200);

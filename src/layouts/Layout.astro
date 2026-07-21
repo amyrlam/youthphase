@@ -115,9 +115,13 @@ const ogImage = new URL('/og.png', Astro.site);
     <div id="moon-finale" aria-hidden="true" class="pointer-events-none fixed inset-0 opacity-0">
     </div>
 
-    <!-- Day-show rainbow: a broad band climbing diagonally across the
-         page after the rain — the foot of a bow too big for the screen
-         (sky.ts triggers it; colors and fade in global.css). -->
+    <!-- Day-show shower cloud: a faint gray dim over the sky while the
+         rain falls, lifting when the rainbow arrives (sky.ts). -->
+    <div id="cloud-dim" aria-hidden="true" class="pointer-events-none fixed inset-0 opacity-0"></div>
+
+    <!-- Day-show rainbow: the left leg of a bow whose arch is far off
+         the upper right — mostly horizontal across the page, sweeping
+         up as it exits (sky.ts triggers it; geometry in global.css). -->
     <div id="rainbow" aria-hidden="true" class="pointer-events-none fixed"></div>
 
     <!-- The easter egg's trigger is a triple-tap anywhere on the sky

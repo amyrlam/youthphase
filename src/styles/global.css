@@ -373,10 +373,24 @@ html.moon-cycle .show-dim {
   width: 1.5px;
   height: 44px;
   border-radius: 1px;
-  background: linear-gradient(180deg, transparent, rgba(225, 236, 255, 0.75));
+  /* Rain against a bright sky is darker than the sky, not lighter —
+     white streaks read as falling light. A deeper shade of the sky's
+     own blue reads as water. */
+  background: linear-gradient(180deg, transparent, rgba(52, 66, 94, 0.6));
   pointer-events: none;
   opacity: 0;
   animation: rain-fall var(--t, 1.1s) linear var(--delay, 0s) forwards;
+}
+
+/* The shower's cloud: a faint gray film while the rain falls, gone the
+   moment the rainbow arrives — the sun coming back out. */
+#cloud-dim {
+  background: linear-gradient(180deg, rgba(82, 92, 110, 0.42), rgba(108, 118, 136, 0.22));
+  transition: opacity 0.9s ease;
+}
+
+#cloud-dim.on {
+  opacity: 1;
 }
 
 /* The streak's tilt and its drift describe the same 4° vector — when
@@ -395,27 +409,30 @@ html.moon-cycle .show-dim {
   }
 }
 
-/* Day-show rainbow: not the postcard arc — a broad band climbing
-   diagonally up and to the right, as if you're standing near the foot
-   of one far too big to fit the screen. Red on the upper edge (the
-   outer edge of a bow's lower limb), blurred and translucent so it
-   reads as light rather than clipart. Wider than the viewport, so no
-   ends are ever visible. */
+/* Day-show rainbow: the left leg of a bow whose arch sits far off the
+   upper right. A huge ring whose center floats above the top-left
+   quarter (25vw, -10dvh) with a 70dvh radius: its lowest point lands
+   mid-left of the screen — where the band runs horizontal — and the
+   arc sweeps increasingly upward as it exits to the upper right. Red
+   rides the outer (lower-left) edge, violet-blue the inner, like the
+   real thing; blurred and translucent so it reads as light rather
+   than clipart. */
 #rainbow {
-  left: 50%;
-  top: 60dvh;
-  width: 240vw;
-  height: 90px;
-  transform: translate(-50%, -50%) rotate(-18deg);
-  background: linear-gradient(
-    180deg,
-    transparent,
-    rgba(255, 135, 135, 0.3) 12%,
-    rgba(255, 185, 125, 0.32) 32%,
-    rgba(255, 235, 150, 0.34) 52%,
-    rgba(140, 220, 190, 0.32) 72%,
-    rgba(140, 180, 255, 0.3) 90%,
-    transparent
+  left: 25vw;
+  top: -10dvh;
+  width: 140dvh;
+  height: 140dvh;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  background: radial-gradient(
+    circle closest-side,
+    transparent 79%,
+    rgba(150, 185, 255, 0.3) 83%,
+    rgba(140, 220, 190, 0.32) 87%,
+    rgba(255, 235, 150, 0.34) 90.5%,
+    rgba(255, 185, 125, 0.32) 94%,
+    rgba(255, 135, 135, 0.3) 97.5%,
+    transparent 100%
   );
   filter: blur(6px);
   opacity: 0;
