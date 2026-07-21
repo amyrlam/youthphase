@@ -30,11 +30,13 @@ import youthPhase from '../assets/contact/youth-phase-print.png';
         </p>
       </div>
 
-      <!-- The photo as a print: matte ivory border (the polaroid's own
-           ivory — the site's one sky-independent surface), a soft float
-           shadow, and a half-degree tilt like it was laid down by hand.
-           The retouched crop is optimized by astro:assets. -->
-      <div class="photo-print mt-8">
+      <!-- The photo as a print, taped to the page: matte ivory border
+           (the polaroid's own ivory — the site's one sky-independent
+           surface), a soft float shadow, a half-degree tilt, and a
+           single translucent tape strip across the top edge — the
+           scrapbook gesture, after Pinterest's photo-editor "Tape"
+           border. The retouched crop is optimized by astro:assets. -->
+      <div class="photo-print mt-10">
         <Image
           src={youthPhase}
           alt="A photo print of Pop's dinghy: a small white boat floating on rippled dusk water, YOUTH PHASE 2 lettered on the bow"
@@ -149,6 +151,24 @@ import youthPhase from '../assets/contact/youth-phase-print.png';
 
   .photo-print:hover {
     transform: rotate(0deg);
+  }
+
+  /* The tape: one translucent strip over the top edge, hanging onto
+     the card behind it. Slightly irregular quad + soft shadow; the
+     print's edge ghosts through the translucency, which is what sells
+     it as tape rather than a label. */
+  .photo-print::before {
+    content: '';
+    position: absolute;
+    top: -0.7rem;
+    left: 50%;
+    width: clamp(5rem, 24%, 7.5rem);
+    height: 1.7rem;
+    transform: translateX(-50%) rotate(-2.5deg);
+    background: linear-gradient(rgba(244, 240, 225, 0.72), rgba(231, 224, 200, 0.66));
+    clip-path: polygon(2% 6%, 97% 0, 100% 92%, 0 100%);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+    pointer-events: none;
   }
 
   @media (prefers-reduced-motion: reduce) {
