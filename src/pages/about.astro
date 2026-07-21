@@ -81,7 +81,10 @@ const fullSizes = await Promise.all(
 ---
 
 <Layout title="about — Amy Lam" description="About Amy Lam.">
-  <main class="relative mx-auto flex min-h-dvh max-w-2xl flex-col gap-6 px-6 pt-20 pb-32">
+  <!-- pb clears the fixed horizon band (h-40) plus the control chips, so
+       text at rest never sits under them; the chips also fade while the
+       page is actively scrolling (see sky.ts). -->
+  <main class="relative mx-auto flex min-h-dvh max-w-2xl flex-col gap-6 px-6 pt-20 pb-48">
     <a
       href="/"
       class="link-squiggle sky-top-ink relative self-start text-[19px] font-bold lowercase tracking-wide transition-transform duration-300 after:absolute after:-inset-3 after:content-[''] hover:-translate-y-0.5 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-current"
@@ -103,7 +106,7 @@ const fullSizes = await Promise.all(
         <p>
           I currently live in Salt Lake City, Utah, with my partner, James. James is a tech
           recruiter focused on web3. After eight years in San Francisco, we moved to Utah
-          during peak pandemic, drawn to the skiing and "the greatest snow on earth." My
+          during peak pandemic, drawn to skiing "the greatest snow on earth." My
           favorite resort is Alta — I still can't believe it's so close to town! I'm
           genuinely excited about what AI means for our industry, and that's part of why
           I'm now looking to relocate back to the San Francisco Bay Area. What am I looking
@@ -140,9 +143,6 @@ const fullSizes = await Promise.all(
                 height={500}
                 class="aspect-square w-full object-cover transition-transform duration-300 group-hover:scale-105"
               />
-              <span class="pointer-events-none absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/60 to-transparent px-2 pt-6 pb-1.5 text-left text-[11px] leading-tight text-white opacity-0 transition-opacity duration-300 group-hover:opacity-100 group-focus-visible:opacity-100">
-                {item.caption}
-              </span>
             </button>
           ))
         }

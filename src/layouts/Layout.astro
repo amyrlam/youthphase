@@ -7,6 +7,7 @@ interface Props {
 }
 
 const { title = 'Amy Lam', description = 'Personal site of Amy Lam' } = Astro.props;
+const ogImage = new URL('/og.png', Astro.site);
 ---
 
 <!doctype html>
@@ -17,21 +18,45 @@ const { title = 'Amy Lam', description = 'Personal site of Amy Lam' } = Astro.pr
     <meta name="description" content={description} />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <title>{title}</title>
+
+    <!-- Link previews (LinkedIn, Slack, iMessage, X): without these a
+         shared link renders bare. og.png is a dusk-sky capture of the
+         homepage — regenerate with scripts/generate-og.mjs. -->
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={Astro.url} />
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:image" content={ogImage} />
   </head>
   <body class="relative antialiased">
+    <!-- Phones size against vw with a gentler blur: 45vmin of a 375px
+         screen is a ~170px circle, and the fixed 90px blur smears that
+         to near-invisibility (the desktop glow is ~2x the size, so the
+         same blur reads as soft rather than gone). -->
     <div
       id="glow"
       aria-hidden="true"
-      class="pointer-events-none fixed h-[45vmin] w-[45vmin] -translate-x-1/2 -translate-y-1/2 rounded-full opacity-0 blur-[90px]"
+      class="pointer-events-none fixed h-[60vw] w-[60vw] -translate-x-1/2 -translate-y-1/2 rounded-full opacity-0 blur-[55px] sm:h-[45vmin] sm:w-[45vmin] sm:blur-[90px]"
     >
     </div>
 
-    <!-- The moon's luminous core: a small bright center inside the wide
-         halo above — a sense of moon, not a literal disc. -->
+    <!-- The moon: not a picture of a moon at all — just the brightest
+         light in the sky, a soft luminous point like Venus at dusk.
+         Every literal rendering (blurred disc, phase pie-chart, vector
+         crescent) eventually read as fake next to the 1-3px stars;
+         a point of light belongs to their family. The phase lives in
+         the status line's words instead. Brightness follows the real
+         illuminated fraction, the glow goes horizon-gold when the moon
+         rides low (.moon-low), and nearby stars wash out (sky.ts) so
+         nothing sits "on top of" it. Styling in global.css. -->
     <div
       id="moon-core"
       aria-hidden="true"
-      class="pointer-events-none fixed h-[7vmin] w-[7vmin] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[#eef2ff] opacity-0 blur-[18px]"
+      class="pointer-events-none fixed h-[7px] w-[7px] -translate-x-1/2 -translate-y-1/2 rounded-full opacity-0"
     >
     </div>
 
@@ -60,6 +85,7 @@ const { title = 'Amy Lam', description = 'Personal site of Amy Lam' } = Astro.pr
     <slot />
 
     <div
+      id="sky-controls"
       class="fixed right-5 bottom-[calc(1.25rem+env(safe-area-inset-bottom))] flex items-center gap-4"
     >
       <button

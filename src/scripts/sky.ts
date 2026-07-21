@@ -6,9 +6,17 @@ interface Place {
   latitude: number;
   longitude: number;
   label: string;
+  /* False when the IP lookup failed and we're showing San Francisco's sky
+     instead of the visitor's — the status line says so ("borrowed sky"). */
+  located: boolean;
 }
 
-const FALLBACK: Place = { latitude: 37.7749, longitude: -122.4194, label: 'san francisco' };
+const FALLBACK: Place = {
+  latitude: 37.7749,
+  longitude: -122.4194,
+  label: 'san francisco',
+  located: false,
+};
 
 /* Manual override for accessibility: 'auto' follows the real sky,
    'day'/'night' pin the palette. */
@@ -281,21 +289,36 @@ function updateStars(place: Place, at: Date) {
       const size = Math.max(1, 3.4 - mag * 0.75);
       star.style.width = `${size.toFixed(1)}px`;
       star.style.height = `${size.toFixed(1)}px`;
-      star.style.setProperty('--o', Math.min(0.95, Math.max(0.3, 0.9 - mag * 0.18)).toFixed(2));
+      const baseO = Math.min(0.95, Math.max(0.3, 0.9 - mag * 0.18));
+      star.dataset.baseO = baseO.toFixed(2);
+      star.style.setProperty('--o', baseO.toFixed(2));
       star.style.setProperty('--d', `${(2.5 + rand() * 5).toFixed(1)}s`);
       star.style.animationDelay = `${(rand() * 6).toFixed(1)}s`;
       if (mag < 0.5) star.style.boxShadow = '0 0 4px rgba(240, 244, 255, 0.7)';
       container.appendChild(star);
     }
   }
+  // Moonlight washes out its neighbors: stars fade within ~10 screen-%
+  // of the moon, so nothing ever sits "on top of" it.
+  const moon = SunCalc.getMoonPosition(at, place.latitude, place.longitude);
+  const moonUp = moon.altitude > 0;
+  const mx = posX(moon.azimuth);
+  const my = posY(moon.altitude);
+
   const spans = container.children;
   STARS.forEach(([ra, dec], i) => {
     const el = spans[i] as HTMLElement;
     const { altDeg, azDeg } = starAltAz(ra, dec, at, place.latitude, place.longitude);
     if (altDeg > 2) {
+      const x = posX(azDeg);
+      const y = starY(altDeg);
       el.style.display = '';
-      el.style.left = `${posX(azDeg).toFixed(2)}%`;
-      el.style.top = `${starY(altDeg).toFixed(2)}%`;
+      el.style.left = `${x.toFixed(2)}%`;
+      el.style.top = `${y.toFixed(2)}%`;
+      const base = parseFloat(el.dataset.baseO ?? '0.8');
+      const dist = moonUp ? Math.hypot(x - mx, y - my) : Infinity;
+      const wash = dist >= 11 ? 1 : Math.max(0.05, (dist - 3) / 8);
+      el.style.setProperty('--o', (base * wash).toFixed(2));
     } else {
       el.style.display = 'none';
     }
@@ -304,22 +327,44 @@ function updateStars(place: Place, at: Date) {
 
 /* An occasional shooting star while the sky is dark. */
 let nightNow = false;
+
+function spawnShootingStar() {
+  const container = document.getElementById('stars');
+  if (!container) return;
+  const s = document.createElement('span');
+  s.className = 'shooting-star';
+  s.style.left = `${10 + Math.random() * 65}%`;
+  s.style.top = `${5 + Math.random() * 35}%`;
+  s.addEventListener('animationend', () => s.remove());
+  container.appendChild(s);
+}
+
 function scheduleShootingStar() {
   if (reducedMotion()) return;
   setTimeout(
     () => {
-      const container = document.getElementById('stars');
-      if (container && nightNow && !document.hidden && !demoRunning) {
-        const s = document.createElement('span');
-        s.className = 'shooting-star';
-        s.style.left = `${10 + Math.random() * 65}%`;
-        s.style.top = `${5 + Math.random() * 35}%`;
-        s.addEventListener('animationend', () => s.remove());
-        container.appendChild(s);
-      }
+      if (nightNow && !document.hidden && !demoRunning) spawnShootingStar();
       scheduleShootingStar();
     },
     18000 + Math.random() * 25000,
+  );
+}
+
+/* The fixed control chips fade while the page scrolls so bio text never
+   passes under an opaque pill — occlusion is a readability bug just like
+   contrast. They return ~200ms after scrolling stops. */
+function fadeChipsWhileScrolling() {
+  const chips = document.getElementById('sky-controls');
+  if (!chips) return;
+  let timer: ReturnType<typeof setTimeout> | undefined;
+  addEventListener(
+    'scroll',
+    () => {
+      chips.classList.add('is-scrolling');
+      clearTimeout(timer);
+      timer = setTimeout(() => chips.classList.remove('is-scrolling'), 200);
+    },
+    { passive: true },
   );
 }
 
@@ -348,6 +393,7 @@ async function locate(): Promise<Place> {
         latitude: data.latitude,
         longitude: data.longitude,
         label: (data.city || FALLBACK.label).toLowerCase(),
+        located: true,
       };
     }
   } catch {
@@ -456,14 +502,9 @@ function render(place: Place, mode: Mode, at = new Date(), demo = false) {
       moonAt = { x: posX(qMoon.azimuth), y: posY(qMoon.altitude) };
     }
 
-    if (moonAt) {
-      body = {
-        ...moonAt,
-        color: 'rgba(214, 224, 252, 0.3)',
-        opacity: 0.35 + moonIllum.fraction * 0.5,
-      };
-    }
-
+    // The round #glow halo is the SUN's glare only. The moon carries
+    // its own crescent-shaped glow via drop-shadow (global.css), so at
+    // night the big halo stays dark.
     if (body) {
       glow.style.left = `${body.x}%`;
       glow.style.top = `${body.y}%`;
@@ -477,7 +518,14 @@ function render(place: Place, mode: Mode, at = new Date(), demo = false) {
       if (moonAt) {
         moonCore.style.left = `${moonAt.x}%`;
         moonCore.style.top = `${moonAt.y}%`;
-        moonCore.style.opacity = String(0.45 + moonIllum.fraction * 0.45);
+        // Brightness follows the real phase: a full moon outshines a
+        // sliver, but even the sliver stays clearly the brightest
+        // point in the sky.
+        moonCore.style.opacity = String(0.65 + moonIllum.fraction * 0.35);
+
+        // Horizon gold: under 15° the light warms up, like a real low
+        // moon (colors in global.css).
+        moonCore.classList.toggle('moon-low', qMoon.altitude < 15);
       } else {
         moonCore.style.opacity = '0';
       }
@@ -486,29 +534,72 @@ function render(place: Place, mode: Mode, at = new Date(), demo = false) {
 
   updateStars(place, qt);
 
+  const inTenMinutes = SunCalc.getPosition(new Date(at.getTime() + 10 * 60 * 1000), latitude, longitude);
+  const rising = inTenMinutes.altitude > sun.altitude;
+  const label = skyLabel(sunAltDeg, rising, moonIllum.phase);
+
   const status = document.getElementById('sky-status');
   if (status) {
-    const inTenMinutes = SunCalc.getPosition(new Date(at.getTime() + 10 * 60 * 1000), latitude, longitude);
-    const rising = inTenMinutes.altitude > sun.altitude;
-    const label = skyLabel(sunAltDeg, rising, moonIllum.phase);
+    // "your sky" is the one sentence of help the whole page needs: it
+    // tells the visitor the gradient is computed from their real sky.
+    // When geolocation failed we're honest about whose sky it is.
+    const whose = place.located ? 'your sky' : 'borrowed sky';
     status.textContent = demo
       ? `${formatTime(at)} · ${label}`
-      : `${label} · ${place.label}`;
+      : mode === 'auto'
+        ? `${whose} · ${label} · ${place.label}`
+        : `${label} · ${place.label}`;
+  }
+
+  // The 404 page's lost-page line follows the sky too: pages drift
+  // into whatever the sky is doing right now. (Not inside the status
+  // block — the 404 page has no #sky-status.)
+  const lost = document.getElementById('lost-line');
+  if (lost) {
+    const destination =
+      label === 'daylight'
+        ? 'the daylight'
+        : label === 'golden hour'
+          ? rising
+            ? 'the sunrise'
+            : 'the sunset'
+          : label === 'dawn' || label === 'dusk'
+            ? `the ${label}`
+            : 'the night sky';
+    lost.textContent = `this page drifted off into ${destination}`;
   }
 }
 
-/* Play the next 24 hours in about 14 seconds. */
-async function playDemo(place: Place, mode: Mode) {
+/* Play the next 24 hours in about 14 seconds. The random real-night
+   shooting stars pause during the demo (their 18s+ cadence would almost
+   never land inside it), so the demo fires a couple deliberately while
+   its sky is dark — the time-lapse should show them off, not hide them.
+   Cancellable: clicking the button again (it reads "◼ stop" while
+   running) or pressing Escape bails out and restores the real sky. */
+let demoAbort = false;
+
+async function playDemo(place: Place, mode: Mode, syncButton: () => void) {
   if (demoRunning) return;
   demoRunning = true;
+  demoAbort = false;
+  syncButton();
   document.documentElement.classList.add('sky-demo');
   const base = new Date();
+  let nightFrames = 0;
   for (let m = 0; m <= 24 * 60; m += 10) {
+    if (demoAbort) break;
     render(place, 'auto', new Date(base.getTime() + m * 60 * 1000), true);
+    // A few frames into darkness and again deeper in — position is
+    // random, timing is guaranteed so every run shows one.
+    if (nightNow && !reducedMotion()) {
+      nightFrames++;
+      if (nightFrames === 4 || nightFrames === 22) spawnShootingStar();
+    }
     await new Promise((r) => setTimeout(r, 95));
   }
   document.documentElement.classList.remove('sky-demo');
   demoRunning = false;
+  syncButton();
   render(place, mode);
 }
 
@@ -518,11 +609,15 @@ async function start() {
 
   enableSparkles();
   scheduleShootingStar();
+  fadeChipsWhileScrolling();
 
   const button = document.getElementById('sky-mode');
+  // Monochrome text glyphs, not color emoji — they read at chip size and
+  // stay in the site's single-ink voice.
+  const MODE_LABELS: Record<Mode, string> = { auto: 'auto', day: '☀︎ day', night: '☾ night' };
   const syncButton = () => {
     if (!button) return;
-    button.textContent = `sky: ${mode}`;
+    button.textContent = `sky: ${MODE_LABELS[mode]}`;
     button.setAttribute('aria-label', `Sky theme: ${mode}. Click to change.`);
   };
 
@@ -537,7 +632,25 @@ async function start() {
     if (!demoRunning) render(place, mode);
   });
 
-  document.getElementById('sky-demo')?.addEventListener('click', () => playDemo(place, mode));
+  const demoButton = document.getElementById('sky-demo');
+  const syncDemoButton = () => {
+    if (!demoButton) return;
+    demoButton.textContent = demoRunning ? '◼ stop' : '▶ 24h';
+    demoButton.setAttribute(
+      'aria-label',
+      demoRunning ? 'Stop the sky time-lapse' : 'Play a 24-hour sky time-lapse',
+    );
+  };
+  demoButton?.addEventListener('click', () => {
+    if (demoRunning) {
+      demoAbort = true;
+    } else {
+      playDemo(place, mode, syncDemoButton);
+    }
+  });
+  addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && demoRunning) demoAbort = true;
+  });
 
   // Dev console hook: preview the sky at any moment, e.g.
   // __skyAt('2026-07-16T20:30'). Call with no argument to return to now.

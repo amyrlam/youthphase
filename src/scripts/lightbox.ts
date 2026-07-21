@@ -17,6 +17,22 @@ function initLightbox() {
 
   let current = 0;
 
+  // Touch-phone position indicator (hidden elsewhere via CSS) — one
+  // tappable dot button per trigger, active one highlighted in renderAt.
+  const dotsContainer = document.getElementById('lightbox-dots');
+  const dots: HTMLElement[] = [];
+  if (dotsContainer && triggers.length > 1) {
+    triggers.forEach((_, i) => {
+      const dot = document.createElement('button');
+      dot.type = 'button';
+      dot.className = 'lightbox-dot';
+      dot.setAttribute('aria-label', `photo ${i + 1} of ${triggers.length}`);
+      dot.addEventListener('click', () => renderAt(i));
+      dotsContainer.appendChild(dot);
+      dots.push(dot);
+    });
+  }
+
   function renderAt(index: number) {
     // Hiding the previously-visible <video> (or <img>) while it holds focus
     // forces the browser to hand focus to the dialog's first focusable
@@ -26,7 +42,26 @@ function initLightbox() {
 
     current = ((index % triggers.length) + triggers.length) % triggers.length;
     const trigger = triggers[current];
-    if (caption) caption.textContent = trigger.dataset.caption ?? '';
+    if (caption) {
+      const text = trigger.dataset.caption ?? '';
+      caption.textContent = text;
+      // Emoji-only captions get the jumbomoji treatment — see the
+      // .lightbox-caption--emoji comment in Lightbox.astro. \u200d and
+      // \ufe0f are the ZWJ and variation selector in compound emoji.
+      const emojiOnly =
+        text.trim().length > 0 &&
+        /^[\p{Extended_Pictographic}\p{Emoji_Component}\u200d\ufe0f\s]+$/u.test(text);
+      caption.classList.toggle('lightbox-caption--emoji', emojiOnly);
+    }
+    dots.forEach((dot, i) => dot.classList.toggle('is-active', i === current));
+
+    // Announce the swap to assistive tech — focus stays parked on the
+    // card, so without this, arrow/swipe navigation is silent.
+    const status = document.getElementById('lightbox-status');
+    if (status) {
+      const name = trigger.dataset.caption || trigger.dataset.alt || '';
+      status.textContent = `photo ${current + 1} of ${triggers.length}${name ? ` — ${name}` : ''}`;
+    }
 
     if (trigger.dataset.video) {
       if (img) img.hidden = true;
@@ -53,6 +88,12 @@ function initLightbox() {
     trigger.addEventListener('click', () => {
       renderAt(i);
       dialog.showModal();
+      // showModal() focuses the dialog's first focusable child — Close —
+      // so the first ArrowLeft/ArrowRight would paint a focus ring on it
+      // (keyboard input makes the pre-existing focus :focus-visible).
+      // Park focus on the non-interactive card instead; Tab still reaches
+      // Close normally.
+      document.getElementById('lightbox-polaroid')?.focus();
     });
   });
 
@@ -78,8 +119,8 @@ function initLightbox() {
     if (e.target === dialog) dialog.close();
   });
 
-  // Touch swipe — the primary way mobile visitors will actually carousel
-  // through photos, since the nav buttons shrink to an edge overlay there.
+  // Touch swipe — the only way mobile visitors carousel through photos,
+  // since the nav buttons are hidden there in favor of the dots.
   const SWIPE_THRESHOLD = 40;
   let touchStartX = 0;
   let touchStartY = 0;

@@ -23,43 +23,49 @@
   </button>
 
   <!-- The expanded view is styled as a polaroid: ivory card, image inset,
-       caption written in the bottom margin. The grid itself stays plain. -->
-  <div class="lightbox-polaroid">
+       caption written in the bottom margin. The grid itself stays plain.
+       tabindex="-1" lets the script focus this card on open — otherwise
+       showModal() lands focus on Close (the dialog's first focusable),
+       and the first arrow-key press paints a focus ring on it. -->
+  <div class="lightbox-polaroid" id="lightbox-polaroid" tabindex="-1">
     <img id="lightbox-img" src="" alt="" class="lightbox-media" />
     <video id="lightbox-video" hidden controls playsinline class="lightbox-media"></video>
     <p id="lightbox-caption" class="lightbox-caption"></p>
   </div>
+
+  <!-- Instagram-style position dots, touch-mobile only — populated by the
+       script (one tappable button per trigger). -->
+  <div id="lightbox-dots" class="lightbox-dots"></div>
+
+  <!-- Announces photo changes to assistive tech: arrows/swipe swap the
+       image silently otherwise, since focus stays parked on the card. -->
+  <p id="lightbox-status" class="sr-only" aria-live="polite"></p>
 </dialog>
 
 <script src="../scripts/lightbox.ts"></script>
 
 <style>
   .lightbox-dialog {
-    /* box-sizing: border-box so the gutter padding below is included in
-       this cap, not added on top of it — otherwise narrow viewports
-       overflow and the nav buttons end up sitting on the photo instead
-       of beside it. */
     box-sizing: border-box;
-    max-width: min(96vw, 60rem);
+    /* The side reservation (9rem total) keeps the widest photo clear of
+       the viewport-edge prev/next buttons: 1.25rem inset + 2.25rem button
+       + ~1rem breathing room per side. */
+    max-width: min(calc(100vw - 9rem), 60rem);
     max-height: 90vh;
     margin: auto;
     border: none;
     background: transparent;
-    /* Side gutters give the prev/next buttons their own space instead of
-       sitting on top of the photo. Equal to the visible button size
-       (2.25rem) + a 1rem gap to the polaroid. .lightbox-close reads this
-       same variable, so the two stay in sync automatically — including
-       under the mobile override below. */
-    --gutter: 3.25rem;
-    padding-inline: var(--gutter);
     overflow: visible;
   }
 
-  /* Mobile screens can't spare a full gutter — let prev/next overlap the
-     photo's outer edge instead so the image itself gets the width back. */
-  @media (max-width: 640px) {
+  /* Touch phones hide prev/next (swipe + dots take over), so no side
+     reservation — just a slim margin so the polaroid isn't edge-to-edge.
+     Gated on pointer, not just width: a mouse user in a narrow window
+     has no swipe, so they keep the arrows and the desktop layout. */
+  @media (pointer: coarse) and (max-width: 640px) {
     .lightbox-dialog {
-      --gutter: 0.75rem;
+      max-width: 96vw;
+      padding-inline: 0.75rem;
     }
   }
 
@@ -68,17 +74,24 @@
   }
 
   .lightbox-polaroid {
-    /* display: grid (rather than plain block flow) plus min-width: 0 on
-       the caption below decouples the two: normally an unwrapped caption's
-       max-content width feeds into this shrink-to-fit box's own sizing,
-       stretching it past the photo. As a grid item with min-width: 0, the
-       caption no longer contributes that width — only the photo does, and
-       the caption just wraps to match whatever width the photo ends up. */
+    /* display: grid plus width: 0 / min-width: 100% on the caption below
+       decouples the two: the photo alone sets this shrink-to-fit box's
+       width, and the caption wraps to match. (min-width: 0 by itself was
+       not enough — it zeroes the caption's min-content contribution, but
+       its unwrapped max-content width still propped the polaroid open,
+       leaving dead white space beside any photo narrower than one line
+       of caption. width: 0 removes that contribution entirely.) */
     display: grid;
     background: #f7f4ed;
     padding: 1rem 1rem 1.25rem;
     border-radius: 0.25rem;
     box-shadow: 0 25px 60px -12px rgba(0, 0, 0, 0.6);
+  }
+
+  /* Focused programmatically on open (see the markup comment); the card
+     isn't interactive, so it never shows a ring. */
+  .lightbox-polaroid:focus {
+    outline: none;
   }
 
   .lightbox-media {
@@ -102,7 +115,19 @@
     padding: 0.85rem 0.25rem 0.15rem;
     /* The trick that stops it stretching .lightbox-polaroid — see the
        comment there. */
-    min-width: 0;
+    width: 0;
+    min-width: 100%;
+    box-sizing: border-box;
+  }
+
+  /* Emoji-only captions (✨, 🎷): gold-on-ivory glyphs nearly vanish at
+     text size, so enlarge them like Slack's jumbomoji — at this size the
+     artwork's own detail carries the contrast. No shadow or outline:
+     inspecting instagram.com shows they render caption emoji as plain
+     native glyphs (no text-shadow, filter, or image replacement), and a
+     shadow makes the glyph look pasted-on. */
+  .lightbox-caption--emoji {
+    font-size: 1.75rem;
   }
 
   /* One shared size/shape/color for close, prev, and next — only
@@ -146,26 +171,81 @@
   /* Floats diagonally outside the polaroid's top-right corner. The gap
      here is a straight-line (not per-axis) distance from the corner — so
      each axis component is diag-gap/√2, not diag-gap itself, otherwise
-     the actual diagonal distance comes out ~1.4x too big. Half of
-     .lightbox-next's 1rem edge gap, pulled in closer per feedback. */
+     the actual diagonal distance comes out ~1.4x too big. */
   .lightbox-close {
     --diag-gap: 0.3536rem;
     top: calc(-1 * var(--diag-gap) - 2.25rem);
-    right: calc(var(--gutter) - var(--diag-gap) - 2.25rem);
+    right: calc(-1 * var(--diag-gap) - 2.25rem);
   }
 
+  /* Pinned to the viewport edges (fixed, not absolute) so they're a
+     stable target across photos: the dialog's width changes with each
+     photo's aspect ratio, and edge-anchored buttons let you park the
+     mouse and click through without re-aiming — same pattern as Google
+     Photos / Instagram's desktop lightbox. Fixed positioning resolves
+     against the viewport even in the top layer.
+
+     On very wide screens the max() clamps them to just outside the
+     dialog's 60rem maximum footprint (30rem half-width + 1.25rem gap +
+     2.25rem button = 33.5rem from center) instead of drifting to distant
+     monitor edges. The two expressions meet exactly at a 69.5rem
+     viewport, so the switchover is seamless. */
   .lightbox-prev,
   .lightbox-next {
+    position: fixed;
     top: 50%;
     translate: 0 -50%;
   }
 
   .lightbox-prev {
-    left: 0;
+    left: max(1.25rem, calc(50vw - 33.5rem));
   }
 
   .lightbox-next {
-    right: 0;
+    right: max(1.25rem, calc(50vw - 33.5rem));
+  }
+
+  /* Hidden except on touch phones, shown by the media query below — which
+     must stay after this rule in source order to win the equal-specificity
+     `display` tie. Sits on the backdrop below the polaroid, like
+     Instagram's multi-photo indicator. Dots are created by the script,
+     so they need :global() to escape Astro's style scoping. Each dot is
+     a real button (tap to jump); the visible 6px dot is a ::before inside
+     a larger transparent hit area. */
+  .lightbox-dots {
+    display: none;
+    justify-content: center;
+    gap: 0.1rem;
+    padding-top: 0.6rem;
+  }
+
+  .lightbox-dots :global(.lightbox-dot) {
+    width: 1.4rem;
+    height: 1.4rem;
+    padding: 0;
+    border: none;
+    background: transparent;
+    display: grid;
+    place-items: center;
+    cursor: pointer;
+  }
+
+  .lightbox-dots :global(.lightbox-dot)::before {
+    content: '';
+    width: 6px;
+    height: 6px;
+    border-radius: 9999px;
+    background: rgba(255, 255, 255, 0.35);
+  }
+
+  .lightbox-dots :global(.lightbox-dot.is-active)::before {
+    background: #f1eefb;
+  }
+
+  .lightbox-dots :global(.lightbox-dot:focus-visible) {
+    outline: 2px solid #f1eefb;
+    outline-offset: -2px;
+    border-radius: 9999px;
   }
 
   /* The desktop diagonal-gap formula on .lightbox-close above assumes a
@@ -174,9 +254,18 @@
      viewport), so pin Close near the corner directly instead. Placed last
      so it wins over the base rule's equal-specificity `right` at this
      breakpoint. */
-  @media (max-width: 640px) {
+  @media (pointer: coarse) and (max-width: 640px) {
     .lightbox-close {
       right: 0.25rem;
+    }
+
+    .lightbox-prev,
+    .lightbox-next {
+      display: none;
+    }
+
+    .lightbox-dots {
+      display: flex;
     }
   }
 </style>
