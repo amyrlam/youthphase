@@ -293,6 +293,82 @@ body {
   }
 }
 
+/* While the hold-the-moon phase cycle plays (mobile easter egg, sky.ts),
+   the moonlight breathes at cycle speed — its usual 2s ease would smear
+   the waxing and waning into mush. */
+html.moon-cycle #moon-core {
+  transition-duration: 0.25s;
+}
+
+/* The held moon face: hidden as a pinprick behind the point of light,
+   blooming to full size while a finger holds the moon. The exponential
+   ease-out makes it feel like it surfaces rather than inflates; the
+   glow is the same family as the point's own halo so the light doesn't
+   change character, only scale. */
+#moon-face {
+  opacity: 0;
+  scale: 0.1;
+  filter: drop-shadow(0 0 14px rgba(216, 228, 255, 0.5))
+    drop-shadow(0 0 36px rgba(190, 208, 255, 0.25));
+  transition:
+    opacity 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+    scale 0.45s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+html.moon-cycle #moon-face {
+  opacity: 1;
+  scale: 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #moon-face {
+    scale: 1;
+    transition: opacity 0.3s ease;
+  }
+}
+
+/* The finale: survive a whole month of held phases and the moonlight
+   floods the sky from wherever the moon stands (--fx/--fy, set by
+   sky.ts), then recedes. The flood is the moon's own light scaled up,
+   not a new color. */
+#moon-finale {
+  background: radial-gradient(
+    circle at var(--fx, 50%) var(--fy, 40%),
+    rgba(244, 247, 255, 0.9),
+    rgba(216, 228, 255, 0.45) 32%,
+    rgba(190, 208, 255, 0) 72%
+  );
+  transition: opacity 0.7s ease;
+}
+
+#moon-finale.wash {
+  opacity: 1;
+}
+
+/* Firework stars: the site's own tap-sparkle glyphs, thrown outward.
+   Each gets a direction (--dx/--dy), spin (--r), duration (--t) and
+   stagger (--delay) from sky.ts. Spawned only when motion is welcome —
+   reduced-motion holds skip the finale entirely and just keep cycling. */
+.finale-star {
+  position: fixed;
+  line-height: 1;
+  pointer-events: none;
+  transform: translate(-50%, -50%) scale(0.3);
+  opacity: 0;
+  animation: finale-burst var(--t, 1.3s) cubic-bezier(0.16, 1, 0.3, 1) var(--delay, 0s) forwards;
+}
+
+@keyframes finale-burst {
+  12% {
+    opacity: 1;
+  }
+  100% {
+    transform: translate(calc(-50% + var(--dx, 0px)), calc(-50% + var(--dy, 0px)))
+      scale(var(--s, 1)) rotate(var(--r, 180deg));
+    opacity: 0;
+  }
+}
+
 /* During the 24h time-lapse, every sky transition runs fast so the day
    plays smoothly. */
 html.sky-demo body,

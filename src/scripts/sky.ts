@@ -372,7 +372,7 @@ function fadeChipsWhileScrolling() {
 function enableSparkles() {
   if (reducedMotion()) return;
   addEventListener('pointerdown', (e) => {
-    if ((e.target as Element | null)?.closest('a, button')) return;
+    if ((e.target as Element | null)?.closest('a, button, #moon-touch')) return;
     const s = document.createElement('span');
     s.className = 'sparkle';
     s.textContent = '✦';
@@ -514,6 +514,25 @@ function render(place: Place, mode: Mode, at = new Date(), demo = false) {
       glow.style.opacity = '0';
     }
 
+    const moonTouch = document.getElementById('moon-touch');
+    const moonFace = document.getElementById('moon-face');
+    if (moonTouch) {
+      // The hold-the-moon easter egg's touch target rides along with the
+      // moon, and only exists while the moon is up. The held face (the
+      // bloomed cratered disc) tracks the same point.
+      if (moonAt) {
+        moonTouch.style.display = '';
+        moonTouch.style.left = `${moonAt.x}%`;
+        moonTouch.style.top = `${moonAt.y}%`;
+        if (moonFace) {
+          moonFace.style.left = `${moonAt.x}%`;
+          moonFace.style.top = `${moonAt.y}%`;
+        }
+      } else {
+        moonTouch.style.display = 'none';
+      }
+    }
+
     if (moonCore) {
       if (moonAt) {
         moonCore.style.left = `${moonAt.x}%`;
@@ -570,6 +589,168 @@ function render(place: Place, mode: Mode, at = new Date(), demo = false) {
   }
 }
 
+/* Easter egg: hold a finger on the moon and the month plays out — the
+   light waxes and wanes through a full synodic cycle (~8s per month,
+   looping) while the status line names each phase. The moon never
+   becomes a picture here either: the phase stays in words and
+   brightness, same as the real sky. Touch pointers only — on mobile the
+   moon is something you can reach out and hold; a mouse never finds it.
+   Released, the sky eases back to now. */
+let cycleRunning = false;
+
+/* The night side of the held moon face, as an SVG path. Real phase
+   geometry: the shadow is bounded by half the disc's edge plus the
+   terminator, an elliptical arc whose x-radius is R·|cos(2πp)| — it
+   collapses to a straight line at the quarters and hugs the limb at new
+   and full. Waxing moons (p < 0.5) light up from the right, waning from
+   the left, matching the northern-hemisphere sky. viewBox is 100×100
+   with the disc at r=49. */
+function moonShadowPath(phase: number): string {
+  const c = Math.cos(2 * Math.PI * phase);
+  const rx = (49 * Math.abs(c)).toFixed(2);
+  if (phase < 0.5) {
+    // Shadow on the left; terminator bulges right while the lit side is
+    // still a crescent (c > 0), left once it's gibbous.
+    return `M 50 1 A 49 49 0 0 0 50 99 A ${rx} 49 0 0 ${c > 0 ? 0 : 1} 50 1`;
+  }
+  // Shadow on the right; mirrored sweep logic.
+  return `M 50 1 A 49 49 0 0 1 50 99 A ${rx} 49 0 0 ${c < 0 ? 0 : 1} 50 1`;
+}
+
+/* One firework of ✦ sparkles from a sky position. The palette is the
+   site's three lights: white, moonlight blue, horizon gold. Stars are
+   appended to <body> so they fly over the page, like the tap sparkles. */
+function spawnBurst(xPct: string, yPct: string) {
+  const COLORS = ['#ffffff', '#bcd0ff', '#ffd9a0'];
+  const n = 18;
+  for (let i = 0; i < n; i++) {
+    const s = document.createElement('span');
+    s.className = 'finale-star';
+    s.textContent = Math.random() < 0.3 ? '✧' : '✦';
+    const ang = (i / n) * 2 * Math.PI + Math.random() * 0.5;
+    const dist = 60 + Math.random() * 160;
+    s.style.left = xPct;
+    s.style.top = yPct;
+    s.style.color = COLORS[i % 3];
+    s.style.fontSize = `${(10 + Math.random() * 12).toFixed(0)}px`;
+    s.style.setProperty('--dx', `${(Math.cos(ang) * dist).toFixed(0)}px`);
+    s.style.setProperty('--dy', `${(Math.sin(ang) * dist).toFixed(0)}px`);
+    s.style.setProperty('--r', `${(Math.random() * 270 - 135).toFixed(0)}deg`);
+    s.style.setProperty('--s', (0.7 + Math.random() * 0.6).toFixed(2));
+    s.style.setProperty('--t', `${(1.1 + Math.random() * 0.6).toFixed(2)}s`);
+    s.style.setProperty('--delay', `${(Math.random() * 0.15).toFixed(2)}s`);
+    s.addEventListener('animationend', () => s.remove());
+    // Backstop: animationend never fires if the animation gets paused
+    // (hidden tab, throttled renderer), and forwards-filled glyphs would
+    // linger as litter. Removing twice is harmless.
+    setTimeout(() => s.remove(), 3000);
+    document.body.appendChild(s);
+  }
+}
+
+function enableMoonHold(getPlace: () => Place, getMode: () => Mode) {
+  const target = document.getElementById('moon-touch');
+  const moonCore = document.getElementById('moon-core');
+  const status = document.getElementById('sky-status');
+  const shadow = document.getElementById('moon-shadow');
+  if (!target || !moonCore) return;
+
+  let holdTimer: ReturnType<typeof setTimeout> | undefined;
+  let tick: ReturnType<typeof setInterval> | undefined;
+  let finaleRunning = false;
+
+  const stop = () => {
+    clearTimeout(holdTimer);
+    // A finale, once earned, plays through — it ends the hold itself.
+    if (finaleRunning) return;
+    if (tick !== undefined) {
+      clearInterval(tick);
+      tick = undefined;
+    }
+    if (!cycleRunning) return;
+    cycleRunning = false;
+    document.documentElement.classList.remove('moon-cycle');
+    render(getPlace(), getMode());
+  };
+
+  /* Hold through the whole month and the sky celebrates: the moonlight
+     floods outward from the moon, sparkle fireworks burst over the
+     page, a couple of shooting stars cross — then everything settles
+     back to tonight. Reduced-motion holds never get here; they just
+     keep cycling. */
+  const finale = () => {
+    if (tick !== undefined) {
+      clearInterval(tick);
+      tick = undefined;
+    }
+    finaleRunning = true;
+    const fin = document.getElementById('moon-finale');
+    const fx = moonCore.style.left || '50%';
+    const fy = moonCore.style.top || '40%';
+    if (fin) {
+      fin.style.setProperty('--fx', fx);
+      fin.style.setProperty('--fy', fy);
+      fin.classList.add('wash');
+    }
+    if (status) status.textContent = 'a month, all at once';
+    setTimeout(() => {
+      spawnBurst(fx, fy);
+      spawnShootingStar();
+      setTimeout(() => spawnBurst(`${(15 + Math.random() * 30).toFixed(0)}%`, `${(15 + Math.random() * 25).toFixed(0)}%`), 350);
+      setTimeout(() => {
+        spawnBurst(`${(55 + Math.random() * 30).toFixed(0)}%`, `${(20 + Math.random() * 30).toFixed(0)}%`);
+        spawnShootingStar();
+      }, 700);
+    }, 450);
+    setTimeout(() => fin?.classList.remove('wash'), 2400);
+    setTimeout(() => {
+      finaleRunning = false;
+      cycleRunning = false;
+      document.documentElement.classList.remove('moon-cycle');
+      render(getPlace(), getMode());
+    }, 3200);
+  };
+
+  const startCycle = () => {
+    if (demoRunning || cycleRunning) return;
+    cycleRunning = true;
+    document.documentElement.classList.add('moon-cycle');
+    // Start from tonight's real phase, so the cycle picks up mid-story.
+    // Phase is derived from elapsed time, not tick count, so a throttled
+    // timer (background tab, low-power mode) costs smoothness but never
+    // slows the month itself.
+    const startPhase = SunCalc.getMoonIllumination(new Date()).phase;
+    const startedAt = performance.now();
+    const frame = () => {
+      const elapsed = performance.now() - startedAt;
+      if (elapsed >= 8000 && !reducedMotion()) {
+        finale();
+        return;
+      }
+      const phase = (startPhase + elapsed / 8000) % 1;
+      // Illuminated fraction from the phase angle: 0 at new, 1 at full —
+      // the same brightness rule render() applies to the real moon.
+      const fraction = (1 - Math.cos(2 * Math.PI * phase)) / 2;
+      moonCore.style.opacity = String(0.65 + fraction * 0.35);
+      if (shadow) shadow.setAttribute('d', moonShadowPath(phase));
+      if (status) status.textContent = moonPhaseName(phase);
+    };
+    frame();
+    tick = setInterval(frame, 100);
+  };
+
+  target.addEventListener('pointerdown', (e) => {
+    if (e.pointerType !== 'touch') return;
+    e.preventDefault();
+    // A beat of stillness before the month starts turning, so ordinary
+    // taps pass through as taps.
+    holdTimer = setTimeout(startCycle, 350);
+  });
+  for (const ev of ['pointerup', 'pointercancel', 'pointerleave'] as const) {
+    target.addEventListener(ev, stop);
+  }
+}
+
 /* Play the next 24 hours in about 14 seconds. The random real-night
    shooting stars pause during the demo (their 18s+ cadence would almost
    never land inside it), so the demo fires a couple deliberately while
@@ -579,7 +760,7 @@ function render(place: Place, mode: Mode, at = new Date(), demo = false) {
 let demoAbort = false;
 
 async function playDemo(place: Place, mode: Mode, syncButton: () => void) {
-  if (demoRunning) return;
+  if (demoRunning || cycleRunning) return;
   demoRunning = true;
   demoAbort = false;
   syncButton();
@@ -610,6 +791,10 @@ async function start() {
   enableSparkles();
   scheduleShootingStar();
   fadeChipsWhileScrolling();
+  enableMoonHold(
+    () => place,
+    () => mode,
+  );
 
   const button = document.getElementById('sky-mode');
   // Monochrome text glyphs, not color emoji — they read at chip size and
@@ -629,7 +814,7 @@ async function start() {
       /* fine to not persist */
     }
     syncButton();
-    if (!demoRunning) render(place, mode);
+    if (!demoRunning && !cycleRunning) render(place, mode);
   });
 
   const demoButton = document.getElementById('sky-demo');
@@ -662,9 +847,9 @@ async function start() {
   syncButton();
   render(place, mode);
   place = await locate();
-  if (!demoRunning) render(place, mode);
+  if (!demoRunning && !cycleRunning) render(place, mode);
   setInterval(() => {
-    if (!demoRunning) render(place, mode);
+    if (!demoRunning && !cycleRunning) render(place, mode);
   }, 60 * 1000);
 }
 

@@ -60,6 +60,73 @@ const ogImage = new URL('/og.png', Astro.site);
     >
     </div>
 
+    <!-- The moon's held face: the one place the "never a picture" rule
+         breaks, on purpose. While a finger holds the moon (sky.ts), the
+         point of light blooms into a small cratered disc whose lit shape
+         is the real phase geometry — the terminator is an elliptical arc,
+         so crescents are crescents and gibbous is gibbous, not a circle
+         sliding off another circle. sky.ts positions it with the moon and
+         rewrites the shadow path each tick; visibility and the bloom
+         transition live in global.css under html.moon-cycle. -->
+    <div
+      id="moon-face"
+      aria-hidden="true"
+      class="pointer-events-none fixed h-[68px] w-[68px] -translate-x-1/2 -translate-y-1/2"
+    >
+      <svg viewBox="0 0 100 100" class="h-full w-full">
+        <defs>
+          <radialGradient id="moon-sphere" cx="42%" cy="38%" r="72%">
+            <stop offset="0%" stop-color="#f2f5fb"></stop>
+            <stop offset="70%" stop-color="#dde4f0"></stop>
+            <stop offset="100%" stop-color="#c3cde0"></stop>
+          </radialGradient>
+          <clipPath id="moon-clip"><circle cx="50" cy="50" r="49"></circle></clipPath>
+        </defs>
+        <circle cx="50" cy="50" r="49" fill="url(#moon-sphere)"></circle>
+        <!-- Maria: the big soft dark seas, then a scatter of craters.
+             All clipped to the disc; tones stay in the site's blue-gray
+             family rather than photographic gray. -->
+        <g clip-path="url(#moon-clip)" fill="#8fa0c0">
+          <ellipse cx="38" cy="34" rx="16" ry="12" opacity="0.35"></ellipse>
+          <ellipse cx="62" cy="28" rx="10" ry="8" opacity="0.28"></ellipse>
+          <ellipse cx="58" cy="52" rx="13" ry="10" opacity="0.3"></ellipse>
+          <ellipse cx="30" cy="60" rx="8" ry="7" opacity="0.25"></ellipse>
+          <circle cx="72" cy="66" r="6" opacity="0.32"></circle>
+          <circle cx="46" cy="74" r="4.5" opacity="0.35"></circle>
+          <circle cx="24" cy="42" r="3" opacity="0.4"></circle>
+          <circle cx="66" cy="44" r="2.5" opacity="0.4"></circle>
+          <circle cx="52" cy="14" r="3.5" opacity="0.3"></circle>
+          <circle cx="80" cy="38" r="2" opacity="0.35"></circle>
+          <circle cx="36" cy="86" r="3" opacity="0.3"></circle>
+        </g>
+        <!-- The night side. sky.ts rewrites d each tick; deep sky navy
+             rather than black, so the dark limb reads as sky swallowing
+             the disc, with the surface just barely ghosting through. -->
+        <path id="moon-shadow" d="" fill="#0a1030" opacity="0.94"></path>
+      </svg>
+    </div>
+
+    <!-- The finale wash: when a hold survives a full month of phases,
+         moonlight floods the sky from the moon's position before the
+         sparkle bursts (sky.ts). Sits below the page content in DOM
+         order so the flood stays behind the text. -->
+    <div id="moon-finale" aria-hidden="true" class="pointer-events-none fixed inset-0 opacity-0">
+    </div>
+
+    <!-- Easter egg: an invisible 44px touch target riding on the moon
+         (sky.ts keeps it positioned and shows it only while the moon is
+         up). Hold a finger on it and the month plays out — the light
+         waxes and wanes while the status line names each phase. Touch
+         pointers only, and hidden from AT: it duplicates nothing
+         functional, it's a secret for wandering fingers. -->
+    <div
+      id="moon-touch"
+      aria-hidden="true"
+      style="display: none"
+      class="fixed h-11 w-11 -translate-x-1/2 -translate-y-1/2 touch-none rounded-full select-none"
+    >
+    </div>
+
     <!-- The real night sky: sky.ts positions the brightest stars for the
          visitor's location and time. -->
     <div id="stars" aria-hidden="true" class="pointer-events-none fixed inset-0 opacity-0"></div>
