@@ -293,6 +293,13 @@ body {
   }
 }
 
+/* While the hold-the-moon phase cycle plays (mobile easter egg, sky.ts),
+   the moonlight breathes at cycle speed — its usual 2s ease would smear
+   the waxing and waning into mush. */
+html.moon-cycle #moon-core {
+  transition-duration: 0.25s;
+}
+
 /* During the 24h time-lapse, every sky transition runs fast so the day
    plays smoothly. */
 html.sky-demo body,

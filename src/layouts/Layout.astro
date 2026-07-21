@@ -60,6 +60,20 @@ const ogImage = new URL('/og.png', Astro.site);
     >
     </div>
 
+    <!-- Easter egg: an invisible 44px touch target riding on the moon
+         (sky.ts keeps it positioned and shows it only while the moon is
+         up). Hold a finger on it and the month plays out — the light
+         waxes and wanes while the status line names each phase. Touch
+         pointers only, and hidden from AT: it duplicates nothing
+         functional, it's a secret for wandering fingers. -->
+    <div
+      id="moon-touch"
+      aria-hidden="true"
+      style="display: none"
+      class="fixed h-11 w-11 -translate-x-1/2 -translate-y-1/2 touch-none rounded-full select-none"
+    >
+    </div>
+
     <!-- The real night sky: sky.ts positions the brightest stars for the
          visitor's location and time. -->
     <div id="stars" aria-hidden="true" class="pointer-events-none fixed inset-0 opacity-0"></div>
