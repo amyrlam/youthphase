@@ -88,8 +88,9 @@ import Layout from '../layouts/Layout.astro';
           <rect x="0" y="170" width="600" height="170" fill="url(#sea)"></rect>
           <rect x="0" y="170" width="600" height="170" fill="#0a1030" opacity="0.18"></rect>
 
-          <!-- The reflection: a soft ivory smudge, shimmering slowly. -->
-          <ellipse class="dinghy-reflection" cx="300" cy="268" rx="66" ry="9" fill="#f7f4ed" opacity="0.14">
+          <!-- The reflection: a soft ivory smudge right at the hull, so
+               the boat sits in the water instead of hovering over it. -->
+          <ellipse class="dinghy-reflection" cx="292" cy="276" rx="74" ry="8" fill="#f7f4ed" opacity="0.14">
           </ellipse>
 
           <!-- Ripples in moonlight, each drifting on its own period. -->
@@ -105,7 +106,12 @@ import Layout from '../layouts/Layout.astro';
                to the side, like the photo: the bow points away toward the
                far shore, the near gunwale and interior are visible, and
                the transom (with the name lettered the way Pop laid it
-               out) faces the viewer at an angle. -->
+               out) faces the viewer at an angle. The static translate
+               grounds the boat lower in the water field — nearer the
+               viewer, well clear of the horizon — and stays separate
+               from .dinghy because the bob animation owns that group's
+               transform. -->
+          <g transform="translate(0 20)">
           <g class="dinghy">
             <!-- Port side of the hull, receding toward the bow. -->
             <path
@@ -163,6 +169,27 @@ import Layout from '../layouts/Layout.astro';
               opacity="0.55"
             ></path>
 
+            <!-- The waterline: light catching where the hull meets the
+                 water, tracing the bottom edge — this contact line is
+                 what keeps the boat from reading as airborne. Inside the
+                 bob group so it rides with the hull. -->
+            <path
+              d="M217 190 Q245 218 296 244"
+              fill="none"
+              stroke="#f0f4ff"
+              stroke-width="2"
+              stroke-linecap="round"
+              opacity="0.45"
+            ></path>
+            <path
+              d="M298 248 Q330 254 355 238"
+              fill="none"
+              stroke="#f0f4ff"
+              stroke-width="2"
+              stroke-linecap="round"
+              opacity="0.4"
+            ></path>
+
             <!-- The name, lettered on the angled transom. -->
             <text
               x="328"
@@ -185,18 +212,20 @@ import Layout from '../layouts/Layout.astro';
               IX
             </text>
           </g>
+          </g>
 
-          <!-- The mooring buoy — a cylinder with a pointed pick-up top,
-               listing a little as they do, riding its own swell. -->
+          <!-- The mooring buoy — cylinder up, tapering to the point that
+               sits down in the water, striped around the middle, listing
+               a little as they do. -->
           <g class="buoy">
-            <g transform="rotate(7 432 244)">
+            <g transform="rotate(7 432 240)">
               <path
-                d="M424 251 Q423 242 425 237 L431 226 Q432 224 433 226 L439 237 Q441 242 440 251 Q432 256 424 251 Z"
+                d="M424 229 Q432 224 440 229 L440 238 Q439 247 434 253 Q432 255 430 253 Q425 247 424 238 Z"
                 fill="#f7f4ed"
               ></path>
-              <path d="M424.5 244 Q432 247 439.5 244 L439.5 248 Q432 252 424.5 248 Z" fill="#8fa0c0" opacity="0.5"></path>
+              <path d="M424 233 Q432 237 440 233 L440 238 Q432 242 424 238 Z" fill="#8fa0c0" opacity="0.55"></path>
             </g>
-            <ellipse cx="432" cy="258" rx="12" ry="2.5" fill="#f0f4ff" opacity="0.2"></ellipse>
+            <ellipse cx="432" cy="251" rx="12" ry="2.5" fill="#f0f4ff" opacity="0.25"></ellipse>
           </g>
         </svg>
         <figcaption class="pt-3 text-center text-sm lowercase tracking-widest">
