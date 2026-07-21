@@ -1,0 +1,121 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-07-21T00:00:00Z",
+  "title": "Design System: youthphase.dev",
+  "extensions": {
+    "colorMeta": {
+      "sky-top-midnight": { "role": "primary", "displayName": "Sky Top (midnight default)", "canonical": "#0a1030", "tonalRamp": ["#05081a", "#0a1030", "#141a4a", "#232c6e", "#3a4693", "#5c68b3", "#8b95cf", "#c3c9e8"] },
+      "sky-bottom-midnight": { "role": "primary", "displayName": "Sky Bottom (midnight default)", "canonical": "#1e2c60", "tonalRamp": ["#0d1330", "#1e2c60", "#2c3f7e", "#3f559c", "#5a6fb6", "#7f92cc", "#a9b6de", "#d4dbee"] },
+      "ink-default": { "role": "neutral", "displayName": "Computed Ink (default)", "canonical": "#f1eefb", "tonalRamp": ["#2a2740", "#4a4668", "#6b668e", "#8d88ae", "#afaacb", "#cfcce2", "#e2dff0", "#f1eefb"] },
+      "chip-bg-fallback": { "role": "primary", "displayName": "Chip Surface (fallback)", "canonical": "#141a3d", "tonalRamp": ["#090c20", "#141a3d", "#22295c", "#333c7c", "#4b559b", "#6d76b7", "#979ed0", "#c6cae6"] },
+      "polaroid-ivory": { "role": "secondary", "displayName": "Polaroid Ivory", "canonical": "#f7f4ed", "tonalRamp": ["#3a362c", "#5c574a", "#7e786a", "#9f998b", "#bfbaad", "#dcd8cd", "#ebe8df", "#f7f4ed"] },
+      "polaroid-ink": { "role": "secondary", "displayName": "Polaroid Ink", "canonical": "#2a2620", "tonalRamp": ["#16130f", "#2a2620", "#453f36", "#615a4e", "#7e7668", "#9c9486", "#bbb4a8", "#dad5cc"] },
+      "moonlight": { "role": "neutral", "displayName": "Moonlight", "canonical": "#f4f7ff", "tonalRamp": ["#2c3350", "#4c5474", "#6d7597", "#8f97b8", "#b1b8d5", "#d2d7ec", "#e5e9f8", "#f4f7ff"] },
+      "moonlight-low": { "role": "neutral", "displayName": "Moonlight (horizon gold)", "canonical": "#ffeecf", "tonalRamp": ["#4a3c1e", "#6e5c33", "#927d4c", "#b49e68", "#d3bf8a", "#ecd9ac", "#f8e5c0", "#ffeecf"] },
+      "starlight": { "role": "neutral", "displayName": "Starlight", "canonical": "#f0f4ff", "tonalRamp": ["#293150", "#495374", "#6a7597", "#8c97b8", "#aeb8d5", "#d0d7ec", "#e3e8f8", "#f0f4ff"] },
+      "backdrop-night": { "role": "neutral", "displayName": "Night Backdrop", "canonical": "rgba(5, 6, 12, 0.82)", "tonalRamp": ["#05060c", "#14161f", "#262935", "#3b3f4d", "#535866", "#6f7481", "#8f93a0", "#b3b6c0"] }
+    },
+    "typographyMeta": {
+      "display": { "displayName": "Display", "purpose": "The homepage name only. Lowercase, tracking-tight." },
+      "headline": { "displayName": "Headline", "purpose": "Page titles ('about'). Lowercase." },
+      "title": { "displayName": "Title", "purpose": "Section headings inside sky-cards. Lowercase." },
+      "body": { "displayName": "Body", "purpose": "Bio and prose. Sentence case — never lowercase prose (The Two Registers Rule)." },
+      "label": { "displayName": "Label", "purpose": "Chips, captions, bylines, nav links. Lowercase, tracking-widest." }
+    },
+    "shadows": [
+      { "name": "polaroid-float", "value": "0 25px 60px -12px rgba(0, 0, 0, 0.6)", "purpose": "The single true drop shadow: lifts the expanded photo off the dimmed sky." },
+      { "name": "moon-halo", "value": "0 0 6px 2px rgba(240, 245, 255, 0.9), 0 0 18px 6px rgba(216, 228, 255, 0.5), 0 0 40px 14px rgba(190, 208, 255, 0.22)", "purpose": "Luminous point, not a shape — depth from light." }
+    ],
+    "motion": [
+      { "name": "feedback", "value": "300ms ease (transform, border-color)", "purpose": "Hover lift, border brighten — quick, quietly eager." },
+      { "name": "weather", "value": "1.6s–2s ease", "purpose": "Sky gradient, ink, chip, glow transitions — reads as weather, not UI." },
+      { "name": "ease-out-expo", "value": "cubic-bezier(0.16, 1, 0.3, 1)", "purpose": "Moon face bloom, finale bursts — surfaces rather than inflates." },
+      { "name": "swipe-exit", "value": "170ms cubic-bezier(0.4, 0, 1, 1)", "purpose": "Lightbox card toss-off: fast, accelerating." },
+      { "name": "swipe-enter", "value": "300ms cubic-bezier(0.22, 1, 0.36, 1)", "purpose": "Incoming photo glide and settle-back." }
+    ],
+    "breakpoints": [
+      { "name": "sm", "value": "640px" },
+      { "name": "touch-phone", "value": "(pointer: coarse) and (max-width: 640px)" }
+    ]
+  },
+  "components": [
+    {
+      "name": "Sky Chip",
+      "kind": "button",
+      "refersTo": "chip-sky",
+      "description": "Bordered pill on the computed 7:1 chip surface; lifts 2px on hover.",
+      "html": "<button class=\"ds-sky-chip\">sky: auto</button>",
+      "css": ".ds-sky-chip { background: var(--card-bg, #141a3d); color: var(--chip-ink, #f1eefb); border: 1px solid color-mix(in srgb, currentColor 30%, transparent); border-radius: 9999px; padding: 0.375rem 0.75rem; font-family: 'Space Grotesk Variable', system-ui, sans-serif; font-size: 0.75rem; letter-spacing: 0.1em; text-transform: lowercase; cursor: pointer; transition: transform 0.3s ease, border-color 0.3s ease; } .ds-sky-chip:hover { transform: translateY(-2px); border-color: color-mix(in srgb, currentColor 80%, transparent); } .ds-sky-chip:focus-visible { outline: 2px solid currentColor; outline-offset: 2px; }"
+    },
+    {
+      "name": "Squiggle Link",
+      "kind": "nav",
+      "description": "The one universal link trait: wavy 1px underline, 4px offset, lowercase, 2px hover lift.",
+      "html": "<a href=\"#\" class=\"ds-link-squiggle\">about</a>",
+      "css": ".ds-link-squiggle { color: var(--chip-ink, #f1eefb); font-family: 'Space Grotesk Variable', system-ui, sans-serif; font-size: 0.875rem; letter-spacing: 0.1em; text-transform: lowercase; text-decoration-line: underline; text-decoration-style: wavy; text-decoration-thickness: 1px; text-underline-offset: 4px; display: inline-block; transition: transform 0.3s ease; } .ds-link-squiggle:hover { transform: translateY(-2px); } .ds-link-squiggle:focus-visible { outline: 2px solid currentColor; outline-offset: 4px; }"
+    },
+    {
+      "name": "Sky Card",
+      "kind": "card",
+      "refersTo": "card-sky",
+      "description": "Content block sitting directly on the sky; computed chip background, 1rem radius.",
+      "html": "<div class=\"ds-sky-card\"><h2 class=\"ds-sky-card-title\">color</h2><p>Everything is computed at runtime from the sun and moon position.</p></div>",
+      "css": ".ds-sky-card { background: var(--card-bg, #141a3d); color: var(--ink, #f1eefb); border-radius: 1rem; padding: 1.5rem; font-family: 'Space Grotesk Variable', system-ui, sans-serif; font-size: 0.875rem; line-height: 1.6; display: flex; flex-direction: column; gap: 0.75rem; } .ds-sky-card-title { font-size: 1.25rem; font-weight: 500; text-transform: lowercase; margin: 0; }"
+    },
+    {
+      "name": "Polaroid",
+      "kind": "custom",
+      "refersTo": "card-polaroid",
+      "description": "The signature expanded-photo card: warm ivory, caption in the bottom margin, the system's only drop shadow.",
+      "html": "<figure class=\"ds-polaroid\"><div class=\"ds-polaroid-photo\"></div><figcaption class=\"ds-polaroid-caption\">kauai wedding</figcaption></figure>",
+      "css": ".ds-polaroid { background: #f7f4ed; padding: 1rem 1rem 1.25rem; border-radius: 0.25rem; box-shadow: 0 25px 60px -12px rgba(0, 0, 0, 0.6); display: inline-block; margin: 0; } .ds-polaroid-photo { width: 180px; height: 220px; background: linear-gradient(180deg, #1e2c60, #0a1030); border-radius: 2px; } .ds-polaroid-caption { color: #2a2620; text-align: center; font-family: 'Space Grotesk Variable', system-ui, sans-serif; font-size: 0.9rem; letter-spacing: 0.03em; padding-top: 0.85rem; }"
+    },
+    {
+      "name": "Icon Button",
+      "kind": "button",
+      "description": "Small visible glyph, invisible ::after expands the hit area to 44px; 2px hover lift.",
+      "html": "<button class=\"ds-icon-btn\" aria-label=\"Close\">✕</button>",
+      "css": ".ds-icon-btn { position: relative; width: 2.25rem; height: 2.25rem; color: #f1eefb; background: rgba(255, 255, 255, 0.12); border: none; border-radius: 9999px; font-size: 1.1rem; line-height: 1; cursor: pointer; transition: background 0.3s ease; } .ds-icon-btn::after { content: ''; position: absolute; inset: -0.25rem; } .ds-icon-btn:hover { background: rgba(255, 255, 255, 0.22); } .ds-icon-btn:focus-visible { outline: 2px solid #f1eefb; outline-offset: 2px; }"
+    },
+    {
+      "name": "Position Dots",
+      "kind": "chip",
+      "description": "Instagram-style carousel indicator; active dot grows 1.35x and brightens with the swipe's ease-out.",
+      "html": "<div class=\"ds-dots\"><button class=\"ds-dot is-active\" aria-label=\"photo 1\"></button><button class=\"ds-dot\" aria-label=\"photo 2\"></button><button class=\"ds-dot\" aria-label=\"photo 3\"></button></div>",
+      "css": ".ds-dots { display: flex; justify-content: center; gap: 0.1rem; } .ds-dot { width: 1.4rem; height: 1.4rem; padding: 0; border: none; background: transparent; display: grid; place-items: center; cursor: pointer; } .ds-dot::before { content: ''; width: 6px; height: 6px; border-radius: 9999px; background: rgba(255, 255, 255, 0.35); transition: background-color 200ms cubic-bezier(0.25, 1, 0.5, 1), transform 200ms cubic-bezier(0.25, 1, 0.5, 1); } .ds-dot.is-active::before { background: #f1eefb; transform: scale(1.35); }"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Living Sky",
+    "overview": "Nothing on this site is a theme; it is weather. The background is the visitor's actual sky — sun and moon positions computed for their location, the ~70 brightest stars placed for their latitude and the hour — and every color the interface wears is derived from that sky at runtime. Colors are never picked, they are computed, with accessibility as a hard constraint. Under that sky sits a warm, lowercase, human voice: squiggle-underlined links, polaroid photo cards, jumbomoji captions, tap sparkles, a moon with a face if you know where to press. Interactive elements are quietly eager — small and unassuming at rest, but everything lifts 2px to meet your cursor.",
+    "keyCharacteristics": [
+      "Sky-computed palette with build-enforced AAA contrast; fixed colors are rare, named exceptions",
+      "One typeface (Space Grotesk), two registers: lowercase chrome, sentence-case prose",
+      "Depth from light (glows, halos, the horizon gradient), not shadow",
+      "Motion at two speeds: weather (1.6–2s) and feedback (0.3s)",
+      "Delight hidden in plain sight: shooting stars, sparkles, the moon's face"
+    ],
+    "rules": [
+      { "name": "The No-Hardcode Rule", "body": "Any color that should track the sky comes from the custom properties. A fixed hex on sky-tracking content is a bug, and check:contrast exists to catch the consequences.", "section": "colors" },
+      { "name": "The One Warm Exception Rule", "body": "Polaroid Ivory is the only surface allowed to ignore the sky. Everything else participates in the weather.", "section": "colors" },
+      { "name": "The Two Registers Rule", "body": "UI chrome is lowercase by design; body prose uses normal sentence case for readability. Don't lowercase prose to force consistency with the chrome.", "section": "typography" },
+      { "name": "The Glow-Over-Shadow Rule", "body": "New elements that need depth get light — a halo, a gradient toward the horizon, a brightened border — never a gray drop shadow. The polaroid keeps its float because it is a physical object.", "section": "elevation" }
+    ],
+    "dos": [
+      "Do source every sky-tracking color from the custom properties and run npm run check:contrast after touching sky.ts or the palette.",
+      "Do give every inline text link the squiggle underline (1px wavy, 4px offset) — no exceptions.",
+      "Do keep interactive feedback at 300ms and sky transitions at 1.6–2s; weather is slow, feedback is quick.",
+      "Do expand touch targets to 44px with invisible ::after hit areas.",
+      "Do provide a prefers-reduced-motion alternative for every animation.",
+      "Do keep chrome lowercase and prose sentence-case (The Two Registers Rule)."
+    ],
+    "donts": [
+      "Don't build the dev-portfolio template: hero + skills grid + project cards + testimonial slider.",
+      "Don't introduce corporate/LinkedIn energy: Title-Case professionalism, buzzwords, resume voice.",
+      "Don't ship AI-slop scaffolding: cream page backgrounds, eyebrow kickers, gradient text, generic identical card grids.",
+      "Don't tip into the over-animated showreel: no scroll-jacking, no WebGL award-bait burying the person under effects.",
+      "Don't hardcode a hex on anything meant to track the sky, and don't add gray drop shadows where a glow belongs.",
+      "Don't add a second typeface or uppercase the chrome; one family, two registers, is the voice."
+    ]
+  }
+}
