@@ -1,0 +1,193 @@
+---
+import Layout from '../layouts/Layout.astro';
+
+/* Gallup's four domain colors, brightened to clear 3:1 against the dark
+   sky-card so the dots stay visible at night. Domain names ride along in
+   visually-hidden text so the information is never color-only. */
+const domains = {
+  executing: { label: 'executing', color: '#b98ae8' },
+  influencing: { label: 'influencing', color: '#f2a45c' },
+  relationship: { label: 'relationship building', color: '#7fb0ff' },
+  strategic: { label: 'strategic thinking', color: '#63c893' },
+} as const;
+
+type DomainKey = keyof typeof domains;
+
+interface Strength {
+  name: string;
+  domain: DomainKey;
+  blurb: string;
+}
+
+const strengths2015: Strength[] = [
+  {
+    name: 'futuristic',
+    domain: 'strategic',
+    blurb: 'inspired by the future and what could be — energizing others with visions of it.',
+  },
+  {
+    name: 'restorative',
+    domain: 'executing',
+    blurb: 'adept at dealing with problems: figuring out what is wrong and resolving it.',
+  },
+  {
+    name: 'activator',
+    domain: 'influencing',
+    blurb: 'turning thoughts into action — do things now, rather than simply talk about them.',
+  },
+  {
+    name: 'communication',
+    domain: 'influencing',
+    blurb: 'putting thoughts into words easily; a good conversationalist and presenter.',
+  },
+  {
+    name: 'individualization',
+    domain: 'relationship',
+    blurb: 'intrigued by the unique qualities of each person, and how they work together.',
+  },
+];
+
+const strengths2025: Strength[] = [
+  {
+    name: 'empathy',
+    domain: 'relationship',
+    blurb: "sensing other people's feelings by imagining yourself in their situations.",
+  },
+  {
+    name: 'relator',
+    domain: 'relationship',
+    blurb: 'close relationships — deep satisfaction in working hard with friends toward a goal.',
+  },
+  {
+    name: 'ideation',
+    domain: 'strategic',
+    blurb: 'fascinated by ideas; finding connections between seemingly disparate phenomena.',
+  },
+  {
+    name: 'individualization',
+    domain: 'relationship',
+    blurb: 'intrigued by the unique qualities of each person, and how they work together.',
+  },
+  {
+    name: 'communication',
+    domain: 'influencing',
+    blurb: 'putting thoughts into words easily; a good conversationalist and presenter.',
+  },
+];
+
+/* Themes that survived the decade get a little star. */
+const keepers = new Set(
+  strengths2015.map((s) => s.name).filter((n) => strengths2025.some((s) => s.name === n)),
+);
+
+const eras = [
+  { year: '2015', list: strengths2015 },
+  { year: '2025', list: strengths2025 },
+];
+---
+
+<Layout
+  title="just for fun — Amy Lam"
+  description="Personality quizzes, internet toys, and other data about Amy of questionable scientific rigor."
+>
+  <main class="relative mx-auto flex min-h-dvh max-w-2xl flex-col gap-6 px-6 pt-20 pb-48">
+    <a
+      href="/"
+      class="link-squiggle sky-top-ink relative self-start text-[19px] font-bold lowercase tracking-wide transition-transform duration-300 after:absolute after:-inset-3 after:content-[''] hover:-translate-y-0.5 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-current"
+    >
+      ← home
+    </a>
+
+    <h1 class="text-4xl font-medium lowercase tracking-tight sm:text-5xl">just for fun</h1>
+
+    <section class="sky-card rounded-2xl px-6 py-8 sm:px-10 sm:py-10">
+      <div class="prose prose-lg max-w-none">
+        <p>
+          Personality tests, internet toys, and other data about me of questionable
+          scientific rigor.
+        </p>
+        <ul>
+          <li>
+            <a
+              href="https://linkedtarot.com/in/amyrlam"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="link-squiggle"
+            >
+              linkedin tarot<span class="sr-only"> (opens in new tab)</span></a
+            >&nbsp;— my career, read as tarot cards. shockingly on the nose.
+          </li>
+          <li>
+            <a
+              href="https://www.eclecticenergies.com/enneagram/type4"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="link-squiggle"
+            >
+              enneagram type 4<span class="sr-only"> (opens in new tab)</span></a
+            >&nbsp;— the individualist. checks out.
+          </li>
+        </ul>
+      </div>
+
+      <h2 class="mt-10 text-2xl font-medium lowercase tracking-tight">
+        cliftonstrengths, a decade apart
+      </h2>
+      <p class="mt-2 text-base">
+        my gallup top 5, taken ten years apart. starred themes survived the decade.
+      </p>
+
+      <div class="mt-6 grid gap-8 sm:grid-cols-2">
+        {
+          eras.map(({ year, list }) => (
+            <div>
+              <h3 class="text-lg font-bold tracking-wide">{year}</h3>
+              <ol class="mt-3 flex flex-col gap-4">
+                {list.map((s, i) => (
+                  <li class="flex gap-3">
+                    <span class="w-4 shrink-0 text-right text-sm leading-6 tabular-nums opacity-80" aria-hidden="true">
+                      {i + 1}
+                    </span>
+                    <div>
+                      <span class="flex items-center gap-2 font-bold lowercase">
+                        <span
+                          class="h-2 w-2 shrink-0 rounded-full"
+                          style={`background: ${domains[s.domain].color}`}
+                          aria-hidden="true"
+                        />
+                        {s.name}
+                        {keepers.has(s.name) && (
+                          <span title="in both top 5s">
+                            <span aria-hidden="true">✦</span>
+                            <span class="sr-only">in both top 5s</span>
+                          </span>
+                        )}
+                        <span class="sr-only">({domains[s.domain].label})</span>
+                      </span>
+                      <p class="mt-1 text-sm leading-relaxed">{s.blurb}</p>
+                    </div>
+                  </li>
+                ))}
+              </ol>
+            </div>
+          ))
+        }
+      </div>
+
+      <ul class="mt-8 flex flex-wrap gap-x-5 gap-y-2 text-xs lowercase tracking-widest" aria-label="CliftonStrengths domains">
+        {
+          Object.values(domains).map((d) => (
+            <li class="flex items-center gap-2">
+              <span
+                class="h-2 w-2 shrink-0 rounded-full"
+                style={`background: ${d.color}`}
+                aria-hidden="true"
+              />
+              {d.label}
+            </li>
+          ))
+        }
+      </ul>
+    </section>
+  </main>
+</Layout>
