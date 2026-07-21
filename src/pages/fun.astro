@@ -4,13 +4,15 @@ import Layout from '../layouts/Layout.astro';
 /* Gallup's four domain colors, close to the report's own palette. The
    strengths block sits on a fixed white "paper report" panel (a nod to the
    printed Gallup PDF), so the colors stay saturated and distinguishable
-   whatever the sky is doing. Domain names ride along in visually-hidden
-   text so the information is never color-only. */
+   whatever the sky is doing. Each domain also gets its own shape (an
+   improvement on Gallup's color-only bars), plus a visually-hidden name,
+   so the coding never relies on color alone. Shape CSS lives in the
+   .domain-mark rules below. */
 const domains = {
-  executing: { label: 'Executing', color: '#7b3fa0' },
-  influencing: { label: 'Influencing', color: '#c96a1a' },
-  relationship: { label: 'Relationship building', color: '#3272c8' },
-  strategic: { label: 'Strategic thinking', color: '#2e8f5a' },
+  executing: { label: 'Executing', color: '#7b3fa0', shape: 'square' },
+  influencing: { label: 'Influencing', color: '#c96a1a', shape: 'triangle' },
+  relationship: { label: 'Relationship building', color: '#3272c8', shape: 'circle' },
+  strategic: { label: 'Strategic thinking', color: '#2e8f5a', shape: 'diamond' },
 } as const;
 
 type DomainKey = keyof typeof domains;
@@ -161,7 +163,7 @@ const eras = [
                             </span>
                           )}
                           <span
-                            class="h-3 w-3 shrink-0 rounded-full"
+                            class={`domain-mark domain-mark--${domains[s.domain].shape} shrink-0`}
                             style={`background: ${domains[s.domain].color}`}
                             aria-hidden="true"
                           />
@@ -182,7 +184,7 @@ const eras = [
             Object.values(domains).map((d) => (
               <li class="flex items-center gap-2">
                 <span
-                  class="h-3 w-3 shrink-0 rounded-full"
+                  class={`domain-mark domain-mark--${d.shape} shrink-0`}
                   style={`background: ${d.color}`}
                   aria-hidden="true"
                 />
@@ -195,3 +197,33 @@ const eras = [
     </section>
   </main>
 </Layout>
+
+<style>
+  /* One mark per Gallup domain — color plus shape, so the coding survives
+     colorblindness. All four sit on a 12px box; the triangle and diamond
+     get a touch more width so they carry the same optical weight as the
+     filled circle and square. */
+  .domain-mark {
+    width: 12px;
+    height: 12px;
+  }
+
+  .domain-mark--circle {
+    border-radius: 50%;
+  }
+
+  .domain-mark--square {
+    border-radius: 2px;
+  }
+
+  .domain-mark--triangle {
+    width: 14px;
+    clip-path: polygon(50% 0, 100% 100%, 0 100%);
+  }
+
+  .domain-mark--diamond {
+    width: 13px;
+    height: 13px;
+    clip-path: polygon(50% 0, 100% 50%, 50% 100%, 0 50%);
+  }
+</style>
