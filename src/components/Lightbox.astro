@@ -123,14 +123,13 @@
   }
 
   /* Emoji-only captions (✨, 🎷): gold-on-ivory glyphs nearly vanish at
-     text size. Borrow from chat apps — enlarge like Slack's jumbomoji,
-     plus the soft drop shadow Instagram uses on story stickers to lift
-     emoji off whatever's behind them. drop-shadow (not text-shadow)
-     follows the glyph's alpha, so it reads as an outline glow rather
-     than a smeared box. */
+     text size, so enlarge them like Slack's jumbomoji — at this size the
+     artwork's own detail carries the contrast. No shadow or outline:
+     inspecting instagram.com shows they render caption emoji as plain
+     native glyphs (no text-shadow, filter, or image replacement), and a
+     shadow makes the glyph look pasted-on. */
   .lightbox-caption--emoji {
     font-size: 1.75rem;
-    filter: drop-shadow(0 1px 2px rgba(42, 38, 32, 0.35));
   }
 
   /* One shared size/shape/color for close, prev, and next — only
