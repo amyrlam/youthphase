@@ -352,7 +352,11 @@ function scheduleShootingStar() {
 
 /* The fixed control chips fade while the page scrolls so bio text never
    passes under an opaque pill — occlusion is a readability bug just like
-   contrast. They return ~200ms after scrolling stops. */
+   contrast. They return ~200ms after scrolling stops. Only while the
+   chips are actually viewport-fixed (desktop): on mobile they're anchored
+   to the bottom of the page, nothing can pass under them, and stray
+   scroll events (URL-bar collapse, overscroll) would just make the
+   buttons flicker off and briefly refuse taps. */
 function fadeChipsWhileScrolling() {
   const chips = document.getElementById('sky-controls');
   if (!chips) return;
@@ -360,6 +364,7 @@ function fadeChipsWhileScrolling() {
   addEventListener(
     'scroll',
     () => {
+      if (getComputedStyle(chips).position !== 'fixed') return;
       chips.classList.add('is-scrolling');
       clearTimeout(timer);
       timer = setTimeout(() => chips.classList.remove('is-scrolling'), 200);
@@ -823,7 +828,9 @@ async function start() {
   const demoButton = document.getElementById('sky-demo');
   const syncDemoButton = () => {
     if (!demoButton) return;
-    demoButton.textContent = demoRunning ? '◼ stop' : '▶ 24h';
+    // U+FE0E forces text presentation — without it, ◼ and ▶ can render
+    // as color emoji (a stuck-black square on iOS) that ignore `color`.
+    demoButton.textContent = demoRunning ? '◼︎ stop' : '▶︎ 24h';
     demoButton.setAttribute(
       'aria-label',
       demoRunning ? 'Stop the sky time-lapse' : 'Play a 24-hour sky time-lapse',

@@ -57,10 +57,14 @@ import Layout from '../layouts/Layout.astro';
     <!-- min-h matches the corner chips' rendered height (1rem text line +
          0.75rem padding + 2px border) so "about" vertically centers with
          them — both are anchored to the same bottom edge, and without it
-         the shorter text line sits ~5px lower than the chips' middle. -->
+         the shorter text line sits ~5px lower than the chips' middle.
+         Mobile is absolute (bottom of the page, like the chips in
+         Layout.astro) rather than fixed; on this non-scrolling page the
+         two render identically, but absolute keeps the footer row from
+         floating over content if the page ever overflows. -->
     <nav
       aria-label="Site pages"
-      class="fixed left-5 bottom-[calc(1.25rem+env(safe-area-inset-bottom))] flex min-h-[calc(1.75rem+2px)] items-center gap-5"
+      class="absolute left-5 bottom-[calc(1.25rem+env(safe-area-inset-bottom))] flex min-h-[calc(1.75rem+2px)] items-center gap-5 sm:fixed"
     >
       <a
         href="/about"

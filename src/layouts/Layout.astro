@@ -151,16 +151,21 @@ const ogImage = new URL('/og.png', Astro.site);
 
     <slot />
 
+    <!-- Mobile: anchored to the bottom of the page (absolute against the
+         relative body), so on scrollable pages the chips rest below the
+         content instead of floating over text and photos mid-scroll.
+         Desktop keeps them viewport-fixed, with the scroll-fade in sky.ts
+         handling overlap. -->
     <div
       id="sky-controls"
-      class="fixed right-5 bottom-[calc(1.25rem+env(safe-area-inset-bottom))] flex items-center gap-4"
+      class="absolute right-5 bottom-[calc(1.25rem+env(safe-area-inset-bottom))] flex items-center gap-4 sm:fixed"
     >
       <button
         id="sky-demo"
         aria-label="Play a 24-hour sky time-lapse"
         class="sky-chip relative rounded-full border border-current/30 px-3 py-1.5 text-xs lowercase tracking-widest transition-transform duration-300 after:absolute after:-inset-2 after:content-[''] hover:-translate-y-0.5 hover:border-current/80 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-current"
       >
-        ▶ 24h
+        ▶︎ 24h
       </button>
       <button
         id="sky-mode"
