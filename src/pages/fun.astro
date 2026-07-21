@@ -149,19 +149,21 @@ const eras = [
                 <h3 class="text-lg font-bold tracking-wide">{year}</h3>
                 <ol class="mt-3 flex flex-col gap-4">
                   {list.map((s, i) => (
-                    <li class="flex gap-3">
+                    <li class="flex gap-2.5">
                       <span class="w-4 shrink-0 text-right text-sm leading-6 tabular-nums opacity-70" aria-hidden="true">
                         {i + 1}
+                      </span>
+                      <span class="mt-[3px] flex h-[18px] w-[18px] shrink-0 items-center justify-center">
+                        {keepers.has(s.name) && (
+                          <span class="star-badge" title="In both Top 5s">
+                            <span aria-hidden="true">✦</span>
+                            <span class="sr-only">In both Top 5s:</span>
+                          </span>
+                        )}
                       </span>
                       <div>
                         <span class="flex items-center gap-2 font-bold">
                           {s.name}
-                          {keepers.has(s.name) && (
-                            <span title="In both Top 5s">
-                              <span aria-hidden="true" style="color: #d99000">✦</span>
-                              <span class="sr-only">In both Top 5s</span>
-                            </span>
-                          )}
                           <span
                             class={`domain-mark domain-mark--${domains[s.domain].shape} shrink-0`}
                             style={`background: ${domains[s.domain].color}`}
@@ -203,6 +205,22 @@ const eras = [
      colorblindness. All four sit on a 12px box; the triangle and diamond
      get a touch more width so they carry the same optical weight as the
      filled circle and square. */
+  /* The "survived the decade" star, left of the theme name — a gold seal
+     in a soft amber circle, so it reads as an award rather than a fifth
+     entry in the domain shape system. */
+  .star-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: #faedd4;
+    color: #b87700;
+    font-size: 11px;
+    line-height: 1;
+  }
+
   .domain-mark {
     width: 12px;
     height: 12px;
