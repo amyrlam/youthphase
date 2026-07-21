@@ -118,12 +118,16 @@ const ogImage = new URL('/og.png', Astro.site);
          up). Hold a finger on it and the month plays out — the light
          waxes and wanes while the status line names each phase. Touch
          pointers only, and hidden from AT: it duplicates nothing
-         functional, it's a secret for wandering fingers. -->
+         functional, it's a secret for wandering fingers. z-10 is
+         load-bearing: the page's <main> is positioned and later in the
+         DOM, so without it the content surface sits on top and real
+         touches never reach this target (long-pressing the moon would
+         text-select the heading instead). -->
     <div
       id="moon-touch"
       aria-hidden="true"
       style="display: none"
-      class="fixed h-11 w-11 -translate-x-1/2 -translate-y-1/2 touch-none rounded-full select-none"
+      class="fixed z-10 h-11 w-11 -translate-x-1/2 -translate-y-1/2 touch-none rounded-full select-none"
     >
     </div>
 
