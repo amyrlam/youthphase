@@ -52,9 +52,13 @@ import Layout from '../layouts/Layout.astro';
       </a>
     </nav>
 
+    <!-- min-h matches the corner chips' rendered height (1rem text line +
+         0.75rem padding + 2px border) so "about" vertically centers with
+         them — both are anchored to the same bottom edge, and without it
+         the shorter text line sits ~5px lower than the chips' middle. -->
     <nav
       aria-label="Site pages"
-      class="fixed left-5 bottom-[calc(1.25rem+env(safe-area-inset-bottom))] flex items-center gap-5"
+      class="fixed left-5 bottom-[calc(1.25rem+env(safe-area-inset-bottom))] flex min-h-[calc(1.75rem+2px)] items-center gap-5"
     >
       <a
         href="/about"
@@ -64,9 +68,14 @@ import Layout from '../layouts/Layout.astro';
       </a>
     </nav>
 
+    <!-- Mobile: stacked a full 1rem above the footer row (footer bottom
+         1.25rem + chip height 1.75rem+2px + 1rem) — the same breathing
+         room the byline gets under "Amy Lam" (gap-8 minus -mt-4). Desktop:
+         inline with the footer row, bottom offset by half the chip/text
+         height difference so its center matches the chips' center. -->
     <p
       id="sky-status"
-      class="sky-caption absolute bottom-[calc(3.5rem+env(safe-area-inset-bottom))] text-sm lowercase tracking-widest sm:bottom-[calc(1.75rem+env(safe-area-inset-bottom))]"
+      class="sky-caption absolute bottom-[calc(4rem+2px+env(safe-area-inset-bottom))] text-sm lowercase tracking-widest sm:bottom-[calc(1.5rem+1px+env(safe-area-inset-bottom))]"
     >
     </p>
   </main>
