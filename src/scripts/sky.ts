@@ -372,7 +372,7 @@ function fadeChipsWhileScrolling() {
 function enableSparkles() {
   if (reducedMotion()) return;
   addEventListener('pointerdown', (e) => {
-    if ((e.target as Element | null)?.closest('a, button, #moon-touch')) return;
+    if ((e.target as Element | null)?.closest('a, button')) return;
     const s = document.createElement('span');
     s.className = 'sparkle';
     s.textContent = '✦';
@@ -514,23 +514,13 @@ function render(place: Place, mode: Mode, at = new Date(), demo = false) {
       glow.style.opacity = '0';
     }
 
-    const moonTouch = document.getElementById('moon-touch');
+    // The show's face (the bloomed cratered disc) rides the moon's
+    // position; the triple-tap trigger only arms while the moon is up.
+    moonVisible = Boolean(moonAt);
     const moonFace = document.getElementById('moon-face');
-    if (moonTouch) {
-      // The hold-the-moon easter egg's touch target rides along with the
-      // moon, and only exists while the moon is up. The held face (the
-      // bloomed cratered disc) tracks the same point.
-      if (moonAt) {
-        moonTouch.style.display = '';
-        moonTouch.style.left = `${moonAt.x}%`;
-        moonTouch.style.top = `${moonAt.y}%`;
-        if (moonFace) {
-          moonFace.style.left = `${moonAt.x}%`;
-          moonFace.style.top = `${moonAt.y}%`;
-        }
-      } else {
-        moonTouch.style.display = 'none';
-      }
+    if (moonFace && moonAt) {
+      moonFace.style.left = `${moonAt.x}%`;
+      moonFace.style.top = `${moonAt.y}%`;
     }
 
     if (moonCore) {
@@ -589,14 +579,14 @@ function render(place: Place, mode: Mode, at = new Date(), demo = false) {
   }
 }
 
-/* Easter egg: hold a finger on the moon and the month plays out — the
-   light waxes and wanes through a full synodic cycle (~8s per month,
-   looping) while the status line names each phase. The moon never
-   becomes a picture here either: the phase stays in words and
-   brightness, same as the real sky. Touch pointers only — on mobile the
-   moon is something you can reach out and hold; a mouse never finds it.
-   Released, the sky eases back to now. */
+/* Easter egg: triple-tap anywhere on the night sky and a month plays
+   out — the moon blooms into its cratered face, the light waxes and
+   wanes through one full synodic cycle (~8s), then the finale flood and
+   sparkle fireworks, before the sky settles back to tonight. Touch
+   pointers only, and only while the moon is up: the moon is the
+   performer, so daylight taps stay ordinary sparkles. */
 let cycleRunning = false;
+let moonVisible = false;
 
 /* The night side of the held moon face, as an SVG path. Real phase
    geometry: the shadow is bounded by half the disc's edge plus the
@@ -648,42 +638,33 @@ function spawnBurst(xPct: string, yPct: string) {
   }
 }
 
-function enableMoonHold(getPlace: () => Place, getMode: () => Mode) {
-  const target = document.getElementById('moon-touch');
+function enableMoonShow(getPlace: () => Place, getMode: () => Mode) {
   const moonCore = document.getElementById('moon-core');
   const status = document.getElementById('sky-status');
   const shadow = document.getElementById('moon-shadow');
-  if (!target || !moonCore) return;
+  if (!moonCore) return;
 
-  let holdTimer: ReturnType<typeof setTimeout> | undefined;
   let tick: ReturnType<typeof setInterval> | undefined;
-  let finaleRunning = false;
 
-  const stop = () => {
-    clearTimeout(holdTimer);
-    // A finale, once earned, plays through — it ends the hold itself.
-    if (finaleRunning) return;
+  /* Back to tonight, without ceremony — how reduced-motion shows end. */
+  const settle = () => {
     if (tick !== undefined) {
       clearInterval(tick);
       tick = undefined;
     }
-    if (!cycleRunning) return;
     cycleRunning = false;
     document.documentElement.classList.remove('moon-cycle');
     render(getPlace(), getMode());
   };
 
-  /* Hold through the whole month and the sky celebrates: the moonlight
-     floods outward from the moon, sparkle fireworks burst over the
-     page, a couple of shooting stars cross — then everything settles
-     back to tonight. Reduced-motion holds never get here; they just
-     keep cycling. */
+  /* The month ends and the sky celebrates: the moonlight floods outward
+     from the moon, sparkle fireworks burst over the page, a couple of
+     shooting stars cross — then everything settles back to tonight. */
   const finale = () => {
     if (tick !== undefined) {
       clearInterval(tick);
       tick = undefined;
     }
-    finaleRunning = true;
     const fin = document.getElementById('moon-finale');
     const fx = moonCore.style.left || '50%';
     const fy = moonCore.style.top || '40%';
@@ -703,15 +684,10 @@ function enableMoonHold(getPlace: () => Place, getMode: () => Mode) {
       }, 700);
     }, 450);
     setTimeout(() => fin?.classList.remove('wash'), 2400);
-    setTimeout(() => {
-      finaleRunning = false;
-      cycleRunning = false;
-      document.documentElement.classList.remove('moon-cycle');
-      render(getPlace(), getMode());
-    }, 3200);
+    setTimeout(settle, 3200);
   };
 
-  const startCycle = () => {
+  const startShow = () => {
     if (demoRunning || cycleRunning) return;
     cycleRunning = true;
     document.documentElement.classList.add('moon-cycle');
@@ -723,8 +699,11 @@ function enableMoonHold(getPlace: () => Place, getMode: () => Mode) {
     const startedAt = performance.now();
     const frame = () => {
       const elapsed = performance.now() - startedAt;
-      if (elapsed >= 8000 && !reducedMotion()) {
-        finale();
+      if (elapsed >= 8000) {
+        // One month exactly, then the celebration — or, under reduced
+        // motion, a quiet return to tonight.
+        if (reducedMotion()) settle();
+        else finale();
         return;
       }
       const phase = (startPhase + elapsed / 8000) % 1;
@@ -739,16 +718,22 @@ function enableMoonHold(getPlace: () => Place, getMode: () => Mode) {
     tick = setInterval(frame, 100);
   };
 
-  target.addEventListener('pointerdown', (e) => {
+  // Three quick taps anywhere on the sky — links and buttons excepted —
+  // while the moon is up. Each tap still leaves its ordinary sparkle
+  // (enableSparkles), so the secret hides inside a gesture that already
+  // feels alive.
+  let taps: number[] = [];
+  addEventListener('pointerdown', (e) => {
     if (e.pointerType !== 'touch') return;
-    e.preventDefault();
-    // A beat of stillness before the month starts turning, so ordinary
-    // taps pass through as taps.
-    holdTimer = setTimeout(startCycle, 350);
+    if ((e.target as Element | null)?.closest('a, button')) return;
+    const now = performance.now();
+    taps = taps.filter((t) => now - t < 450);
+    taps.push(now);
+    if (taps.length >= 3 && moonVisible && !demoRunning && !cycleRunning) {
+      taps = [];
+      startShow();
+    }
   });
-  for (const ev of ['pointerup', 'pointercancel', 'pointerleave'] as const) {
-    target.addEventListener(ev, stop);
-  }
 }
 
 /* Play the next 24 hours in about 14 seconds. The random real-night
@@ -791,7 +776,7 @@ async function start() {
   enableSparkles();
   scheduleShootingStar();
   fadeChipsWhileScrolling();
-  enableMoonHold(
+  enableMoonShow(
     () => place,
     () => mode,
   );
