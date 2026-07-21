@@ -409,7 +409,10 @@ function enableSparkles() {
 
 async function locate(): Promise<Place> {
   try {
-    const res = await fetch('https://ipapi.co/json/', { signal: AbortSignal.timeout(4000) });
+    /* Same-origin echo of Vercel's per-request geo headers (api/geo.ts) —
+       no third-party lookup, no rate limits. Absent under `astro dev`,
+       where this 404s and we fall through to the fallback below. */
+    const res = await fetch('/api/geo', { signal: AbortSignal.timeout(4000) });
     if (!res.ok) throw new Error(`geo lookup failed: ${res.status}`);
     const data = await res.json();
     if (typeof data.latitude === 'number' && typeof data.longitude === 'number') {

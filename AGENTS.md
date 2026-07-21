@@ -2,6 +2,10 @@
 
 Before any UI work, consult [PRODUCT.md](PRODUCT.md) (register, audience, brand personality, anti-references) and [DESIGN.md](DESIGN.md) (the visual system: sky-computed palette, typography registers, named rules). The unlisted page `src/pages/design-system.astro` shows the live patterns; keep all three in sync when a new shared pattern lands.
 
+## README
+
+README.md is a tech explainer for curious readers, not contributor docs. Whenever a change alters how the site works — a new feature, a changed mechanism (geolocation, sky rendering, deployment shape), a removed behavior — update the README's explanation in the same PR so it never drifts from reality.
+
 ## Development
 
 When starting the dev server, use background mode:
