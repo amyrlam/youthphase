@@ -84,9 +84,11 @@ const keepers = new Set(
   strengths2015.map((s) => s.name).filter((n) => strengths2025.some((s) => s.name === n)),
 );
 
+/* 2025 leads: a visitor cares about the current Top 5; 2015 is the
+   comparison column. */
 const eras = [
-  { year: '2015', list: strengths2015 },
   { year: '2025', list: strengths2025 },
+  { year: '2015', list: strengths2015 },
 ];
 ---
 
@@ -105,40 +107,35 @@ const eras = [
     <h1 class="text-4xl font-medium lowercase tracking-tight sm:text-5xl">just for fun</h1>
 
     <section class="sky-card rounded-2xl px-6 py-8 sm:px-10 sm:py-10">
-      <div class="prose prose-lg max-w-none">
-        <p>
-          Personality tests, internet toys, and other data about me of questionable
-          scientific rigor.
-        </p>
-        <ul>
-          <li>
-            <a
-              href="https://linkedtarot.com/in/amyrlam"
-              target="_blank"
-              rel="noopener noreferrer"
-              class="link-squiggle"
-            >
-              LinkedIn Tarot<span class="sr-only"> (opens in new tab)</span></a
-            >&nbsp;— my career, read as tarot cards. Shockingly on the nose.
-          </li>
-          <li>
-            <a
-              href="https://www.eclecticenergies.com/enneagram/type4"
-              target="_blank"
-              rel="noopener noreferrer"
-              class="link-squiggle"
-            >
-              My Enneagram<span class="sr-only"> (opens in new tab)</span></a
-            >&nbsp;— Type 4, The Individualist. Checks out.
-          </li>
-        </ul>
-      </div>
-
-      <h2 class="mt-10 text-2xl font-medium tracking-tight">
-        CliftonStrengths, a decade apart
+      <h2 class="text-2xl font-medium tracking-tight">
+        <a
+          href="https://linkedtarot.com/in/amyrlam"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="link-squiggle"
+        >
+          My LinkedIn Tarot<span class="sr-only"> (opens in new tab)</span>
+        </a>
       </h2>
+
+      <h2 class="mt-8 text-2xl font-medium tracking-tight">
+        <a
+          href="https://www.eclecticenergies.com/enneagram/type4"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="link-squiggle"
+        >
+          My Enneagram<span class="sr-only"> (opens in new tab)</span>
+        </a>
+      </h2>
+      <p class="mt-2 text-base">Type 4, The Individualist.</p>
+
+      <h2 class="mt-8 text-2xl font-medium tracking-tight">CliftonStrengths</h2>
       <p class="mt-2 text-base">
-        My Gallup Top 5, taken ten years apart. Starred themes survived the decade.
+        My Gallup Top 5, taken ten years apart. Themes in both get a star (<span
+          class="star-badge mx-0.5 align-[-3px]"
+          ><span aria-hidden="true">✦</span><span class="sr-only">gold star badge</span></span
+        >).
       </p>
 
       <div class="mt-6 rounded-xl bg-white px-5 py-6 text-[#212a4a] sm:px-7 sm:py-7">
