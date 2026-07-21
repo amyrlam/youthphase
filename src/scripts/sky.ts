@@ -617,6 +617,37 @@ function moonShadowPath(phase: number): string {
   return `M 50 1 A 49 49 0 0 1 50 99 A ${rx} 49 0 0 ${c < 0 ? 0 : 1} 50 1`;
 }
 
+/* One firework of ✦ sparkles from a sky position. The palette is the
+   site's three lights: white, moonlight blue, horizon gold. Stars are
+   appended to <body> so they fly over the page, like the tap sparkles. */
+function spawnBurst(xPct: string, yPct: string) {
+  const COLORS = ['#ffffff', '#bcd0ff', '#ffd9a0'];
+  const n = 18;
+  for (let i = 0; i < n; i++) {
+    const s = document.createElement('span');
+    s.className = 'finale-star';
+    s.textContent = Math.random() < 0.3 ? '✧' : '✦';
+    const ang = (i / n) * 2 * Math.PI + Math.random() * 0.5;
+    const dist = 60 + Math.random() * 160;
+    s.style.left = xPct;
+    s.style.top = yPct;
+    s.style.color = COLORS[i % 3];
+    s.style.fontSize = `${(10 + Math.random() * 12).toFixed(0)}px`;
+    s.style.setProperty('--dx', `${(Math.cos(ang) * dist).toFixed(0)}px`);
+    s.style.setProperty('--dy', `${(Math.sin(ang) * dist).toFixed(0)}px`);
+    s.style.setProperty('--r', `${(Math.random() * 270 - 135).toFixed(0)}deg`);
+    s.style.setProperty('--s', (0.7 + Math.random() * 0.6).toFixed(2));
+    s.style.setProperty('--t', `${(1.1 + Math.random() * 0.6).toFixed(2)}s`);
+    s.style.setProperty('--delay', `${(Math.random() * 0.15).toFixed(2)}s`);
+    s.addEventListener('animationend', () => s.remove());
+    // Backstop: animationend never fires if the animation gets paused
+    // (hidden tab, throttled renderer), and forwards-filled glyphs would
+    // linger as litter. Removing twice is harmless.
+    setTimeout(() => s.remove(), 3000);
+    document.body.appendChild(s);
+  }
+}
+
 function enableMoonHold(getPlace: () => Place, getMode: () => Mode) {
   const target = document.getElementById('moon-touch');
   const moonCore = document.getElementById('moon-core');
@@ -626,9 +657,12 @@ function enableMoonHold(getPlace: () => Place, getMode: () => Mode) {
 
   let holdTimer: ReturnType<typeof setTimeout> | undefined;
   let tick: ReturnType<typeof setInterval> | undefined;
+  let finaleRunning = false;
 
   const stop = () => {
     clearTimeout(holdTimer);
+    // A finale, once earned, plays through — it ends the hold itself.
+    if (finaleRunning) return;
     if (tick !== undefined) {
       clearInterval(tick);
       tick = undefined;
@@ -637,6 +671,44 @@ function enableMoonHold(getPlace: () => Place, getMode: () => Mode) {
     cycleRunning = false;
     document.documentElement.classList.remove('moon-cycle');
     render(getPlace(), getMode());
+  };
+
+  /* Hold through the whole month and the sky celebrates: the moonlight
+     floods outward from the moon, sparkle fireworks burst over the
+     page, a couple of shooting stars cross — then everything settles
+     back to tonight. Reduced-motion holds never get here; they just
+     keep cycling. */
+  const finale = () => {
+    if (tick !== undefined) {
+      clearInterval(tick);
+      tick = undefined;
+    }
+    finaleRunning = true;
+    const fin = document.getElementById('moon-finale');
+    const fx = moonCore.style.left || '50%';
+    const fy = moonCore.style.top || '40%';
+    if (fin) {
+      fin.style.setProperty('--fx', fx);
+      fin.style.setProperty('--fy', fy);
+      fin.classList.add('wash');
+    }
+    if (status) status.textContent = 'a month, all at once';
+    setTimeout(() => {
+      spawnBurst(fx, fy);
+      spawnShootingStar();
+      setTimeout(() => spawnBurst(`${(15 + Math.random() * 30).toFixed(0)}%`, `${(15 + Math.random() * 25).toFixed(0)}%`), 350);
+      setTimeout(() => {
+        spawnBurst(`${(55 + Math.random() * 30).toFixed(0)}%`, `${(20 + Math.random() * 30).toFixed(0)}%`);
+        spawnShootingStar();
+      }, 700);
+    }, 450);
+    setTimeout(() => fin?.classList.remove('wash'), 2400);
+    setTimeout(() => {
+      finaleRunning = false;
+      cycleRunning = false;
+      document.documentElement.classList.remove('moon-cycle');
+      render(getPlace(), getMode());
+    }, 3200);
   };
 
   const startCycle = () => {
@@ -650,7 +722,12 @@ function enableMoonHold(getPlace: () => Place, getMode: () => Mode) {
     const startPhase = SunCalc.getMoonIllumination(new Date()).phase;
     const startedAt = performance.now();
     const frame = () => {
-      const phase = (startPhase + (performance.now() - startedAt) / 8000) % 1;
+      const elapsed = performance.now() - startedAt;
+      if (elapsed >= 8000 && !reducedMotion()) {
+        finale();
+        return;
+      }
+      const phase = (startPhase + elapsed / 8000) % 1;
       // Illuminated fraction from the phase angle: 0 at new, 1 at full —
       // the same brightness rule render() applies to the real moon.
       const fraction = (1 - Math.cos(2 * Math.PI * phase)) / 2;
