@@ -508,7 +508,9 @@ function render(place: Place, mode: Mode, at = new Date(), demo = false) {
       if (moonAt) {
         moonCore.style.left = `${moonAt.x}%`;
         moonCore.style.top = `${moonAt.y}%`;
-        moonCore.style.opacity = String(0.45 + moonIllum.fraction * 0.45);
+        // Floor high enough that even a thin crescent reads as a
+        // deliberate disc rather than a stray glow.
+        moonCore.style.opacity = String(0.55 + moonIllum.fraction * 0.4);
       } else {
         moonCore.style.opacity = '0';
       }

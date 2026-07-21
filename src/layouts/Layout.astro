@@ -44,15 +44,15 @@ const ogImage = new URL('/og.png', Astro.site);
     >
     </div>
 
-    <!-- The moon's luminous core: a small bright center inside the wide
-         halo above — a sense of moon, not a literal disc. Same mobile
-         story as the glow: at 7vmin (~26px) the 18px blur dissolves the
-         core into an accidental-looking smudge, so phones get a larger
-         disc with a blur that's small relative to it. -->
+    <!-- The moon's luminous core: a bright disc inside the wide halo
+         above. The blur must stay small relative to the disc (≲1/5 of
+         its width) or the edge dissolves and the moon reads as an
+         accidental smudge — that bug shipped twice, first on phones
+         (26px core, 18px blur), then on desktop (56px core, same 18px). -->
     <div
       id="moon-core"
       aria-hidden="true"
-      class="pointer-events-none fixed h-[13vw] w-[13vw] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[#eef2ff] opacity-0 blur-[10px] sm:h-[7vmin] sm:w-[7vmin] sm:blur-[18px]"
+      class="pointer-events-none fixed h-[13vw] w-[13vw] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[#eef2ff] opacity-0 blur-[10px] sm:h-[7vmin] sm:w-[7vmin] sm:blur-[11px]"
     >
     </div>
 
