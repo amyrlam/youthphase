@@ -26,7 +26,7 @@ import youthPhase from '../assets/contact/youth-phase-print.png';
           I grew up with my grandparents on the Connecticut shoreline, where Pop kept a
           little dinghy in the harbor named <em>Youth Phase</em>. Each time life carried him
           somewhere new, he'd update the numbers on the hull. Even in his old age, he never
-          stopped counting.
+          stopped counting. I think I'm up to <em>Youth Phase XVII</em> right now.
         </p>
       </div>
 
@@ -96,9 +96,10 @@ import youthPhase from '../assets/contact/youth-phase-print.png';
             class="rounded-lg border border-current/30 bg-transparent px-3 py-2 text-base focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-current"
           />
           <!-- Inline validation, in the site's voice — no browser
-               bubbles (the form is novalidate), no semantic red (the
-               ink color is the palette). Filled by the script. -->
-          <p id="contact-email-error" data-error-for="contact-email" hidden class="text-xs tracking-wide"></p>
+               bubbles (the form is novalidate). Colored by --error-ink:
+               the computed ink tinted toward coral, sky-safe (see the
+               style block). Filled by the script. -->
+          <p id="contact-email-error" data-error-for="contact-email" hidden class="field-error text-xs tracking-wide"></p>
         </div>
 
         <div class="flex flex-col gap-1.5">
@@ -113,7 +114,7 @@ import youthPhase from '../assets/contact/youth-phase-print.png';
             maxlength="5000"
             class="resize-y rounded-lg border border-current/30 bg-transparent px-3 py-2 text-base focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-current"
           ></textarea>
-          <p id="contact-message-error" data-error-for="contact-message" hidden class="text-xs tracking-wide"></p>
+          <p id="contact-message-error" data-error-for="contact-message" hidden class="field-error text-xs tracking-wide"></p>
         </div>
 
         <!-- Honeypot: hidden from people (and from the accessibility tree),
@@ -208,10 +209,21 @@ import youthPhase from '../assets/contact/youth-phase-print.png';
     border-radius: 2px;
   }
 
-  /* An invalid field's border goes full-strength ink — state carried by
-     weight, not by a semantic red the palette doesn't have. */
+  /* Error color: the sky's own ink, tinted toward coral. Because the
+     ink is computed contrast-safe against the card, mixing mostly-ink
+     keeps it readable under every sky (light or dark card) while
+     clearly reading as "error" rather than text. Fields get the same
+     tint on their border at full strength. */
+  #contact-form {
+    --error-ink: color-mix(in oklab, currentColor 60%, #ff5d4d 40%);
+  }
+
+  .field-error {
+    color: var(--error-ink);
+  }
+
   #contact-form [aria-invalid='true'] {
-    border-color: currentColor;
+    border-color: var(--error-ink);
   }
 </style>
 
@@ -284,7 +296,7 @@ import youthPhase from '../assets/contact/youth-phase-print.png';
     const data = Object.fromEntries(new FormData(form).entries());
     if (submit) submit.disabled = true;
     if (submit) submit.textContent = 'Sending…';
-    if (status) status.textContent = '';
+    if (status) { status.textContent = ''; status.classList.remove('field-error'); }
 
     try {
       const res = await fetch('/api/contact', {
@@ -296,7 +308,7 @@ import youthPhase from '../assets/contact/youth-phase-print.png';
       form.reset();
       if (status) status.textContent = "Message sent — I'll write back soon";
     } catch {
-      if (status) status.textContent = 'Something went wrong — mind trying again?';
+      if (status) { status.textContent = 'Something went wrong — mind trying again?'; status.classList.add('field-error'); }
     } finally {
       if (submit) {
         submit.disabled = false;

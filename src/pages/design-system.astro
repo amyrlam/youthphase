@@ -162,10 +162,13 @@ import Layout from '../layouts/Layout.astro';
         <code>required</code> attribute already announces it); optional fields are simply
         unmarked. Submit is the bordered-pill button. Status messages go in an <code>aria-live="polite"</code> line next to the
         submit, written in the site's voice. Validation is inline, not browser bubbles
-        (forms are <code>novalidate</code>): a lowercase line appears under the field, the
-        field gets <code>aria-invalid</code> + <code>aria-describedby</code> and a
-        full-strength ink border — state carried by weight and words, never a semantic red.
-        Errors clear as you type. Every form gets a hidden honeypot field the server checks.
+        (forms are <code>novalidate</code>): a sentence-case line appears under the field,
+        and the field gets <code>aria-invalid</code> + <code>aria-describedby</code>. The
+        error color is the sky's own ink tinted toward coral —
+        <code>color-mix(in oklab, currentColor 60%, #ff5d4d 40%)</code> — so it stays
+        readable under every sky while clearly reading as error, on both the message and
+        the field's border. Errors clear as you type. Every form gets a hidden honeypot
+        field the server checks.
       </p>
       <div class="flex flex-col gap-1.5">
         <label for="ds-input" class="text-xs tracking-widest">
