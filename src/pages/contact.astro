@@ -26,7 +26,8 @@ import youthPhase from '../assets/contact/youth-phase-print.png';
           I grew up with my grandparents on the Connecticut shoreline, where Pop kept a
           little dinghy in the harbor named <em>Youth Phase</em>. Each time life carried him
           somewhere new, he'd update the numbers on the hull. Even in his old age, he never
-          stopped counting. I think I'm up to <em>Youth Phase XVII</em> right now.
+          stopped counting. It's always resonated with me, and I think I'm up to Youth
+          Phase XVII right now.
         </p>
       </div>
 
@@ -128,7 +129,7 @@ import youthPhase from '../assets/contact/youth-phase-print.png';
           <button
             type="submit"
             id="contact-submit"
-            class="relative w-fit rounded-full border border-current/30 px-4 py-1.5 text-xs tracking-widest transition-transform duration-300 after:absolute after:-inset-2 after:content-[''] hover:-translate-y-0.5 hover:border-current/80 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-current disabled:opacity-60 disabled:hover:translate-y-0 disabled:hover:border-current/30"
+            class="relative w-fit rounded-full px-4 py-1.5 text-xs tracking-widest after:absolute after:-inset-2 after:content-[''] hover:-translate-y-0.5 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-current disabled:opacity-60 disabled:hover:translate-y-0"
           >
             Send
           </button>
@@ -215,7 +216,33 @@ import youthPhase from '../assets/contact/youth-phase-print.png';
      clearly reading as "error" rather than text. Fields get the same
      tint on their border at full strength. */
   #contact-form {
-    --error-ink: color-mix(in oklab, currentColor 60%, #ff5d4d 40%);
+    /* Two error colors, split by WCAG role. Text must clear AAA 7:1 on
+       the card, and the card pairing only guarantees that for the ink
+       itself — so the text color keeps the ink's exact lightness and
+       shifts hue/chroma only (a faint coral blush; measured 7.0-7.1:1
+       live). Borders are non-text UI (3:1 floor), so they can afford
+       the rich coral that makes the invalid field unmistakable. */
+    --error-border: color-mix(in oklab, currentColor 60%, #ff5d4d 40%);
+    --error-ink: color-mix(in oklab, currentColor 72%, #ff5d4d 28%);
+  }
+
+  @supports (color: oklch(from red calc(l) c h)) {
+    #contact-form {
+      --error-ink: oklch(from currentColor l 0.05 25);
+    }
+  }
+
+  /* Send is filled — the card pairing inverted (chip-ink surface,
+     card-bg text), so it keeps the computed 7:1 guarantee while
+     standing apart from the bordered sky chips in the site corners.
+     Colors ride the sky's own slow transition; the lift stays quick. */
+  #contact-submit {
+    background: var(--chip-ink, #ffffff);
+    color: var(--card-bg, #141a3d);
+    transition:
+      background-color 1.6s ease,
+      color 1.6s ease,
+      transform 0.3s ease;
   }
 
   .field-error {
@@ -223,7 +250,7 @@ import youthPhase from '../assets/contact/youth-phase-print.png';
   }
 
   #contact-form [aria-invalid='true'] {
-    border-color: var(--error-ink);
+    border-color: var(--error-border);
   }
 </style>
 

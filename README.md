@@ -28,9 +28,12 @@ The background is your actual sky, computed in the browser:
 - **Text color is proven, not eyeballed.** For every sky,
   [sky.ts](src/scripts/sky.ts) computes WCAG contrast for candidate
   inks against the whole band of gradient the text sits on and picks
-  one that clears the bar; around sunset, when no single ink can cover
-  the band, a scrim closes the gap. `npm run check:contrast` verifies
-  the system across the full range of skies.
+  one that clears the bar — WCAG AAA (7:1) on the chip surfaces where
+  small text lives, 4.5:1 for the large center ink; around sunset, when
+  no single ink can cover the band, a scrim closes the gap.
+  `npm run check:contrast` verifies the system across the full range of
+  skies, and even the contact form's coral error text keeps the ink's
+  computed lightness so it stays AAA under any sky.
 - **The stars are real**: the ~70 brightest stars, placed for your
   latitude, longitude, and the time. Sun, moon, and stars advance in
   quarter-hour hops — a slow sundial tick rather than imperceptible
