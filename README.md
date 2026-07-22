@@ -2,8 +2,9 @@
 
 Personal site of Amy Lam. Built with [Astro](https://astro.build) and
 [Tailwind CSS](https://tailwindcss.com), package-managed with
-[pnpm](https://pnpm.io). This README exists to explain how the site
-works, because the fun is in the details.
+[pnpm](https://pnpm.io), linted with Prettier/ESLint/Stylelint. This
+README exists to explain how the site works, because the fun is in
+the details.
 
 ## The sky
 
