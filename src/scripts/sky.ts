@@ -278,6 +278,23 @@ function starAltAz(
 /* Stars get the full sky height; the sun/moon glow stays lower. */
 const starY = (altDeg: number) => 88 - (Math.max(0, altDeg) / 90) * 80;
 
+// Shared with spawnShootingStar below: any star (twinkling or shooting)
+// whose position lands inside one of these boxes reads as a mistake —
+// burning through a letter, or peeking out from behind a nav icon like
+// the socials row. Card-backed prose is exempt, it already has an opaque
+// surface behind it.
+function foregroundRects(): DOMRect[] {
+  return Array.from(
+    document.querySelectorAll<HTMLElement>('.show-dim, #sky-status, nav[aria-label="Site pages"]'),
+  ).map((el) => el.getBoundingClientRect());
+}
+
+function overlapsForeground(xPct: number, yPct: number, rects: DOMRect[], pad = 6): boolean {
+  const x = (xPct / 100) * innerWidth;
+  const y = (yPct / 100) * innerHeight;
+  return rects.some((r) => x > r.left - pad && x < r.right + pad && y > r.top - pad && y < r.bottom + pad);
+}
+
 function updateStars(place: Place, at: Date) {
   const container = document.getElementById('stars');
   if (!container) return;
@@ -305,24 +322,7 @@ function updateStars(place: Place, at: Date) {
   const mx = posX(moon.azimuth);
   const my = posY(moon.altitude);
 
-  // Text gets the same courtesy: a 1-3px star burning through a letter
-  // makes small text hard to read, so any star whose position lands
-  // inside a bare-text block's box (plus a small halo) goes dark. Only
-  // text that sits naked on the sky needs this — card-backed prose
-  // already has an opaque surface behind it.
-  const textRects = Array.from(
-    document.querySelectorAll<HTMLElement>(
-      '.show-dim, #sky-status, nav[aria-label="Site pages"]',
-    ),
-  ).map((el) => el.getBoundingClientRect());
-  const pad = 6;
-  const behindText = (xPct: number, yPct: number) => {
-    const x = (xPct / 100) * innerWidth;
-    const y = (yPct / 100) * innerHeight;
-    return textRects.some(
-      (r) => x > r.left - pad && x < r.right + pad && y > r.top - pad && y < r.bottom + pad,
-    );
-  };
+  const rects = foregroundRects();
 
   const spans = container.children;
   STARS.forEach(([ra, dec], i) => {
@@ -337,7 +337,7 @@ function updateStars(place: Place, at: Date) {
       const base = parseFloat(el.dataset.baseO ?? '0.8');
       const dist = moonUp ? Math.hypot(x - mx, y - my) : Infinity;
       const wash = dist >= 11 ? 1 : Math.max(0.05, (dist - 3) / 8);
-      el.style.setProperty('--o', behindText(x, y) ? '0' : (base * wash).toFixed(2));
+      el.style.setProperty('--o', overlapsForeground(x, y, rects) ? '0' : (base * wash).toFixed(2));
     } else {
       el.style.display = 'none';
     }
@@ -350,10 +350,21 @@ let nightNow = false;
 function spawnShootingStar() {
   const container = document.getElementById('stars');
   if (!container) return;
+  // Random spot, same as the resting stars — but rerolled off any nav
+  // icon or headline it'd otherwise streak behind (up to a few tries;
+  // the sky is mostly empty, so this almost always lands first try).
+  const rects = foregroundRects();
+  let left = 0;
+  let top = 0;
+  for (let tries = 0; tries < 6; tries++) {
+    left = 10 + Math.random() * 65;
+    top = 5 + Math.random() * 35;
+    if (!overlapsForeground(left, top, rects)) break;
+  }
   const s = document.createElement('span');
   s.className = 'shooting-star';
-  s.style.left = `${10 + Math.random() * 65}%`;
-  s.style.top = `${5 + Math.random() * 35}%`;
+  s.style.left = `${left}%`;
+  s.style.top = `${top}%`;
   s.addEventListener('animationend', () => s.remove());
   container.appendChild(s);
 }

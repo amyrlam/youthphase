@@ -38,6 +38,9 @@ The background is your actual sky, computed in the browser:
   latitude, longitude, and the time. Sun, moon, and stars advance in
   quarter-hour hops — a slow sundial tick rather than imperceptible
   drift. Shooting stars visit occasionally at night.
+- **Every tap sparkles.** Tap or click anywhere on the open sky (not on
+  links, buttons, or cards) and a small ✦ lands where you touched —
+  desktop and mobile both, every tap, no counting required.
 - **There's a secret show.** Three quick taps anywhere on the home
   page's sky (touch only) play whatever fits the moment: the moon's
   month of phases in eight seconds when it's up (its terminator is
@@ -93,7 +96,3 @@ add the domain under Project → Settings → Domains. On other hosts
 (Netlify, Cloudflare Pages) the static site works as-is, but `/api/geo`
 would need porting to that host's functions and geo headers — until
 then every visitor just gets the borrowed sky.
-
-## Later
-
-- Blog: link reposts first, original posts after (see the separate blog-infrastructure PR)

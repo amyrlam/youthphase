@@ -409,17 +409,17 @@ html.moon-cycle .show-dim {
   }
 }
 
-/* Day-show rainbow: the left leg of a bow whose arch sits far off the
-   upper right. A huge ring whose center floats above the top-left
-   quarter (25vw, -10dvh) with a 70dvh radius: its lowest point lands
-   mid-left of the screen — where the band runs horizontal — and the
-   arc sweeps increasingly upward as it exits to the upper right. Red
-   rides the outer (lower-left) edge, violet-blue the inner, like the
-   real thing; blurred and translucent so it reads as light rather
-   than clipart. */
+/* Day-show rainbow: the left leg of a bow whose center — like the real
+   antisolar point — sits below the horizon, off the bottom-left of the
+   screen (25vw, 110dvh), 70dvh radius. That's what makes it arch rather
+   than sag: the visible slice is the TOP of the circle, so it peaks
+   around mid-left and curves down and away on both sides, exiting the
+   bottom edge to the right. Red rides the outer (upper) edge, violet-blue
+   the inner, like the real thing; blurred and translucent so it reads as
+   light rather than clipart. */
 #rainbow {
   left: 25vw;
-  top: -10dvh;
+  top: 110dvh;
   width: 140dvh;
   height: 140dvh;
   transform: translate(-50%, -50%);
@@ -437,6 +437,29 @@ html.moon-cycle .show-dim {
   filter: blur(6px);
   opacity: 0;
   transition: opacity 1.4s ease;
+}
+
+/* This whole show only ever plays from a triple-tap (sky.ts gates it to
+   pointerType === 'touch'), so a mouse-only desktop can never trigger it
+   — the media query below is about touch phones specifically, not
+   "mobile vs. desktop" screen width. pointer: coarse targets exactly the
+   devices that can reach this at all; max-width keeps a touch tablet
+   with room to spare (iPad landscape and up) on the desktop geometry.
+
+   The desktop circle is sized for a wide, short viewport: on a narrow
+   phone the same radius barely curves before running out of screen. A
+   bigger, closer circle reads as huge rather than cramped — the foot
+   plants at the bottom-left corner and the band climbs the full height
+   of the screen on its way to the top-right. It crosses behind the name
+   and social icons on the way up, but blurred and this pale it doesn't
+   cost their contrast. */
+@media (pointer: coarse) and (max-width: 640px) {
+  #rainbow {
+    left: 216vw;
+    top: 96dvh;
+    width: 200dvh;
+    height: 200dvh;
+  }
 }
 
 #rainbow.arc {

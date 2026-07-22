@@ -49,9 +49,12 @@
     box-sizing: border-box;
     /* The side reservation (9rem total) keeps the widest photo clear of
        the viewport-edge prev/next buttons: 1.25rem inset + 2.25rem button
-       + ~1rem breathing room per side. */
+       + ~1rem breathing room per side. dvh, not vh: vh is pinned to the
+       viewport with Safari's address bar collapsed, so on load (bar
+       visible) a 90vh dialog is taller than what's actually on screen —
+       dvh tracks whichever height is real right now. */
     max-width: min(calc(100vw - 9rem), 60rem);
-    max-height: 90vh;
+    max-height: 90dvh;
     margin: auto;
     border: none;
     background: transparent;
@@ -61,10 +64,18 @@
   /* Touch phones hide prev/next (swipe + dots take over), so no side
      reservation — just a slim margin so the polaroid isn't edge-to-edge.
      Gated on pointer, not just width: a mouse user in a narrow window
-     has no swipe, so they keep the arrows and the desktop layout. */
+     has no swipe, so they keep the arrows and the desktop layout.
+
+     max-height is also trimmed by the safe-area insets: the dialog is
+     centered with margin: auto, and a dialog sized right up to 100dvh
+     would center itself straight under the notch/Dynamic Island with no
+     margin to push it clear. .lightbox-media below caps the photo/video
+     itself to match, so a tall portrait one can't reflate the dialog
+     back past this ceiling. */
   @media (pointer: coarse) and (max-width: 640px) {
     .lightbox-dialog {
       max-width: 96vw;
+      max-height: calc(100dvh - env(safe-area-inset-top) - env(safe-area-inset-bottom));
       padding-inline: 0.75rem;
     }
   }
@@ -86,6 +97,13 @@
     padding: 1rem 1rem 1.25rem;
     border-radius: 0.25rem;
     box-shadow: 0 25px 60px -12px rgba(0, 0, 0, 0.6);
+    /* Without this, the browser spends the first several touchmove events
+       deciding whether the gesture is a page scroll before conceding
+       horizontal panning to the touchmove listener in lightbox.ts — which
+       reads as a swipe that doesn't respond to the first flick. Declaring
+       vertical-only native panning up front hands horizontal off to JS
+       immediately. */
+    touch-action: pan-y;
   }
 
   /* Focused programmatically on open (see the markup comment); the card
@@ -98,13 +116,29 @@
     display: block;
     /* 100% of whatever's left inside the dialog's padding — never a raw
        vw value, so it can't out-grow the gutters reserved for the nav
-       buttons. */
+       buttons. dvh for the same reason as .lightbox-dialog above. */
     max-width: 100%;
-    max-height: 74vh;
+    max-height: 74dvh;
     width: auto;
     height: auto;
     border-radius: 2px;
     background: #000;
+  }
+
+  /* Tighter cap than desktop's flat 74dvh: on a phone, the polaroid's own
+     padding (~2.25rem), the caption, the close button's overshoot above,
+     and the dot row below are all real height the media has to share the
+     screen with — 74dvh of media plus all of that reliably overflows a
+     short viewport (Safari's toolbar showing, an SE-sized screen). ~9rem
+     covers that fixed chrome so a tall portrait photo or video still
+     leaves the close button and dots on-screen. */
+  @media (pointer: coarse) and (max-width: 640px) {
+    .lightbox-media {
+      max-height: min(
+        74dvh,
+        calc(100dvh - env(safe-area-inset-top) - env(safe-area-inset-bottom) - 9rem)
+      );
+    }
   }
 
   .lightbox-caption {
@@ -267,12 +301,19 @@
   /* The desktop diagonal-gap formula on .lightbox-close above assumes a
      gutter wide enough to inset the button from the dialog edge; the
      shrunken mobile --gutter no longer is (it'd push the button past the
-     viewport), so pin Close near the corner directly instead. Placed last
-     so it wins over the base rule's equal-specificity `right` at this
-     breakpoint. */
+     viewport). Switched to fixed (like prev/next) and pinned to the
+     screen corner with the safe-area inset, rather than floating off the
+     polaroid's own corner: a tall portrait photo or video pushes the
+     polaroid's top edge close to the notch, and a button anchored to
+     that edge would ride right along with it. Anchoring to the viewport
+     instead keeps Close in the same reachable spot no matter how tall
+     the media is. Placed last so it wins over the base rule's
+     equal-specificity properties at this breakpoint. */
   @media (pointer: coarse) and (max-width: 640px) {
     .lightbox-close {
-      right: 0.25rem;
+      position: fixed;
+      top: calc(env(safe-area-inset-top) + 0.75rem);
+      right: calc(env(safe-area-inset-right) + 0.75rem);
     }
 
     .lightbox-prev,
