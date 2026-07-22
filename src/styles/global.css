@@ -271,7 +271,11 @@ body {
    nav links, the status caption, the corner buttons — lives on its solid
    lower zone, which is what makes small text AAA-safe outside the hero. */
 #horizon {
-  background: linear-gradient(to top, var(--card-bg, var(--color-chip-bg-fallback)) 50%, transparent);
+  background: linear-gradient(
+    to top,
+    var(--card-bg, var(--color-chip-bg-fallback)) 50%,
+    transparent
+  );
   transition: background-color 1.6s ease;
 }
 
