@@ -90,6 +90,32 @@ Key files:
 - `src/layouts/Layout.astro` — shared shell (glow element, sky controls, sky script)
 - `api/geo.ts` — the geolocation endpoint (Vercel-only; absent in dev)
 
+## Testing
+
+`pnpm test` runs the Playwright suite in `tests/`:
+
+- **Accessibility**: [`@axe-core/playwright`](https://github.com/dequelabs/axe-core-npm)
+  scans every page (plus the lightbox in its open state) for violations.
+  Axe can't judge contrast against the animated sky gradient — that's
+  what `check:contrast` is for — so a few guarantees axe doesn't cover
+  get their own assertions: small controls (icon links, lightbox
+  buttons) still expose a 44×44px hit area, the lightbox never hands
+  keyboard focus to the page behind it, and `prefers-reduced-motion`
+  actually disables the star twinkle animation.
+- **Regression tests** for the lightbox (arrow-key focus, long captions
+  wrapping instead of stretching the polaroid) and the contact form
+  (inline validation, error states).
+- **Link hygiene**: every external link on every page opens in a new
+  tab with the `rel` that makes `target="_blank"` safe.
+
+`check:contrast` is a separate script (not Playwright) that sweeps
+every sun altitude and fails if any ink/background pairing drops below
+WCAG AAA — see [the sky section](#the-sky) above.
+
+[GitHub Actions](https://github.com/features/actions)
+(`.github/workflows/ci.yml`) runs the build, `check:contrast`, and the
+full Playwright suite on every push to `main` and on every pull request.
+
 ## Deploying (Vercel)
 
 The site is a static Astro build plus that one serverless function,
