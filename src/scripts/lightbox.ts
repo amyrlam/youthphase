@@ -63,6 +63,8 @@ function initLightbox() {
       // \ufe0f are the ZWJ and variation selector in compound emoji.
       const emojiOnly =
         text.trim().length > 0 &&
+        // \u200d/\ufe0f deliberately share this class (see the comment above) to match compound emoji sequences \u2014 not a mistaken multi-codepoint literal.
+        // eslint-disable-next-line no-misleading-character-class
         /^[\p{Extended_Pictographic}\p{Emoji_Component}\u200d\ufe0f\s]+$/u.test(text);
       caption.classList.toggle('lightbox-caption--emoji', emojiOnly);
     }

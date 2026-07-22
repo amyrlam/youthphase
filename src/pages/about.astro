@@ -74,7 +74,6 @@ const media = [
   },
 ];
 
-const posterOptimized = await getImage({ src: skiVideoPoster, width: 900 });
 const fullSizes = await Promise.all(
   media.map((m) => getImage({ src: m.type === 'video' ? m.poster : m.src, width: 1800 })),
 );
