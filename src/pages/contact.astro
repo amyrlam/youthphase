@@ -1,0 +1,346 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { Image } from 'astro:assets';
+
+/* youth-phase-print.png is the retouched cut of youth-phase-2.png (the
+   original stays in the repo): cropped from photo-of-a-photo to just
+   the print, with the drifting plastic bag cloned out of the water. */
+import youthPhase from '../assets/contact/youth-phase-print.png';
+---
+
+<Layout title="contact — Amy Lam" description="Get in touch with Amy Lam.">
+  <!-- pb clears the fixed horizon band + chips, same as the about page. -->
+  <main class="relative mx-auto flex min-h-dvh max-w-2xl flex-col gap-6 px-6 pt-20 pb-48">
+    <a
+      href="/"
+      class="link-squiggle sky-top-ink relative self-start text-[19px] font-bold lowercase tracking-wide transition-transform duration-300 after:absolute after:-inset-3 after:content-[''] hover:-translate-y-0.5 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-current"
+    >
+      ← home
+    </a>
+
+    <h1 class="text-4xl font-medium lowercase tracking-tight sm:text-5xl">contact</h1>
+
+    <section class="sky-card rounded-2xl px-6 py-8 sm:px-10 sm:py-10">
+      <div class="prose sm:prose-lg max-w-none">
+        <p>
+          I grew up with my grandparents on the Connecticut shoreline, where Pop kept a
+          little dinghy in the harbor named <em>Youth Phase</em>. Each time life carried him
+          somewhere new, he'd update the numbers on the hull. Even in his old age, he never
+          stopped counting. It's always resonated with me, and I think I'm up to Youth
+          Phase XVII right now.
+        </p>
+      </div>
+
+      <!-- The photo as a print, taped to the page at all four corners:
+           matte ivory border (the polaroid's own ivory — the site's one
+           sky-independent surface), a soft float shadow, a half-degree
+           tilt, and translucent tape strips across each corner — the
+           scrapbook gesture. The retouched crop is optimized by
+           astro:assets. -->
+      <div class="photo-print mt-10">
+        <span class="tape tape-tl" aria-hidden="true"></span>
+        <span class="tape tape-tr" aria-hidden="true"></span>
+        <span class="tape tape-bl" aria-hidden="true"></span>
+        <span class="tape tape-br" aria-hidden="true"></span>
+        <Image
+          src={youthPhase}
+          alt="A photo print of Pop's dinghy: a small white boat floating on rippled dusk water, YOUTH PHASE 2 lettered on the bow"
+          width={1200}
+          class="block w-full"
+        />
+      </div>
+
+      <!-- The handoff line: to the form, or to the code. Sentence case
+           and body-sized — it's prose, not chrome. The link carries the
+           full system treatment: squiggle underline plus the hover lift
+           (inline-block so the transform applies). -->
+      <p class="mt-8 text-base sm:text-lg">
+        Send me a message below, or read about
+        <a
+          href="https://github.com/amyrlam/youthphase"
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label="how this site is built (opens in new tab)"
+          class="link-squiggle inline-block transition-transform duration-300 hover:-translate-y-0.5 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-current"
+          >how this site is built</a
+        > on GitHub.
+      </p>
+    </section>
+
+    <section class="sky-card rounded-2xl px-6 py-8 sm:px-10 sm:py-10">
+      <form id="contact-form" class="flex flex-col gap-5" novalidate>
+        <div class="flex flex-col gap-1.5">
+          <label for="contact-name" class="text-xs tracking-widest">Name</label>
+          <input
+            id="contact-name"
+            name="name"
+            type="text"
+            autocomplete="name"
+            maxlength="200"
+            class="rounded-lg border border-current/30 bg-transparent px-3 py-2 text-base focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-current"
+          />
+        </div>
+
+        <div class="flex flex-col gap-1.5">
+          <!-- The asterisk is visual shorthand; assistive tech already
+               announces required from the input's own attribute. -->
+          <label for="contact-email" class="text-xs tracking-widest">
+            Email <span aria-hidden="true">*</span>
+          </label>
+          <input
+            id="contact-email"
+            name="email"
+            type="email"
+            required
+            autocomplete="email"
+            maxlength="254"
+            class="rounded-lg border border-current/30 bg-transparent px-3 py-2 text-base focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-current"
+          />
+          <!-- Inline validation, in the site's voice — no browser
+               bubbles (the form is novalidate). Colored by --error-ink:
+               the computed ink tinted toward coral, sky-safe (see the
+               style block). Filled by the script. -->
+          <p id="contact-email-error" data-error-for="contact-email" hidden class="field-error text-xs tracking-wide"></p>
+        </div>
+
+        <div class="flex flex-col gap-1.5">
+          <label for="contact-message" class="text-xs tracking-widest">
+            Message <span aria-hidden="true">*</span>
+          </label>
+          <textarea
+            id="contact-message"
+            name="message"
+            required
+            rows="5"
+            maxlength="5000"
+            class="resize-y rounded-lg border border-current/30 bg-transparent px-3 py-2 text-base focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-current"
+          ></textarea>
+          <p id="contact-message-error" data-error-for="contact-message" hidden class="field-error text-xs tracking-wide"></p>
+        </div>
+
+        <!-- Honeypot: hidden from people (and from the accessibility tree),
+             irresistible to bots. The server treats any value here as spam. -->
+        <div class="hidden" aria-hidden="true">
+          <label for="contact-website">leave this field empty</label>
+          <input id="contact-website" name="website" type="text" tabindex="-1" autocomplete="off" />
+        </div>
+
+        <div class="flex items-center gap-4">
+          <button
+            type="submit"
+            id="contact-submit"
+            class="relative w-fit rounded-full px-4 py-1.5 text-xs tracking-widest after:absolute after:-inset-2 after:content-[''] hover:-translate-y-0.5 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-current disabled:opacity-60 disabled:hover:translate-y-0"
+          >
+            Send
+          </button>
+          <p id="contact-status" aria-live="polite" class="text-sm tracking-wide"></p>
+        </div>
+      </form>
+
+    </section>
+  </main>
+</Layout>
+
+<style>
+  /* The print treatment: a matte ivory border — the polaroid's own
+     ivory, the site's one sky-independent surface — with a soft float
+     shadow and a half-degree tilt, like a print laid down by hand.
+     Straightens gently on hover, the way you'd square it on a table. */
+  .photo-print {
+    position: relative;
+    padding: clamp(0.75rem, 2.5vw, 1.1rem);
+    background: #f7f4ed;
+    border-radius: 0.25rem;
+    box-shadow: 0 20px 45px -14px rgba(0, 0, 0, 0.55);
+    transform: rotate(-0.6deg);
+    transition: transform 0.3s ease;
+  }
+
+  .photo-print:hover {
+    transform: rotate(0deg);
+  }
+
+  /* The tape: translucent strips laid diagonally across each corner,
+     hanging onto the card behind. Slightly irregular quads + soft
+     shadows; the print's edge ghosts through the translucency, which
+     is what sells it as tape rather than a sticker. */
+  .tape {
+    position: absolute;
+    width: clamp(4.2rem, 22%, 6rem);
+    height: 1.55rem;
+    background: linear-gradient(rgba(244, 240, 225, 0.72), rgba(231, 224, 200, 0.66));
+    clip-path: polygon(2% 6%, 97% 0, 100% 92%, 0 100%);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+    pointer-events: none;
+  }
+
+  .tape-tl {
+    top: -0.2rem;
+    left: -1.5rem;
+    transform: rotate(-45deg);
+  }
+
+  .tape-tr {
+    top: -0.2rem;
+    right: -1.5rem;
+    transform: rotate(45deg);
+  }
+
+  .tape-bl {
+    bottom: -0.2rem;
+    left: -1.5rem;
+    transform: rotate(45deg);
+  }
+
+  .tape-br {
+    bottom: -0.2rem;
+    right: -1.5rem;
+    transform: rotate(-45deg);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .photo-print,
+    .photo-print:hover {
+      transform: none;
+      transition: none;
+    }
+  }
+
+  .photo-print img {
+    border-radius: 2px;
+  }
+
+  /* Error color: the sky's own ink, tinted toward coral. Because the
+     ink is computed contrast-safe against the card, mixing mostly-ink
+     keeps it readable under every sky (light or dark card) while
+     clearly reading as "error" rather than text. Fields get the same
+     tint on their border at full strength. */
+  #contact-form {
+    /* Two error colors, split by WCAG role. Text must clear AAA 7:1 on
+       the card, and the card pairing only guarantees that for the ink
+       itself — so the text color keeps the ink's exact lightness and
+       shifts hue/chroma only (a faint coral blush; measured 7.0-7.1:1
+       live). Borders are non-text UI (3:1 floor), so they can afford
+       the rich coral that makes the invalid field unmistakable. */
+    --error-border: color-mix(in oklab, currentColor 60%, #ff5d4d 40%);
+    --error-ink: color-mix(in oklab, currentColor 72%, #ff5d4d 28%);
+  }
+
+  @supports (color: oklch(from red calc(l) c h)) {
+    #contact-form {
+      --error-ink: oklch(from currentColor l 0.05 25);
+    }
+  }
+
+  /* Send is filled — the card pairing inverted (chip-ink surface,
+     card-bg text), so it keeps the computed 7:1 guarantee while
+     standing apart from the bordered sky chips in the site corners.
+     Colors ride the sky's own slow transition; the lift stays quick. */
+  #contact-submit {
+    background: var(--chip-ink, #ffffff);
+    color: var(--card-bg, #141a3d);
+    transition:
+      background-color 1.6s ease,
+      color 1.6s ease,
+      transform 0.3s ease;
+  }
+
+  .field-error {
+    color: var(--error-ink);
+  }
+
+  #contact-form [aria-invalid='true'] {
+    border-color: var(--error-border);
+  }
+</style>
+
+<script>
+  /* Progressive enhancement over /api/contact (a Vercel function — under
+     plain `astro dev` it doesn't exist, so local testing needs `vercel
+     dev`; the error state covers the 404 gracefully). */
+  const form = document.getElementById('contact-form') as HTMLFormElement | null;
+  const submit = document.getElementById('contact-submit') as HTMLButtonElement | null;
+  const status = document.getElementById('contact-status');
+
+  /* Inline validation in the site's voice, instead of browser bubbles.
+     Messages appear under the field; the field is marked aria-invalid
+     (which also strengthens its border, see the style block) and linked
+     to its message via aria-describedby. Errors clear as you type. */
+  const FIELD_MESSAGES: Record<string, { empty: string; invalid?: string }> = {
+    'contact-email': {
+      empty: 'I need an email to write back to',
+      invalid: "That email doesn't look complete",
+    },
+    'contact-message': {
+      empty: "Don't forget the message itself",
+    },
+  };
+
+  function setError(field: HTMLInputElement | HTMLTextAreaElement, message: string | null) {
+    const note = document.querySelector<HTMLElement>(`[data-error-for="${field.id}"]`);
+    if (!note) return;
+    if (message) {
+      note.textContent = message;
+      note.hidden = false;
+      field.setAttribute('aria-invalid', 'true');
+      field.setAttribute('aria-describedby', note.id);
+    } else {
+      note.hidden = true;
+      field.removeAttribute('aria-invalid');
+      field.removeAttribute('aria-describedby');
+    }
+  }
+
+  function validate(): boolean {
+    if (!form) return false;
+    let firstInvalid: HTMLElement | null = null;
+    for (const id of Object.keys(FIELD_MESSAGES)) {
+      const field = document.getElementById(id) as HTMLInputElement | HTMLTextAreaElement;
+      const v = field.validity;
+      const msg = v.valid
+        ? null
+        : v.valueMissing
+          ? FIELD_MESSAGES[id].empty
+          : (FIELD_MESSAGES[id].invalid ?? FIELD_MESSAGES[id].empty);
+      setError(field, msg);
+      if (msg && !firstInvalid) firstInvalid = field;
+    }
+    firstInvalid?.focus();
+    return !firstInvalid;
+  }
+
+  for (const id of Object.keys(FIELD_MESSAGES)) {
+    document.getElementById(id)?.addEventListener('input', (e) => {
+      setError(e.target as HTMLInputElement, null);
+    });
+  }
+
+  form?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    if (!validate()) return;
+
+    const data = Object.fromEntries(new FormData(form).entries());
+    if (submit) submit.disabled = true;
+    if (submit) submit.textContent = 'Sending…';
+    if (status) { status.textContent = ''; status.classList.remove('field-error'); }
+
+    try {
+      const res = await fetch('/api/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+      });
+      if (!res.ok) throw new Error(`send failed: ${res.status}`);
+      form.reset();
+      if (status) status.textContent = "Message sent — I'll write back soon";
+    } catch {
+      if (status) { status.textContent = 'Something went wrong — mind trying again?'; status.classList.add('field-error'); }
+    } finally {
+      if (submit) {
+        submit.disabled = false;
+        submit.textContent = 'Send';
+      }
+    }
+  });
+</script>
