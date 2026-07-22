@@ -125,26 +125,34 @@ const fullSizes = await Promise.all(
 
       <div class="mt-8 grid grid-cols-2 gap-3 sm:grid-cols-3">
         {
-          media.map((item, i) => (
-            <button
-              type="button"
-              data-lightbox-trigger
-              data-full={fullSizes[i].src}
-              data-video={item.type === 'video' ? item.video : undefined}
-              data-alt={item.alt}
-              data-caption={item.caption}
-              class="group relative overflow-hidden rounded-2xl focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-current"
-              aria-label={item.type === 'video' ? `Play video: ${item.alt}` : `View larger: ${item.alt}`}
-            >
-              <Image
-                src={item.type === 'video' ? item.poster : item.src}
-                alt={item.alt}
-                width={500}
-                height={500}
-                class="aspect-square w-full object-cover transition-transform duration-300 group-hover:scale-105"
-              />
-            </button>
-          ))
+          media.map((item, i) => {
+            // On the 2-col mobile grid, an odd count leaves the last tile
+            // stranded alone on the left — spanning it across both columns
+            // and capping its width to one column's share centers it
+            // instead. sm:col-span-1 sm:w-full reverts this once the
+            // 3-col grid has no orphan (9 items divides evenly by 3).
+            const isOrphan = i === media.length - 1 && media.length % 2 === 1;
+            return (
+              <button
+                type="button"
+                data-lightbox-trigger
+                data-full={fullSizes[i].src}
+                data-video={item.type === 'video' ? item.video : undefined}
+                data-alt={item.alt}
+                data-caption={item.caption}
+                class={`group relative overflow-hidden rounded-2xl focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-current ${isOrphan ? 'col-span-2 w-[calc(50%-0.375rem)] mx-auto sm:col-span-1 sm:w-full sm:mx-0' : ''}`}
+                aria-label={item.type === 'video' ? `Play video: ${item.alt}` : `View larger: ${item.alt}`}
+              >
+                <Image
+                  src={item.type === 'video' ? item.poster : item.src}
+                  alt={item.alt}
+                  width={500}
+                  height={500}
+                  class="aspect-square w-full object-cover transition-transform duration-300 group-hover:scale-105"
+                />
+              </button>
+            );
+          })
         }
       </div>
     </section>
