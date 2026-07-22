@@ -1,8 +1,9 @@
 # youthphase.dev
 
 Personal site of Amy Lam. Built with [Astro](https://astro.build) and
-[Tailwind CSS](https://tailwindcss.com). This README exists to explain
-how the site works, because the fun is in the details.
+[Tailwind CSS](https://tailwindcss.com), package-managed with
+[pnpm](https://pnpm.io). This README exists to explain how the site
+works, because the fun is in the details.
 
 ## The sky
 
@@ -31,7 +32,7 @@ The background is your actual sky, computed in the browser:
   one that clears the bar — WCAG AAA (7:1) on the chip surfaces where
   small text lives, 4.5:1 for the large center ink; around sunset, when
   no single ink can cover the band, a scrim closes the gap.
-  `npm run check:contrast` verifies the system across the full range of
+  `pnpm check:contrast` verifies the system across the full range of
   skies, and even the contact form's coral error text keeps the ink's
   computed lightness so it stays AAA under any sky.
 - **The stars are real**: the ~70 brightest stars, placed for your
@@ -72,11 +73,11 @@ the geo lookup resolves, and re-renders every minute.
 ## Development
 
 ```sh
-npm install
-npm run dev             # dev server at localhost:4321
-npm run build           # static build to dist/
-npm run check:contrast  # verify ink contrast across all skies
-npm test                # Playwright (a11y, lightbox)
+pnpm install
+pnpm dev                 # dev server at localhost:4321
+pnpm build               # static build to dist/
+pnpm check:contrast      # verify ink contrast across all skies
+pnpm test                # Playwright (a11y, lightbox)
 ```
 
 Key files:

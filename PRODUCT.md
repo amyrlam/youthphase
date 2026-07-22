@@ -50,4 +50,4 @@ warm · alive · meticulous. Lowercase, human voice throughout. Whimsy (squiggle
 
 ## Accessibility & Inclusion
 
-Practiced in the codebase and to be preserved: automated axe checks on every page in the Playwright suite, `prefers-reduced-motion` alternatives for all motion, aria-live announcements for silent state changes, 44px (WCAG AAA) touch targets via invisible hit-area expansion, and a contrast-check script (`npm run check:contrast`).
+Practiced in the codebase and to be preserved: automated axe checks on every page in the Playwright suite, `prefers-reduced-motion` alternatives for all motion, aria-live announcements for silent state changes, 44px (WCAG AAA) touch targets via invisible hit-area expansion, and a contrast-check script (`pnpm check:contrast`).

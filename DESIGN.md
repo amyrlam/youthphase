@@ -69,7 +69,7 @@ components:
 
 **Creative North Star: "The Living Sky"**
 
-Nothing on this site is a theme; it is weather. The background is the visitor's actual sky — sun and moon positions computed for their location, the ~70 brightest stars placed for their latitude and the hour — and every color the interface wears is derived from that sky at runtime. Colors are never picked, they are *computed*, with accessibility as a hard constraint: ink is chosen per frame for ≥4.5:1, chip surfaces for ≥7:1, and `npm run check:contrast` sweeps every sun altitude and fails the build if any pairing drops below AAA. The system's aliveness is engineered, not decorated.
+Nothing on this site is a theme; it is weather. The background is the visitor's actual sky — sun and moon positions computed for their location, the ~70 brightest stars placed for their latitude and the hour — and every color the interface wears is derived from that sky at runtime. Colors are never picked, they are *computed*, with accessibility as a hard constraint: ink is chosen per frame for ≥4.5:1, chip surfaces for ≥7:1, and `pnpm check:contrast` sweeps every sun altitude and fails the build if any pairing drops below AAA. The system's aliveness is engineered, not decorated.
 
 Under that sky sits a warm, lowercase, human voice: squiggle-underlined links, polaroid photo cards, jumbomoji captions, tap sparkles, a moon with a face if you know where to press. Interactive elements are **quietly eager** — small and unassuming at rest, but everything lifts 2px to meet your cursor. The system explicitly rejects the dev-portfolio template, corporate/LinkedIn energy, AI-slop scaffolding (cream backgrounds, eyebrow kickers, gradient text, card grids), and the over-animated showreel. Warmth and personhood over professional polish.
 
@@ -158,7 +158,7 @@ The expanded photo view: ivory card (#f7f4ed), 1rem padding with a deeper 1.25re
 ## 6. Do's and Don'ts
 
 ### Do:
-- **Do** source every sky-tracking color from the custom properties and run `npm run check:contrast` after touching sky.ts or the palette.
+- **Do** source every sky-tracking color from the custom properties and run `pnpm check:contrast` after touching sky.ts or the palette.
 - **Do** give every inline text link the squiggle underline (1px wavy, 4px offset) — no exceptions.
 - **Do** keep interactive feedback at 300ms and sky transitions at 1.6–2s; weather is slow, feedback is quick.
 - **Do** expand touch targets to 44px with invisible `::after` hit areas.

@@ -3,7 +3,7 @@
   "configurations": [
     {
       "name": "dev",
-      "runtimeExecutable": "/Users/amyrlam/.local/opt/node/bin/npm",
+      "runtimeExecutable": "/Users/amyrlam/.local/opt/node/bin/pnpm",
       "runtimeArgs": [
         "run",
         "dev",
@@ -17,7 +17,7 @@
     },
     {
       "name": "worktree-1",
-      "runtimeExecutable": "/Users/amyrlam/.local/opt/node/bin/npm",
+      "runtimeExecutable": "/Users/amyrlam/.local/opt/node/bin/pnpm",
       "runtimeArgs": [
         "run",
         "dev",
@@ -33,7 +33,7 @@
     },
     {
       "name": "worktree-2",
-      "runtimeExecutable": "/Users/amyrlam/.local/opt/node/bin/npm",
+      "runtimeExecutable": "/Users/amyrlam/.local/opt/node/bin/pnpm",
       "runtimeArgs": [
         "run",
         "dev",
@@ -49,7 +49,7 @@
     },
     {
       "name": "worktree-3",
-      "runtimeExecutable": "/Users/amyrlam/.local/opt/node/bin/npm",
+      "runtimeExecutable": "/Users/amyrlam/.local/opt/node/bin/pnpm",
       "runtimeArgs": [
         "run",
         "dev",
@@ -65,7 +65,7 @@
     },
     {
       "name": "worktree-4",
-      "runtimeExecutable": "/Users/amyrlam/.local/opt/node/bin/npm",
+      "runtimeExecutable": "/Users/amyrlam/.local/opt/node/bin/pnpm",
       "runtimeArgs": ["run", "dev", "--", "--port", "4334"],
       "port": 4334,
       "env": {

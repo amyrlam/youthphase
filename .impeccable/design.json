@@ -102,7 +102,7 @@
       { "name": "The Glow-Over-Shadow Rule", "body": "New elements that need depth get light — a halo, a gradient toward the horizon, a brightened border — never a gray drop shadow. The polaroid keeps its float because it is a physical object.", "section": "elevation" }
     ],
     "dos": [
-      "Do source every sky-tracking color from the custom properties and run npm run check:contrast after touching sky.ts or the palette.",
+      "Do source every sky-tracking color from the custom properties and run pnpm check:contrast after touching sky.ts or the palette.",
       "Do give every inline text link the squiggle underline (1px wavy, 4px offset) — no exceptions.",
       "Do keep interactive feedback at 300ms and sky transitions at 1.6–2s; weather is slow, feedback is quick.",
       "Do expand touch targets to 44px with invisible ::after hit areas.",

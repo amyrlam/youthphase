@@ -1,0 +1,6 @@
+allowBuilds:
+  esbuild: true
+  # Carried over from the npm-era package.json's allowScripts; current
+  # sharp doesn't ship a build script that needs approval, but this keeps
+  # a future version's postinstall from silently reintroducing one.
+  sharp: true
