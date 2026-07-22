@@ -138,9 +138,19 @@ test.describe('prefers-reduced-motion', () => {
     // pin the sky to a moonless winter night via the dev-console helper
     // (see README) so the star field is actually visible to assert on.
     // sky.ts attaches __skyAt during its own async start-up, so wait for
-    // it rather than assuming it exists the instant goto() resolves.
+    // it rather than assuming it exists the instant goto() resolves. The
+    // explicit "Z" matters — an unzoned ISO string parses as the local
+    // time of whatever machine runs the test, not San Francisco's, which
+    // can land on a different, non-nighttime sun altitude. And #stars'
+    // opacity is a real CSS transition (2s), so wait for it to actually
+    // land rather than asserting the instant after the call returns.
     await page.waitForFunction(() => typeof (window as unknown as { __skyAt?: unknown }).__skyAt === 'function');
-    await page.evaluate(() => (window as unknown as { __skyAt: (iso: string) => void }).__skyAt('2026-01-01T02:00'));
+    await page.evaluate(() =>
+      (window as unknown as { __skyAt: (iso: string) => void }).__skyAt('2026-01-01T09:00:00Z'),
+    );
+    await expect
+      .poll(() => page.evaluate(() => parseFloat(getComputedStyle(document.getElementById('stars')!).opacity)))
+      .toBeGreaterThan(0.5);
     const star = page.locator('.star').first();
     await expect(star).toBeVisible();
     const animationName = await star.evaluate((el) => getComputedStyle(el).animationName);
