@@ -52,20 +52,6 @@ import Layout from '../layouts/Layout.astro';
           ></path>
         </svg>
       </a>
-      <!-- Internal link to the contact form, so no target="_blank" — but
-           it lives with the socials: it's the same "reach me" family, and
-           the filled envelope matches the other glyphs' visual weight. -->
-      <a
-        href="/contact"
-        aria-label="Contact form"
-        class="p-2 transition-transform duration-300 hover:-translate-y-0.5 focus-visible:outline-2 focus-visible:outline-offset-0 focus-visible:outline-current"
-      >
-        <svg viewBox="0 0 24 24" fill="currentColor" class="h-7 w-7" aria-hidden="true">
-          <path
-            d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"
-          ></path>
-        </svg>
-      </a>
     </nav>
 
     <!-- min-h matches the corner chips' rendered height (1rem text line +
@@ -85,6 +71,12 @@ import Layout from '../layouts/Layout.astro';
         class="link-squiggle sky-caption relative text-sm lowercase tracking-widest transition-transform duration-300 after:absolute after:-inset-3 after:content-[''] hover:-translate-y-0.5 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-current"
       >
         about
+      </a>
+      <a
+        href="/contact"
+        class="link-squiggle sky-caption relative text-sm lowercase tracking-widest transition-transform duration-300 after:absolute after:-inset-3 after:content-[''] hover:-translate-y-0.5 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-current"
+      >
+        contact
       </a>
     </nav>
 
