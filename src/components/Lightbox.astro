@@ -57,6 +57,7 @@
 <style>
   .lightbox-dialog {
     box-sizing: border-box;
+
     /* The side reservation (9rem total) keeps the widest photo clear of
        the viewport-edge prev/next buttons: 1.25rem inset + 2.25rem button
        + ~1rem breathing room per side. dvh, not vh: vh is pinned to the
@@ -82,7 +83,7 @@
      margin to push it clear. .lightbox-media below caps the photo/video
      itself to match, so a tall portrait one can't reflate the dialog
      back past this ceiling. */
-  @media (pointer: coarse) and (max-width: 640px) {
+  @media (pointer: coarse) and (width <= 640px) {
     .lightbox-dialog {
       max-width: 96vw;
       max-height: calc(100dvh - env(safe-area-inset-top) - env(safe-area-inset-bottom));
@@ -91,7 +92,7 @@
   }
 
   .lightbox-dialog::backdrop {
-    background: rgba(5, 6, 12, 0.82);
+    background: rgb(5 6 12 / 82%);
   }
 
   .lightbox-polaroid {
@@ -106,7 +107,8 @@
     background: #f7f4ed;
     padding: 1rem 1rem 1.25rem;
     border-radius: 0.25rem;
-    box-shadow: 0 25px 60px -12px rgba(0, 0, 0, 0.6);
+    box-shadow: 0 25px 60px -12px rgb(0 0 0 / 60%);
+
     /* Without this, the browser spends the first several touchmove events
        deciding whether the gesture is a page scroll before conceding
        horizontal panning to the touchmove listener in lightbox.ts — which
@@ -124,6 +126,7 @@
 
   .lightbox-media {
     display: block;
+
     /* 100% of whatever's left inside the dialog's padding — never a raw
        vw value, so it can't out-grow the gutters reserved for the nav
        buttons. dvh for the same reason as .lightbox-dialog above. */
@@ -142,7 +145,7 @@
      short viewport (Safari's toolbar showing, an SE-sized screen). ~9rem
      covers that fixed chrome so a tall portrait photo or video still
      leaves the close button and dots on-screen. */
-  @media (pointer: coarse) and (max-width: 640px) {
+  @media (pointer: coarse) and (width <= 640px) {
     .lightbox-media {
       max-height: min(
         74dvh,
@@ -157,6 +160,7 @@
     font-size: 0.9rem;
     letter-spacing: 0.03em;
     padding: 0.85rem 0.25rem 0.15rem;
+
     /* The trick that stops it stretching .lightbox-polaroid — see the
        comment there. */
     width: 0;
@@ -184,7 +188,7 @@
     width: 2.25rem;
     height: 2.25rem;
     color: #f1eefb;
-    background: rgba(255, 255, 255, 0.12);
+    background: rgb(255 255 255 / 12%);
     border: none;
     border-radius: 9999px;
     font-size: 1.1rem;
@@ -200,7 +204,7 @@
   }
 
   .lightbox-btn:hover {
-    background: rgba(255, 255, 255, 0.22);
+    background: rgb(255 255 255 / 22%);
   }
 
   .lightbox-btn:focus {
@@ -218,6 +222,7 @@
      the actual diagonal distance comes out ~1.4x too big. */
   .lightbox-close {
     --diag-gap: 0.3536rem;
+
     top: calc(-1 * var(--diag-gap) - 2.25rem);
     right: calc(-1 * var(--diag-gap) - 2.25rem);
   }
@@ -283,7 +288,8 @@
     width: 6px;
     height: 6px;
     border-radius: 9999px;
-    background: rgba(255, 255, 255, 0.35);
+    background: rgb(255 255 255 / 35%);
+
     /* The active dot grows and brightens in step with the card swiping
        in, instead of snapping — same ease-out family as the swipe. */
     transition:
@@ -319,7 +325,7 @@
      instead keeps Close in the same reachable spot no matter how tall
      the media is. Placed last so it wins over the base rule's
      equal-specificity properties at this breakpoint. */
-  @media (pointer: coarse) and (max-width: 640px) {
+  @media (pointer: coarse) and (width <= 640px) {
     .lightbox-close {
       position: fixed;
       top: calc(env(safe-area-inset-top) + 0.75rem);

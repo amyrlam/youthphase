@@ -170,7 +170,7 @@ import youthPhase from '../assets/contact/youth-phase-print.png';
     padding: clamp(0.75rem, 2.5vw, 1.1rem);
     background: #f7f4ed;
     border-radius: 0.25rem;
-    box-shadow: 0 20px 45px -14px rgba(0, 0, 0, 0.55);
+    box-shadow: 0 20px 45px -14px rgb(0 0 0 / 55%);
     transform: rotate(-0.6deg);
     transition: transform 0.3s ease;
   }
@@ -187,9 +187,9 @@ import youthPhase from '../assets/contact/youth-phase-print.png';
     position: absolute;
     width: clamp(4.2rem, 22%, 6rem);
     height: 1.55rem;
-    background: linear-gradient(rgba(244, 240, 225, 0.72), rgba(231, 224, 200, 0.66));
+    background: linear-gradient(rgb(244 240 225 / 72%), rgb(231 224 200 / 66%));
     clip-path: polygon(2% 6%, 97% 0, 100% 92%, 0 100%);
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 1px 3px rgb(0 0 0 / 20%);
     pointer-events: none;
   }
 
@@ -247,7 +247,7 @@ import youthPhase from '../assets/contact/youth-phase-print.png';
 
   @supports (color: oklch(from red calc(l) c h)) {
     #contact-form {
-      --error-ink: oklch(from currentColor l 0.05 25);
+      --error-ink: oklch(from currentcolor l 0.05 25deg);
     }
   }
 
@@ -256,7 +256,7 @@ import youthPhase from '../assets/contact/youth-phase-print.png';
      standing apart from the bordered sky chips in the site corners.
      Colors ride the sky's own slow transition; the lift stays quick. */
   #contact-submit {
-    background: var(--chip-ink, #ffffff);
+    background: var(--chip-ink, #fff);
     color: var(--card-bg, #141a3d);
     transition:
       background-color 1.6s ease,

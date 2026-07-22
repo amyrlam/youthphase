@@ -15,7 +15,8 @@
     "astro": "astro",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "lint": "eslint ."
+    "lint": "eslint .",
+    "lint:css": "stylelint \"**/*.{css,astro}\""
   },
   "dependencies": {
     "@astrojs/vercel": "^11.0.3",
@@ -38,8 +39,12 @@
     "eslint-plugin-astro": "^3.0.1",
     "eslint-plugin-jsx-a11y": "^6.10.2",
     "globals": "^17.7.0",
+    "postcss-html": "^1.8.1",
     "prettier": "^3.9.6",
     "prettier-plugin-astro": "^0.14.1",
+    "stylelint": "^17.14.1",
+    "stylelint-config-standard": "^40.0.0",
+    "stylelint-config-tailwindcss": "^1.0.1",
     "typescript-eslint": "^8.65.0"
   }
 }
