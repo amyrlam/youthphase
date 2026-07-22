@@ -80,6 +80,9 @@ pnpm check:contrast      # verify ink contrast across all skies
 pnpm test                # Playwright (a11y, lightbox)
 ```
 
+`.github/workflows/ci.yml` runs the build, the contrast check, and the
+Playwright suite on every push and pull request.
+
 Key files:
 
 - `src/scripts/sky.ts` — the whole sky engine
