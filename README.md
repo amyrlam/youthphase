@@ -66,6 +66,9 @@ the geo lookup resolves, and re-renders every minute.
 - `/design-system` — unlisted page showing the live shared patterns.
   [PRODUCT.md](PRODUCT.md) (voice, audience) and [DESIGN.md](DESIGN.md)
   (the visual system) are the written half.
+- Page views are tracked with [Vercel Web Analytics](https://vercel.com/docs/analytics),
+  enabled via the `@astrojs/vercel` adapter — no cookies, no third-party
+  script.
 - Design work happens in [Claude Code](https://claude.com/claude-code)
   with the Impeccable plugin (its commands read PRODUCT.md and DESIGN.md
   as context), with the Mobbin MCP on hand for interaction reference.
@@ -89,14 +92,13 @@ Key files:
 
 ## Deploying (Vercel)
 
-The site is a static Astro build plus that one serverless function.
-It uses the `@astrojs/vercel` adapter (in `output: 'static'` mode) to
-enable Vercel Web Analytics; Vercel still picks up the root-level
-`api/` directory as its own serverless function alongside the static
-build, independent of the adapter. Import the repo at
-[vercel.com/new](https://vercel.com/new) (Astro is auto-detected) and
-add the domain under Project → Settings → Domains. On other hosts
-(Netlify, Cloudflare Pages) the static site works as-is, but `/api/geo`
-would need porting to that host's functions and geo headers, and web
-analytics would need a different provider — until then every visitor
-just gets the borrowed sky.
+The site is a static Astro build plus that one serverless function,
+built with the `@astrojs/vercel` adapter (in `output: 'static'` mode).
+Vercel still picks up the root-level `api/` directory as its own
+serverless function alongside the static build, independent of the
+adapter. Import the repo at [vercel.com/new](https://vercel.com/new)
+(Astro is auto-detected) and add the domain under Project → Settings
+→ Domains. On other hosts (Netlify, Cloudflare Pages) the static site
+works as-is, but `/api/geo` would need porting to that host's functions
+and geo headers, and analytics would need a different provider — until
+then every visitor just gets the borrowed sky.
