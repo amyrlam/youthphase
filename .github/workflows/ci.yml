@@ -68,14 +68,9 @@ jobs:
           retention-days: 14
 
       # Publishes the Chromatic archives Playwright wrote to ./test-results
-      # while running the suite above. Requires a CHROMATIC_PROJECT_TOKEN
-      # repo secret from https://www.chromatic.com, which doesn't exist yet
-      # — continue-on-error keeps this job green in the meantime. Remove
-      # continue-on-error once the secret is added, so a real publish
-      # failure actually fails the job.
+      # while running the suite above.
       - name: Publish to Chromatic
         uses: chromaui/action@latest
-        continue-on-error: true
         with:
           playwright: true
           projectToken: ${{ secrets.CHROMATIC_PROJECT_TOKEN }}
