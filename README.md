@@ -2,8 +2,9 @@
 
 Personal site of Amy Lam. Built with [Astro](https://astro.build) and
 [Tailwind CSS](https://tailwindcss.com), package-managed with
-[pnpm](https://pnpm.io). This README exists to explain how the site
-works, because the fun is in the details.
+[pnpm](https://pnpm.io), linted with Prettier/ESLint/Stylelint. This
+README exists to explain how the site works, because the fun is in
+the details.
 
 ## The sky
 
@@ -81,6 +82,10 @@ pnpm dev                 # dev server at localhost:4321
 pnpm build               # static build to dist/
 pnpm check:contrast      # verify ink contrast across all skies
 pnpm test                # Playwright (a11y, lightbox)
+pnpm format              # Prettier, writes
+pnpm format:check        # Prettier, checks only (what CI runs)
+pnpm lint                # ESLint — JS/TS, Astro, jsx-a11y
+pnpm lint:css            # Stylelint — global.css and .astro <style> blocks
 ```
 
 Key files:
@@ -112,9 +117,31 @@ Key files:
 every sun altitude and fails if any ink/background pairing drops below
 WCAG AAA — see [the sky section](#the-sky) above.
 
+## Linting
+
+- **Prettier** (`prettier-plugin-astro` for `.astro` files) — `singleQuote`,
+  `printWidth: 100`. `.claude/` and `.impeccable/` are excluded; they're
+  tool-internal config/output, not site source.
+- **ESLint** (flat config) — `@eslint/js` + `typescript-eslint` recommended,
+  plus `eslint-plugin-astro`'s recommended and `jsx-a11y-recommended`
+  configs, so a chunk of accessibility checking happens statically
+  alongside the axe-core runtime checks above. `eslint-plugin-better-tailwindcss`
+  adds Tailwind-specific correctness checks — unknown/typo'd classes,
+  conflicting utilities, canonical simplifications (`h-7 w-7` →
+  `size-7`) — scoped to `.astro` `class="..."` attributes; this
+  project's own custom classes (`sky-*`, `lightbox-*`, ...) are
+  allowlisted rather than flagged as unknown. Ordering/line-wrapping
+  are left off — that's Prettier's job, not this plugin's opinion.
+- **Stylelint** (`stylelint-config-standard` + `stylelint-config-tailwindcss`)
+  — covers `global.css` and every `.astro` file's `<style>` block
+  (via `postcss-html`). `:global(...)` (Astro's scoped-style escape
+  hatch) and `--modifier`-suffixed BEM class names are allowlisted;
+  everything else is standard modern CSS.
+
 [GitHub Actions](https://github.com/features/actions)
-(`.github/workflows/ci.yml`) runs the build, `check:contrast`, and the
-full Playwright suite on every push to `main` and on every pull request.
+(`.github/workflows/ci.yml`) runs the build, `check:contrast`, the full
+Playwright suite, and all three linters on every push to `main` and on
+every pull request.
 
 ## Deploying (Vercel)
 

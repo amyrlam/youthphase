@@ -20,7 +20,10 @@ export function GET(request: Request): Response {
     }
   }
 
-  return Response.json(located ? { latitude, longitude, city } : { latitude: null, longitude: null, city: null }, {
-    headers: { 'cache-control': 'private, no-store' },
-  });
+  return Response.json(
+    located ? { latitude, longitude, city } : { latitude: null, longitude: null, city: null },
+    {
+      headers: { 'cache-control': 'private, no-store' },
+    },
+  );
 }

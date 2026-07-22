@@ -20,11 +20,11 @@ import youthPhase from '../assets/contact/youth-phase-print.png';
 
     <h1 class="text-4xl font-medium lowercase tracking-tight sm:text-5xl">contact</h1>
 
-    <section class="sky-card rounded-2xl px-6 py-8 sm:px-10 sm:py-10">
+    <section class="sky-card rounded-2xl px-6 py-8 sm:p-10">
       <div class="prose sm:prose-lg max-w-none">
         <p>
-          I grew up with my grandparents on the Connecticut shoreline, where Pop kept a
-          dinghy in the harbor named <em>Youth Phase</em>.
+          I grew up with my grandparents on the Connecticut shoreline, where Pop kept a dinghy in
+          the harbor named <em>Youth Phase</em>.
         </p>
       </div>
 
@@ -51,9 +51,8 @@ import youthPhase from '../assets/contact/youth-phase-print.png';
 
       <div class="prose sm:prose-lg mt-12 max-w-none">
         <p>
-          Each time life carried him somewhere new, he'd swap the number on the hull for the
-          next one.
-          That's always resonated with me. My career keeps evolving too, more living document
+          Each time life carried him somewhere new, he'd swap the number on the hull for the next
+          one. That's always resonated with me. My career keeps evolving too, more living document
           than fixed title, and inspiration for this domain name. I think I'm up to
           <em>Youth Phase XVII</em> myself now!
         </p>
@@ -76,7 +75,7 @@ import youthPhase from '../assets/contact/youth-phase-print.png';
       </p>
     </section>
 
-    <section class="sky-card rounded-2xl px-6 py-8 sm:px-10 sm:py-10">
+    <section class="sky-card rounded-2xl px-6 py-8 sm:p-10">
       <form id="contact-form" class="flex flex-col gap-5" novalidate>
         <div class="flex flex-col gap-1.5">
           <label for="contact-name" class="text-xs tracking-widest">Name</label>
@@ -109,7 +108,13 @@ import youthPhase from '../assets/contact/youth-phase-print.png';
                bubbles (the form is novalidate). Colored by --error-ink:
                the computed ink tinted toward coral, sky-safe (see the
                style block). Filled by the script. -->
-          <p id="contact-email-error" data-error-for="contact-email" hidden class="field-error text-xs tracking-wide"></p>
+          <p
+            id="contact-email-error"
+            data-error-for="contact-email"
+            hidden
+            class="field-error text-xs tracking-wide"
+          >
+          </p>
         </div>
 
         <div class="flex flex-col gap-1.5">
@@ -124,7 +129,13 @@ import youthPhase from '../assets/contact/youth-phase-print.png';
             maxlength="5000"
             class="resize-y rounded-lg border border-current/30 bg-transparent px-3 py-2 text-base focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-current"
           ></textarea>
-          <p id="contact-message-error" data-error-for="contact-message" hidden class="field-error text-xs tracking-wide"></p>
+          <p
+            id="contact-message-error"
+            data-error-for="contact-message"
+            hidden
+            class="field-error text-xs tracking-wide"
+          >
+          </p>
         </div>
 
         <!-- Honeypot: hidden from people (and from the accessibility tree),
@@ -145,7 +156,6 @@ import youthPhase from '../assets/contact/youth-phase-print.png';
           <p id="contact-status" aria-live="polite" class="text-sm tracking-wide"></p>
         </div>
       </form>
-
     </section>
   </main>
 </Layout>
@@ -160,7 +170,7 @@ import youthPhase from '../assets/contact/youth-phase-print.png';
     padding: clamp(0.75rem, 2.5vw, 1.1rem);
     background: #f7f4ed;
     border-radius: 0.25rem;
-    box-shadow: 0 20px 45px -14px rgba(0, 0, 0, 0.55);
+    box-shadow: 0 20px 45px -14px rgb(0 0 0 / 55%);
     transform: rotate(-0.6deg);
     transition: transform 0.3s ease;
   }
@@ -177,9 +187,9 @@ import youthPhase from '../assets/contact/youth-phase-print.png';
     position: absolute;
     width: clamp(4.2rem, 22%, 6rem);
     height: 1.55rem;
-    background: linear-gradient(rgba(244, 240, 225, 0.72), rgba(231, 224, 200, 0.66));
+    background: linear-gradient(rgb(244 240 225 / 72%), rgb(231 224 200 / 66%));
     clip-path: polygon(2% 6%, 97% 0, 100% 92%, 0 100%);
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 1px 3px rgb(0 0 0 / 20%);
     pointer-events: none;
   }
 
@@ -237,7 +247,7 @@ import youthPhase from '../assets/contact/youth-phase-print.png';
 
   @supports (color: oklch(from red calc(l) c h)) {
     #contact-form {
-      --error-ink: oklch(from currentColor l 0.05 25);
+      --error-ink: oklch(from currentcolor l 0.05 25deg);
     }
   }
 
@@ -246,7 +256,7 @@ import youthPhase from '../assets/contact/youth-phase-print.png';
      standing apart from the bordered sky chips in the site corners.
      Colors ride the sky's own slow transition; the lift stays quick. */
   #contact-submit {
-    background: var(--chip-ink, #ffffff);
+    background: var(--chip-ink, #fff);
     color: var(--card-bg, #141a3d);
     transition:
       background-color 1.6s ease,
@@ -332,7 +342,10 @@ import youthPhase from '../assets/contact/youth-phase-print.png';
     const data = Object.fromEntries(new FormData(form).entries());
     if (submit) submit.disabled = true;
     if (submit) submit.textContent = 'Sending…';
-    if (status) { status.textContent = ''; status.classList.remove('field-error'); }
+    if (status) {
+      status.textContent = '';
+      status.classList.remove('field-error');
+    }
 
     try {
       const res = await fetch('/api/contact', {
@@ -344,7 +357,10 @@ import youthPhase from '../assets/contact/youth-phase-print.png';
       form.reset();
       if (status) status.textContent = "Message sent — I'll write back soon";
     } catch {
-      if (status) { status.textContent = 'Something went wrong — mind trying again?'; status.classList.add('field-error'); }
+      if (status) {
+        status.textContent = 'Something went wrong — mind trying again?';
+        status.classList.add('field-error');
+      }
     } finally {
       if (submit) {
         submit.disabled = false;

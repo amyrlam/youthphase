@@ -144,12 +144,18 @@ test.describe('prefers-reduced-motion', () => {
     // can land on a different, non-nighttime sun altitude. And #stars'
     // opacity is a real CSS transition (2s), so wait for it to actually
     // land rather than asserting the instant after the call returns.
-    await page.waitForFunction(() => typeof (window as unknown as { __skyAt?: unknown }).__skyAt === 'function');
+    await page.waitForFunction(
+      () => typeof (window as unknown as { __skyAt?: unknown }).__skyAt === 'function',
+    );
     await page.evaluate(() =>
       (window as unknown as { __skyAt: (iso: string) => void }).__skyAt('2026-01-01T09:00:00Z'),
     );
     await expect
-      .poll(() => page.evaluate(() => parseFloat(getComputedStyle(document.getElementById('stars')!).opacity)))
+      .poll(() =>
+        page.evaluate(() =>
+          parseFloat(getComputedStyle(document.getElementById('stars')!).opacity),
+        ),
+      )
       .toBeGreaterThan(0.5);
     const star = page.locator('.star').first();
     await expect(star).toBeVisible();

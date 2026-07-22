@@ -74,7 +74,6 @@ const media = [
   },
 ];
 
-const posterOptimized = await getImage({ src: skiVideoPoster, width: 900 });
 const fullSizes = await Promise.all(
   media.map((m) => getImage({ src: m.type === 'video' ? m.poster : m.src, width: 1800 })),
 );
@@ -96,7 +95,7 @@ const fullSizes = await Promise.all(
 
     <h1 class="text-4xl font-medium lowercase tracking-tight sm:text-5xl">about</h1>
 
-    <section class="sky-card rounded-2xl px-6 py-8 sm:px-10 sm:py-10">
+    <section class="sky-card rounded-2xl px-6 py-8 sm:p-10">
       <!-- prose-lg only from sm up: at 375px the card's inner width fits
            ~30ch of 18px text, which reads as a wall; base 16px buys back
            a few characters per line where they're scarcest. -->
@@ -104,22 +103,22 @@ const fullSizes = await Promise.all(
         <p>
           I'm a frontend-leaning software engineer and engineering manager with over a decade of
           experience. I thrive at the intersection of engineering, design, and product. I'm
-          especially interested in design systems, design engineering, and frontend
-          platform & infrastructure work, with a through line of problem-solving around
-          user experience (UX) and developer experience (DX).
+          especially interested in design systems, design engineering, and frontend platform &
+          infrastructure work, with a through line of problem-solving around user experience (UX)
+          and developer experience (DX).
         </p>
         <p>
           I currently live in Salt Lake City, Utah, with my partner, James. James is a tech
-          recruiter focused on web3. After eight years in San Francisco, we moved to Utah
-          during peak pandemic, drawn to skiing "the greatest snow on earth." My
-          favorite resort is Alta — I still can't believe it's so close to town!
+          recruiter focused on web3. After eight years in San Francisco, we moved to Utah during
+          peak pandemic, drawn to skiing "the greatest snow on earth." My favorite resort is Alta —
+          I still can't believe it's so close to town!
         </p>
         <p>
           I'm genuinely excited about what AI means for the tech industry, and that's the main
-          reason why I'm now looking to relocate back to the San Francisco Bay Area. What am I looking
-          for in my next role? Good product and good people. I do my best work on teams that
-          like to riff off each other's ideas, digging into hard, interesting problems
-          together. As the saying goes, creativity is intelligence having fun.
+          reason why I'm now looking to relocate back to the San Francisco Bay Area. What am I
+          looking for in my next role? Good product and good people. I do my best work on teams that
+          like to riff off each other's ideas, digging into hard, interesting problems together. As
+          the saying goes, creativity is intelligence having fun.
         </p>
       </div>
 
@@ -141,7 +140,9 @@ const fullSizes = await Promise.all(
                 data-alt={item.alt}
                 data-caption={item.caption}
                 class={`group relative overflow-hidden rounded-2xl focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-current ${isOrphan ? 'col-span-2 w-[calc(50%-0.375rem)] mx-auto sm:col-span-1 sm:w-full sm:mx-0' : ''}`}
-                aria-label={item.type === 'video' ? `Play video: ${item.alt}` : `View larger: ${item.alt}`}
+                aria-label={
+                  item.type === 'video' ? `Play video: ${item.alt}` : `View larger: ${item.alt}`
+                }
               >
                 <Image
                   src={item.type === 'video' ? item.poster : item.src}

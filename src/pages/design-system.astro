@@ -17,37 +17,37 @@ import Layout from '../layouts/Layout.astro';
 
     <h1 class="text-4xl font-medium lowercase tracking-tight sm:text-5xl">design system</h1>
     <p class="sky-card rounded-2xl px-5 py-4 text-sm">
-      Reference only — this page is not linked from the site. If you add a new shared
-      pattern (a class, a component, a spacing rule), add it here too.
+      Reference only — this page is not linked from the site. If you add a new shared pattern (a
+      class, a component, a spacing rule), add it here too.
     </p>
 
-    <section class="sky-card flex flex-col gap-3 rounded-2xl px-6 py-6">
+    <section class="sky-card flex flex-col gap-3 rounded-2xl p-6">
       <h2 class="text-xl font-medium lowercase">color</h2>
       <p class="text-sm">
-        Everything is computed at runtime by <code>src/scripts/sky.ts</code> from the sun/moon
-        position — nothing here is a fixed hex value. The variables: <code>--sky-top</code>,
-        <code>--sky-bottom</code> (the gradient), <code>--ink</code> (body text, chosen per
-        frame for ≥4.5:1 against the mid-gradient band — not the extremes), <code>--card-bg</code>
+        Everything is computed at runtime by <code>src/scripts/sky.ts</code> from the sun/moon position
+        — nothing here is a fixed hex value. The variables: <code>--sky-top</code>,
+        <code>--sky-bottom</code> (the gradient), <code>--ink</code> (body text, chosen per frame for
+        ≥4.5:1 against the mid-gradient band — not the extremes), <code>--card-bg</code>
         / <code>--chip-ink</code> (the "chip" background, chosen for ≥7:1 — used by
         <code>.sky-chip</code>, <code>.sky-card</code>, <code>.sky-caption</code>),
         <code>--top-ink</code> (<code>.sky-top-ink</code> — chosen for ≥4.5:1 against pure
-        <code>--sky-top</code> specifically, for text like the "← home" link that sits above
-        any card). Never hardcode a color that's meant to track the sky; use these.
+        <code>--sky-top</code> specifically, for text like the "← home" link that sits above any card).
+        Never hardcode a color that's meant to track the sky; use these.
       </p>
       <p class="text-sm">
-        <code>pnpm check:contrast</code> sweeps every sun altitude and fails the build if
-        any of this drops below AAA. Run it after touching sky.ts or the palette.
+        <code>pnpm check:contrast</code> sweeps every sun altitude and fails the build if any of this
+        drops below AAA. Run it after touching sky.ts or the palette.
       </p>
     </section>
 
     <div class="flex flex-col gap-4">
-      <section class="sky-card flex flex-col gap-4 rounded-2xl px-6 py-6">
+      <section class="sky-card flex flex-col gap-4 rounded-2xl p-6">
         <h2 class="text-xl font-medium lowercase">links</h2>
         <p class="text-sm">
-          Every inline text link gets <code>.link-squiggle</code> (wavy underline, 1px, 4px
-          offset) — it's the one trait that must stay consistent regardless of context, so
-          clickable text is never confused with plain captions next to it. Pair it with
-          whichever color/size treatment the context calls for:
+          Every inline text link gets <code>.link-squiggle</code> (wavy underline, 1px, 4px offset) —
+          it's the one trait that must stay consistent regardless of context, so clickable text is never
+          confused with plain captions next to it. Pair it with whichever color/size treatment the context
+          calls for:
         </p>
         <a href="/" class="link-squiggle sky-caption w-fit text-sm lowercase tracking-widest">
           horizon-band nav style
@@ -58,29 +58,25 @@ import Layout from '../layouts/Layout.astro';
            so --top-ink sits on exactly the pairing check-contrast.ts
            verifies — a real card, just a different one than .sky-card,
            since --top-ink was never checked against --card-bg. -->
-      <section class="sky-top-card flex flex-col gap-4 rounded-2xl px-6 py-6">
+      <section class="sky-top-card flex flex-col gap-4 rounded-2xl p-6">
         <p class="text-sm">
           top-of-page back-link style — <code>.sky-top-ink</code> on
           <code>.sky-top-card</code> (background: <code>--sky-top</code> itself, not
           <code>--card-bg</code>) — a different verified pairing than the card above:
         </p>
-        <a
-          href="/"
-          class="link-squiggle w-fit text-[19px] font-bold lowercase tracking-wide"
-        >
+        <a href="/" class="link-squiggle w-fit text-[19px] font-bold lowercase tracking-wide">
           ← back-link style
         </a>
       </section>
     </div>
 
-    <section class="sky-card flex flex-col gap-4 rounded-2xl px-6 py-6">
+    <section class="sky-card flex flex-col gap-4 rounded-2xl p-6">
       <h2 class="text-xl font-medium lowercase">buttons</h2>
       <p class="text-sm">
         <code>.sky-chip</code> — bordered pill, 7:1-contrast background. Hover lifts (same
-        <code>-translate-y-0.5</code> as links/icons) and brightens the border; focus gets a
-        current-color outline. Content color never shifts on hover/focus — only decorative
-        chrome (border, position) does, so the AAA contrast guarantee never depends on
-        interaction state.
+        <code>-translate-y-0.5</code> as links/icons) and brightens the border; focus gets a current-color
+        outline. Content color never shifts on hover/focus — only decorative chrome (border, position)
+        does, so the AAA contrast guarantee never depends on interaction state.
       </p>
       <button
         type="button"
@@ -90,56 +86,54 @@ import Layout from '../layouts/Layout.astro';
       </button>
     </section>
 
-    <section class="sky-card flex flex-col gap-4 rounded-2xl px-6 py-6">
+    <section class="sky-card flex flex-col gap-4 rounded-2xl p-6">
       <h2 class="text-xl font-medium lowercase">icon buttons + touch targets</h2>
       <p class="text-sm">
-        WCAG AAA wants a 44×44px tap target. When the button should <em>look</em> smaller
-        than that (social icons, lightbox controls), keep the visible element small and
-        expand the real hit area with an invisible <code>::after</code> at
-        <code>inset: -Npx</code> — never shrink the actual clickable region to match the
-        visual size.
+        WCAG AAA wants a 44×44px tap target. When the button should <em>look</em> smaller than that (social
+        icons, lightbox controls), keep the visible element small and expand the real hit area with an
+        invisible <code>::after</code> at
+        <code>inset: -Npx</code> — never shrink the actual clickable region to match the visual size.
       </p>
-      <pre class="overflow-x-auto rounded-lg border border-current/20 p-3 text-xs">.btn::after {'{'} content: ''; position: absolute; inset: -4px; {'}'}</pre>
+      <pre
+        class="overflow-x-auto rounded-lg border border-current/20 p-3 text-xs">.btn::after {'{'} content: ''; position: absolute; inset: -4px; {'}'}</pre>
     </section>
 
-    <section class="sky-card flex flex-col gap-3 rounded-2xl px-6 py-6">
+    <section class="sky-card flex flex-col gap-3 rounded-2xl p-6">
       <h2 class="text-xl font-medium lowercase">cards</h2>
       <p class="text-sm">
-        <code>.sky-card</code> for any block of content sitting directly on the sky
-        (paragraphs, blog cards). <code>.lightbox-polaroid</code> is the one exception — a
-        fixed warm-ivory card, deliberately <em>not</em> sky-tied, used only for the expanded
-        photo view.
+        <code>.sky-card</code> for any block of content sitting directly on the sky (paragraphs, blog
+        cards). <code>.lightbox-polaroid</code> is the one exception — a fixed warm-ivory card, deliberately
+        <em>not</em> sky-tied, used only for the expanded photo view.
       </p>
     </section>
 
-    <section class="sky-card flex flex-col gap-4 rounded-2xl px-6 py-6">
+    <section class="sky-card flex flex-col gap-4 rounded-2xl p-6">
       <h2 class="text-xl font-medium lowercase">icons</h2>
       <p class="text-sm">
         Hand-rolled filled SVGs on a 24×24 viewBox, rendered at <code>h-7 w-7</code> with
-        <code>fill="currentColor"</code> so they track the computed
-        ink — never an icon font or a component library, and never mixed with outline-style
-        glyphs. Each sits in a <code>p-2</code> link with the standard hover lift; external
-        links open a new tab with an "(opens in new tab)" aria-label, internal ones (the
-        envelope, linking to <code>/contact</code>) don't. The bird stays the classic
-        Twitter bird, deliberately.
+        <code>fill="currentColor"</code> so they track the computed ink — never an icon font or a component
+        library, and never mixed with outline-style glyphs. Each sits in a <code>p-2</code> link with
+        the standard hover lift; external links open a new tab with an "(opens in new tab)" aria-label,
+        internal ones (the envelope, linking to <code>/contact</code>) don't. The bird stays the
+        classic Twitter bird, deliberately.
       </p>
       <div class="flex items-center gap-3">
-        <svg viewBox="0 0 24 24" fill="currentColor" class="h-7 w-7" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="currentColor" class="size-7" aria-hidden="true">
           <path
             d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.225 0z"
           ></path>
         </svg>
-        <svg viewBox="0 0 24 24" fill="currentColor" class="h-7 w-7" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="currentColor" class="size-7" aria-hidden="true">
           <path
             d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723c-.951.555-2.005.959-3.127 1.184a4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.827 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417 9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.053 0 13.998-7.496 13.998-13.985 0-.21 0-.42-.015-.63A9.935 9.935 0 0024 4.59z"
           ></path>
         </svg>
-        <svg viewBox="0 0 24 24" fill="currentColor" class="h-7 w-7" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="currentColor" class="size-7" aria-hidden="true">
           <path
             d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.605-2.665-.303-5.466-1.332-5.466-5.93 0-1.31.469-2.381 1.236-3.221-.124-.303-.535-1.523.117-3.176 0 0 1.008-.322 3.301 1.23A11.51 11.51 0 0112 5.803c1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.873.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.61-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222 0 1.604-.014 2.896-.014 3.286 0 .322.216.696.825.577C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"
           ></path>
         </svg>
-        <svg viewBox="0 0 24 24" fill="currentColor" class="h-7 w-7" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="currentColor" class="size-7" aria-hidden="true">
           <path
             d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"
           ></path>
@@ -147,31 +141,31 @@ import Layout from '../layouts/Layout.astro';
       </div>
     </section>
 
-    <section class="sky-card flex flex-col gap-4 rounded-2xl px-6 py-6">
+    <section class="sky-card flex flex-col gap-4 rounded-2xl p-6">
       <h2 class="text-xl font-medium lowercase">forms</h2>
       <p class="text-sm">
         Inputs (see <code>/contact</code>): transparent background on a <code>.sky-card</code> with
-        <code>border-current/30</code> and <code>rounded-lg</code>, plus a
-        current-color focus outline —
-        the ink/card pairing already guarantees contrast, so fields inherit it. Form chrome
-        is the one sentence-case exception to the lowercase register: labels
-        (<code>text-xs tracking-widest</code>, above the field, no placeholders), the
-        submit button ("Send"), and validation/status messages are all sentence case —
-        which also keeps form actions from reading as sky chips. Required fields carry an
-        asterisk in the label (visual only — <code>aria-hidden</code>, since the
-        <code>required</code> attribute already announces it); optional fields are simply
-        unmarked. Submit is a filled pill — the card pairing inverted
-        (<code>--chip-ink</code> surface, <code>--card-bg</code> text), which keeps the
-        computed 7:1 guarantee and separates form actions from the bordered sky chips.
-        Status messages go in an <code>aria-live="polite"</code> line next to the submit,
-        written in the site's voice. Validation is inline, not browser bubbles (forms are
-        <code>novalidate</code>): a sentence-case line appears under the field, and the
-        field gets <code>aria-invalid</code> + <code>aria-describedby</code>. Error color
-        splits by WCAG role: the text keeps the ink's exact lightness with a coral hue
-        shift (<code>oklch(from currentColor l 0.05 25)</code>) so it holds AAA 7:1 under
-        any sky, while the border — non-text UI, 3:1 floor — carries the rich coral
-        (<code>color-mix(in oklab, currentColor 60%, #ff5d4d 40%)</code>). Errors clear as
-        you type. Every form gets a hidden honeypot field the server checks.
+        <code>border-current/30</code> and <code>rounded-lg</code>, plus a current-color focus
+        outline — the ink/card pairing already guarantees contrast, so fields inherit it. Form
+        chrome is the one sentence-case exception to the lowercase register: labels (<code
+          >text-xs tracking-widest</code
+        >, above the field, no placeholders), the submit button ("Send"), and validation/status
+        messages are all sentence case — which also keeps form actions from reading as sky chips.
+        Required fields carry an asterisk in the label (visual only — <code>aria-hidden</code>,
+        since the
+        <code>required</code> attribute already announces it); optional fields are simply unmarked. Submit
+        is a filled pill — the card pairing inverted (<code>--chip-ink</code> surface, <code
+          >--card-bg</code
+        > text), which keeps the computed 7:1 guarantee and separates form actions from the bordered sky
+        chips. Status messages go in an <code>aria-live="polite"</code> line next to the submit, written
+        in the site's voice. Validation is inline, not browser bubbles (forms are
+        <code>novalidate</code>): a sentence-case line appears under the field, and the field gets <code
+          >aria-invalid</code
+        > + <code>aria-describedby</code>. Error color splits by WCAG role: the text keeps the ink's
+        exact lightness with a coral hue shift (<code>oklch(from currentColor l 0.05 25)</code>) so
+        it holds AAA 7:1 under any sky, while the border — non-text UI, 3:1 floor — carries the rich
+        coral (<code>color-mix(in oklab, currentColor 60%, #ff5d4d 40%)</code>). Errors clear as you
+        type. Every form gets a hidden honeypot field the server checks.
       </p>
       <div class="flex flex-col gap-1.5">
         <label for="ds-input" class="text-xs tracking-widest">
@@ -185,22 +179,26 @@ import Layout from '../layouts/Layout.astro';
       </div>
     </section>
 
-    <section class="sky-card flex flex-col gap-3 rounded-2xl px-6 py-6">
+    <section class="sky-card flex flex-col gap-3 rounded-2xl p-6">
       <h2 class="text-xl font-medium lowercase">motion</h2>
       <ul class="list-inside list-disc text-sm">
         <li>Interactive hover/focus feedback: 300ms.</li>
-        <li>Sky color transitions (gradient, ink, chip): 1.6–2s, so they read as weather, not UI.</li>
-        <li><code>prefers-reduced-motion</code> disables star twinkle, shooting stars, and tap sparkles.</li>
+        <li>
+          Sky color transitions (gradient, ink, chip): 1.6–2s, so they read as weather, not UI.
+        </li>
+        <li>
+          <code>prefers-reduced-motion</code> disables star twinkle, shooting stars, and tap sparkles.
+        </li>
       </ul>
     </section>
 
-    <section class="sky-card flex flex-col gap-3 rounded-2xl px-6 py-6">
+    <section class="sky-card flex flex-col gap-3 rounded-2xl p-6">
       <h2 class="text-xl font-medium lowercase">type</h2>
       <p class="text-sm">
         Space Grotesk everywhere. UI chrome (nav, buttons, captions, headings) is lowercase by
-        design — body prose (bio paragraphs, blog posts) uses normal sentence case for
-        readability. Don't lowercase prose to force consistency with the chrome; they're
-        different registers on purpose.
+        design — body prose (bio paragraphs, blog posts) uses normal sentence case for readability.
+        Don't lowercase prose to force consistency with the chrome; they're different registers on
+        purpose.
       </p>
     </section>
   </main>
