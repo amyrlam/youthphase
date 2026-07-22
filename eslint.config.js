@@ -2,6 +2,7 @@
 import js from '@eslint/js';
 import tseslint from 'typescript-eslint';
 import astro from 'eslint-plugin-astro';
+import betterTailwindcss from 'eslint-plugin-better-tailwindcss';
 import prettier from 'eslint-config-prettier';
 import globals from 'globals';
 
@@ -22,6 +23,46 @@ export default tseslint.config(
   // don't add a second parser config for .astro below, it'll conflict.
   ...astro.configs['flat/recommended'],
   ...astro.configs['flat/jsx-a11y-recommended'],
+  {
+    plugins: { 'better-tailwindcss': betterTailwindcss },
+    rules: {
+      ...betterTailwindcss.configs.recommended.rules,
+      // Class *ordering* and line-wrapping are Prettier's job here, not
+      // this plugin's opinion — enabling them would fight prettier-plugin-astro
+      // and force a one-time reflow of nearly every class string in the
+      // codebase for no correctness benefit. The catchers that matter
+      // (typos, conflicts, duplicates) stay on.
+      'better-tailwindcss/enforce-consistent-class-order': 'off',
+      'better-tailwindcss/enforce-consistent-line-wrapping': 'off',
+      // detectComponentClasses only recognizes Tailwind v4's own @utility
+      // mechanism, not plain hand-written CSS classes like .sky-card —
+      // this project's actual custom classes (defined in global.css and
+      // component <style> blocks) need an explicit allowlist instead.
+      'better-tailwindcss/no-unknown-classes': [
+        'error',
+        {
+          ignore: [
+            '^sky-',
+            '^lightbox-',
+            '^tape',
+            '^link-squiggle$',
+            '^photo-print$',
+            '^field-error$',
+            '^star$',
+            '^rain-drop$',
+            '^shooting-star$',
+            '^show-dim$',
+            '^sparkle$',
+          ],
+        },
+      ],
+    },
+    settings: {
+      'better-tailwindcss': {
+        entryPoint: './src/styles/global.css',
+      },
+    },
+  },
   {
     languageOptions: {
       globals: { ...globals.browser, ...globals.node },

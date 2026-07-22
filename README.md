@@ -124,7 +124,13 @@ WCAG AAA — see [the sky section](#the-sky) above.
 - **ESLint** (flat config) — `@eslint/js` + `typescript-eslint` recommended,
   plus `eslint-plugin-astro`'s recommended and `jsx-a11y-recommended`
   configs, so a chunk of accessibility checking happens statically
-  alongside the axe-core runtime checks above.
+  alongside the axe-core runtime checks above. `eslint-plugin-better-tailwindcss`
+  adds Tailwind-specific correctness checks — unknown/typo'd classes,
+  conflicting utilities, canonical simplifications (`h-7 w-7` →
+  `size-7`) — scoped to `.astro` `class="..."` attributes; this
+  project's own custom classes (`sky-*`, `lightbox-*`, ...) are
+  allowlisted rather than flagged as unknown. Ordering/line-wrapping
+  are left off — that's Prettier's job, not this plugin's opinion.
 - **Stylelint** (`stylelint-config-standard` + `stylelint-config-tailwindcss`)
   — covers `global.css` and every `.astro` file's `<style>` block
   (via `postcss-html`). `:global(...)` (Astro's scoped-style escape
