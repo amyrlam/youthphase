@@ -23,8 +23,8 @@ import youthPhase from '../assets/contact/youth-phase-print.png';
     <section class="sky-card rounded-2xl px-6 py-8 sm:px-10 sm:py-10">
       <div class="prose sm:prose-lg max-w-none">
         <p>
-          I grew up with my grandparents on the Connecticut shoreline, where Pop kept a
-          dinghy in the harbor named <em>Youth Phase</em>.
+          I grew up with my grandparents on the Connecticut shoreline, where Pop kept a dinghy in
+          the harbor named <em>Youth Phase</em>.
         </p>
       </div>
 
@@ -51,9 +51,8 @@ import youthPhase from '../assets/contact/youth-phase-print.png';
 
       <div class="prose sm:prose-lg mt-12 max-w-none">
         <p>
-          Each time life carried him somewhere new, he'd swap the number on the hull for the
-          next one.
-          That's always resonated with me. My career keeps evolving too, more living document
+          Each time life carried him somewhere new, he'd swap the number on the hull for the next
+          one. That's always resonated with me. My career keeps evolving too, more living document
           than fixed title, and inspiration for this domain name. I think I'm up to
           <em>Youth Phase XVII</em> myself now!
         </p>
@@ -109,7 +108,13 @@ import youthPhase from '../assets/contact/youth-phase-print.png';
                bubbles (the form is novalidate). Colored by --error-ink:
                the computed ink tinted toward coral, sky-safe (see the
                style block). Filled by the script. -->
-          <p id="contact-email-error" data-error-for="contact-email" hidden class="field-error text-xs tracking-wide"></p>
+          <p
+            id="contact-email-error"
+            data-error-for="contact-email"
+            hidden
+            class="field-error text-xs tracking-wide"
+          >
+          </p>
         </div>
 
         <div class="flex flex-col gap-1.5">
@@ -124,7 +129,13 @@ import youthPhase from '../assets/contact/youth-phase-print.png';
             maxlength="5000"
             class="resize-y rounded-lg border border-current/30 bg-transparent px-3 py-2 text-base focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-current"
           ></textarea>
-          <p id="contact-message-error" data-error-for="contact-message" hidden class="field-error text-xs tracking-wide"></p>
+          <p
+            id="contact-message-error"
+            data-error-for="contact-message"
+            hidden
+            class="field-error text-xs tracking-wide"
+          >
+          </p>
         </div>
 
         <!-- Honeypot: hidden from people (and from the accessibility tree),
@@ -145,7 +156,6 @@ import youthPhase from '../assets/contact/youth-phase-print.png';
           <p id="contact-status" aria-live="polite" class="text-sm tracking-wide"></p>
         </div>
       </form>
-
     </section>
   </main>
 </Layout>
@@ -332,7 +342,10 @@ import youthPhase from '../assets/contact/youth-phase-print.png';
     const data = Object.fromEntries(new FormData(form).entries());
     if (submit) submit.disabled = true;
     if (submit) submit.textContent = 'Sending…';
-    if (status) { status.textContent = ''; status.classList.remove('field-error'); }
+    if (status) {
+      status.textContent = '';
+      status.classList.remove('field-error');
+    }
 
     try {
       const res = await fetch('/api/contact', {
@@ -344,7 +357,10 @@ import youthPhase from '../assets/contact/youth-phase-print.png';
       form.reset();
       if (status) status.textContent = "Message sent — I'll write back soon";
     } catch {
-      if (status) { status.textContent = 'Something went wrong — mind trying again?'; status.classList.add('field-error'); }
+      if (status) {
+        status.textContent = 'Something went wrong — mind trying again?';
+        status.classList.add('field-error');
+      }
     } finally {
       if (submit) {
         submit.disabled = false;

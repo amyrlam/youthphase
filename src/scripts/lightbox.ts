@@ -279,7 +279,8 @@ function initLightbox() {
       const velocity = Math.abs(dx) / Math.max(1, e.timeStamp - touchStartTime);
       const horizontal = Math.abs(dx) > Math.abs(dy);
       const commit =
-        horizontal && (Math.abs(dx) >= SWIPE_THRESHOLD || (Math.abs(dx) >= 20 && velocity >= FLICK_VELOCITY));
+        horizontal &&
+        (Math.abs(dx) >= SWIPE_THRESHOLD || (Math.abs(dx) >= 20 && velocity >= FLICK_VELOCITY));
       if (commit) {
         animateSwipe(dx < 0 ? 1 : -1);
       } else {

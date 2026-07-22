@@ -12,7 +12,9 @@
     "preview": "astro preview",
     "check:contrast": "node scripts/check-contrast.ts",
     "test": "playwright test",
-    "astro": "astro"
+    "astro": "astro",
+    "format": "prettier --write .",
+    "format:check": "prettier --check ."
   },
   "dependencies": {
     "@astrojs/vercel": "^11.0.3",
@@ -27,6 +29,8 @@
   "devDependencies": {
     "@axe-core/playwright": "^4.12.1",
     "@playwright/test": "^1.61.1",
-    "@types/suncalc": "^1.9.2"
+    "@types/suncalc": "^1.9.2",
+    "prettier": "^3.9.6",
+    "prettier-plugin-astro": "^0.14.1"
   }
 }

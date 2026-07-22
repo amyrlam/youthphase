@@ -254,7 +254,7 @@ const RAD = Math.PI / 180;
    turned for this longitude and moment. */
 function siderealDeg(at: Date, lonDeg: number): number {
   const days = (at.getTime() - Date.UTC(2000, 0, 1, 12)) / 86400000;
-  return ((((280.46061837 + 360.98564736629 * days + lonDeg) % 360) + 360) % 360);
+  return (((280.46061837 + 360.98564736629 * days + lonDeg) % 360) + 360) % 360;
 }
 
 function starAltAz(
@@ -267,7 +267,9 @@ function starAltAz(
   const H = (siderealDeg(at, lonDeg) - raHours * 15) * RAD;
   const lat = latDeg * RAD;
   const dec = decDeg * RAD;
-  const alt = Math.asin(Math.sin(dec) * Math.sin(lat) + Math.cos(dec) * Math.cos(lat) * Math.cos(H));
+  const alt = Math.asin(
+    Math.sin(dec) * Math.sin(lat) + Math.cos(dec) * Math.cos(lat) * Math.cos(H),
+  );
   const azFromSouth = Math.atan2(
     Math.sin(H),
     Math.cos(H) * Math.sin(lat) - Math.tan(dec) * Math.cos(lat),
@@ -292,7 +294,9 @@ function foregroundRects(): DOMRect[] {
 function overlapsForeground(xPct: number, yPct: number, rects: DOMRect[], pad = 6): boolean {
   const x = (xPct / 100) * innerWidth;
   const y = (yPct / 100) * innerHeight;
-  return rects.some((r) => x > r.left - pad && x < r.right + pad && y > r.top - pad && y < r.bottom + pad);
+  return rects.some(
+    (r) => x > r.left - pad && x < r.right + pad && y > r.top - pad && y < r.bottom + pad,
+  );
 }
 
 function updateStars(place: Place, at: Date) {
@@ -412,7 +416,11 @@ function enableSparkles() {
     // text sitting directly on it) qualify. Cards, forms, images, and
     // anything interactive stay sparkle-free.
     const target = e.target as Element | null;
-    if (target?.closest('a, button, input, textarea, label, dialog, form, img, video, .sky-card, .sky-top-card')) {
+    if (
+      target?.closest(
+        'a, button, input, textarea, label, dialog, form, img, video, .sky-card, .sky-top-card',
+      )
+    ) {
       return;
     }
     const s = document.createElement('span');
@@ -535,14 +543,22 @@ function render(place: Place, mode: Mode, at = new Date(), demo = false) {
     if (mode === 'day') {
       body =
         sunAltDeg > 0
-          ? { x: posX(qSun.azimuth), y: posY(qSun.altitude), color: sunGlowColor(sunAltDeg), opacity: 1 }
+          ? {
+              x: posX(qSun.azimuth),
+              y: posY(qSun.altitude),
+              color: sunGlowColor(sunAltDeg),
+              opacity: 1,
+            }
           : { x: 66, y: 30, color: sunGlowColor(45), opacity: 1 };
     } else if (mode === 'night') {
-      moonAt = moonUp
-        ? { x: posX(qMoon.azimuth), y: posY(qMoon.altitude) }
-        : { x: 72, y: 26 };
+      moonAt = moonUp ? { x: posX(qMoon.azimuth), y: posY(qMoon.altitude) } : { x: 72, y: 26 };
     } else if (sunAltDeg > -6) {
-      body = { x: posX(qSun.azimuth), y: posY(qSun.altitude), color: sunGlowColor(sunAltDeg), opacity: 1 };
+      body = {
+        x: posX(qSun.azimuth),
+        y: posY(qSun.altitude),
+        color: sunGlowColor(sunAltDeg),
+        opacity: 1,
+      };
     } else if (moonUp) {
       moonAt = { x: posX(qMoon.azimuth), y: posY(qMoon.altitude) };
     }
@@ -588,7 +604,11 @@ function render(place: Place, mode: Mode, at = new Date(), demo = false) {
 
   updateStars(place, qt);
 
-  const inTenMinutes = SunCalc.getPosition(new Date(at.getTime() + 10 * 60 * 1000), latitude, longitude);
+  const inTenMinutes = SunCalc.getPosition(
+    new Date(at.getTime() + 10 * 60 * 1000),
+    latitude,
+    longitude,
+  );
   const rising = inTenMinutes.altitude > sun.altitude;
   const label = skyLabel(sunAltDeg, rising, moonIllum.phase);
 

@@ -1,0 +1,9 @@
+dist/
+.astro/
+test-results/
+playwright-report/
+pnpm-lock.yaml
+
+# Tool-internal config/output, not site source
+.claude/
+.impeccable/
