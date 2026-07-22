@@ -117,6 +117,14 @@ Key files:
 every sun altitude and fails if any ink/background pairing drops below
 WCAG AAA — see [the sky section](#the-sky) above.
 
+The same Playwright run also feeds [Chromatic](https://www.chromatic.com)
+visual regression testing via
+[`@chromatic-com/playwright`](https://www.chromatic.com/docs/playwright/) —
+CI publishes a snapshot of every page after each test, so a UI change
+shows an actual visual diff on the PR instead of only a pass/fail.
+Needs a `CHROMATIC_PROJECT_TOKEN` repo secret from a Chromatic project
+to actually publish.
+
 ## Linting
 
 - **Prettier** (`prettier-plugin-astro` for `.astro` files) — `singleQuote`,

@@ -1,4 +1,4 @@
-import { defineConfig } from '@playwright/test';
+import { defineConfig, devices } from '@playwright/test';
 
 export default defineConfig({
   testDir: './tests',
@@ -12,4 +12,12 @@ export default defineConfig({
   use: {
     baseURL: 'http://localhost:4321',
   },
+  // Chromatic's Playwright integration requires an explicit Chrome project
+  // to snapshot against — https://www.chromatic.com/docs/playwright/.
+  projects: [
+    {
+      name: 'chromium',
+      use: { ...devices['Desktop Chrome'] },
+    },
+  ],
 });

@@ -1,4 +1,5 @@
-import { test, expect, type Locator } from '@playwright/test';
+import { test, expect } from '@chromatic-com/playwright';
+import type { Locator } from '@playwright/test';
 import AxeBuilder from '@axe-core/playwright';
 
 /* Automated accessibility gate — axe-core over each page, plus the
