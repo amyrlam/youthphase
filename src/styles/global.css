@@ -3,6 +3,50 @@
 
 @plugin '@tailwindcss/typography';
 
+/* Design tokens (see DESIGN.md's frontmatter for the human-readable
+   version of the same values). Tailwind v4 turns each of these into a
+   real CSS custom property, so they're usable both as utility classes
+   (rounded-card, text-headline, p-card-pad) and as var(--color-...)
+   inside plain <style> blocks like Lightbox.astro's — one source of
+   truth for the site's fixed accents instead of hex literals scattered
+   per component. The sky's own live-computed colors (--sky-top,
+   --ink, --card-bg, etc.) stay a separate runtime layer below; they
+   change every frame and can't be static theme tokens. */
+@theme {
+  --color-sky-top-midnight: #0a1030;
+  --color-sky-bottom-midnight: #1e2c60;
+  --color-ink-default: #f1eefb;
+  --color-chip-bg-fallback: #141a3d;
+  --color-polaroid-ivory: #f7f4ed;
+  --color-polaroid-ink: #2a2620;
+  --color-moonlight: #f4f7ff;
+  --color-moonlight-low: #ffeecf;
+  --color-starlight: #f0f4ff;
+  --color-backdrop-night: #05060c;
+
+  --text-display: clamp(3.75rem, 8vw, 6rem);
+  --text-display--font-weight: 500;
+  --text-display--letter-spacing: -0.025em;
+  --text-headline: 2.25rem;
+  --text-headline--font-weight: 500;
+  --text-headline--letter-spacing: -0.025em;
+  --text-title: 1.25rem;
+  --text-title--font-weight: 500;
+  --text-body: 0.875rem;
+  --text-body--font-weight: 400;
+  --text-body--line-height: 1.6;
+  --text-label: 0.75rem;
+  --text-label--font-weight: 400;
+  --text-label--letter-spacing: 0.1em;
+
+  --radius-polaroid: 0.25rem;
+  --radius-card: 1rem;
+
+  --spacing-card-pad: 1.5rem;
+  --spacing-page-gutter: 1.5rem;
+  --spacing-section-gap: 2rem;
+}
+
 /* Registered custom properties so the sky colors animate smoothly
    as the sun/moon script updates them. */
 @property --sky-top {
@@ -61,7 +105,7 @@ body {
    set by sky.ts under 15° altitude), the light warms to horizon gold,
    cooling back to white as it climbs. */
 #moon-core {
-  background-color: #f4f7ff;
+  background-color: var(--color-moonlight);
   box-shadow:
     0 0 6px 2px rgb(240 245 255 / 90%),
     0 0 18px 6px rgb(216 228 255 / 50%),
@@ -75,7 +119,7 @@ body {
 }
 
 #moon-core.moon-low {
-  background-color: #ffeecf;
+  background-color: var(--color-moonlight-low);
   box-shadow:
     0 0 6px 2px rgb(255 232 190 / 90%),
     0 0 18px 6px rgb(255 216 150 / 50%),
@@ -175,7 +219,7 @@ body {
    sit on this card so long-form text clears AAA at every sun altitude,
    not just the fixed hero band the radial scrim covers. */
 .sky-card {
-  background: var(--card-bg, #141a3d);
+  background: var(--card-bg, var(--color-chip-bg-fallback));
   color: var(--ink);
   transition:
     background-color 1.6s ease,
@@ -227,7 +271,7 @@ body {
    nav links, the status caption, the corner buttons — lives on its solid
    lower zone, which is what makes small text AAA-safe outside the hero. */
 #horizon {
-  background: linear-gradient(to top, var(--card-bg, #141a3d) 50%, transparent);
+  background: linear-gradient(to top, var(--card-bg, var(--color-chip-bg-fallback)) 50%, transparent);
   transition: background-color 1.6s ease;
 }
 

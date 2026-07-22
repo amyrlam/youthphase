@@ -64,7 +64,12 @@ the geo lookup resolves, and re-renders every minute.
   swiped to.
 - The 404 page follows the sky too: lost pages drift into whatever the
   sky is doing right now.
-- `/design-system` — unlisted page showing the live shared patterns.
+- `/design-system` — unlisted page showing the live shared patterns:
+  color, radius, and spacing tokens, the type scale, elevation, and
+  do's/don'ts, alongside the components. The fixed tokens themselves
+  live in an `@theme` block in [global.css](src/styles/global.css) —
+  usable as Tailwind utilities (`rounded-card`, `bg-polaroid-ivory`) or
+  as `var(--color-polaroid-ivory)` in plain CSS.
   [PRODUCT.md](PRODUCT.md) (voice, audience) and [DESIGN.md](DESIGN.md)
   (the visual system) are the written half.
 - Page views are tracked with [Vercel Web Analytics](https://vercel.com/docs/analytics),

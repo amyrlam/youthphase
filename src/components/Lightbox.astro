@@ -92,7 +92,7 @@
   }
 
   .lightbox-dialog::backdrop {
-    background: rgb(5 6 12 / 82%);
+    background: color-mix(in srgb, var(--color-backdrop-night) 82%, transparent);
   }
 
   .lightbox-polaroid {
@@ -104,9 +104,9 @@
        leaving dead white space beside any photo narrower than one line
        of caption. width: 0 removes that contribution entirely.) */
     display: grid;
-    background: #f7f4ed;
+    background: var(--color-polaroid-ivory);
     padding: 1rem 1rem 1.25rem;
-    border-radius: 0.25rem;
+    border-radius: var(--radius-polaroid);
     box-shadow: 0 25px 60px -12px rgb(0 0 0 / 60%);
 
     /* Without this, the browser spends the first several touchmove events
@@ -155,7 +155,7 @@
   }
 
   .lightbox-caption {
-    color: #2a2620;
+    color: var(--color-polaroid-ink);
     text-align: center;
     font-size: 0.9rem;
     letter-spacing: 0.03em;
@@ -187,7 +187,7 @@
     position: absolute;
     width: 2.25rem;
     height: 2.25rem;
-    color: #f1eefb;
+    color: var(--color-ink-default);
     background: rgb(255 255 255 / 12%);
     border: none;
     border-radius: 9999px;
@@ -212,7 +212,7 @@
   }
 
   .lightbox-btn:focus-visible {
-    outline: 2px solid #f1eefb;
+    outline: 2px solid var(--color-ink-default);
     outline-offset: 2px;
   }
 
@@ -298,7 +298,7 @@
   }
 
   .lightbox-dots :global(.lightbox-dot.is-active)::before {
-    background: #f1eefb;
+    background: var(--color-ink-default);
     transform: scale(1.35);
   }
 
@@ -309,7 +309,7 @@
   }
 
   .lightbox-dots :global(.lightbox-dot:focus-visible) {
-    outline: 2px solid #f1eefb;
+    outline: 2px solid var(--color-ink-default);
     outline-offset: -2px;
     border-radius: 9999px;
   }
