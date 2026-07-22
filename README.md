@@ -89,11 +89,14 @@ Key files:
 
 ## Deploying (Vercel)
 
-The site is a static Astro build plus that one serverless function —
-Vercel picks up a root-level `api/` directory alongside any static
-build, no adapter needed. Import the repo at
+The site is a static Astro build plus that one serverless function.
+It uses the `@astrojs/vercel` adapter (in `output: 'static'` mode) to
+enable Vercel Web Analytics; Vercel still picks up the root-level
+`api/` directory as its own serverless function alongside the static
+build, independent of the adapter. Import the repo at
 [vercel.com/new](https://vercel.com/new) (Astro is auto-detected) and
 add the domain under Project → Settings → Domains. On other hosts
 (Netlify, Cloudflare Pages) the static site works as-is, but `/api/geo`
-would need porting to that host's functions and geo headers — until
-then every visitor just gets the borrowed sky.
+would need porting to that host's functions and geo headers, and web
+analytics would need a different provider — until then every visitor
+just gets the borrowed sky.
