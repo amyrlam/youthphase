@@ -137,6 +137,9 @@ test.describe('prefers-reduced-motion', () => {
     // Stars are only opaque at night (sky.ts fades #stars to 0 by day) —
     // pin the sky to a moonless winter night via the dev-console helper
     // (see README) so the star field is actually visible to assert on.
+    // sky.ts attaches __skyAt during its own async start-up, so wait for
+    // it rather than assuming it exists the instant goto() resolves.
+    await page.waitForFunction(() => typeof (window as unknown as { __skyAt?: unknown }).__skyAt === 'function');
     await page.evaluate(() => (window as unknown as { __skyAt: (iso: string) => void }).__skyAt('2026-01-01T02:00'));
     const star = page.locator('.star').first();
     await expect(star).toBeVisible();
