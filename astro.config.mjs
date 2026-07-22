@@ -1,9 +1,14 @@
 // @ts-check
 import { defineConfig } from 'astro/config';
 import tailwindcss from '@tailwindcss/vite';
+import vercel from '@astrojs/vercel';
 
 export default defineConfig({
   site: 'https://youthphase.dev',
+  output: 'static',
+  adapter: vercel({
+    webAnalytics: { enabled: true },
+  }),
   // The default HTML compressor eats newlines adjacent to tags, which
   // deletes real inter-word spaces — e.g. "at <code>h-7</code>" written
   // across a line break rendered as "ath-7" on /design-system. The few

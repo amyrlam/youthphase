@@ -1,5 +1,6 @@
 /* Vercel serverless function (root api/ directory — deployed alongside the
-   static Astro build, no adapter needed). Echoes the geolocation headers
+   static Astro build, independent of the @astrojs/vercel adapter used for
+   web analytics). Echoes the geolocation headers
    Vercel attaches to every request so the sky script can place the visitor
    without a third-party IP lookup. Not served by `astro dev`; locally the
    sky falls back to San Francisco ("borrowed sky"). */
