@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import { test, expect } from '@chromatic-com/playwright';
 
 /* Enforcement: every external link opens in a new tab, with the rel
    that makes target="_blank" safe. Lives in the test suite rather than
