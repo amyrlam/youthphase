@@ -476,6 +476,11 @@ function formatTime(d: Date): string {
 
 let demoRunning = false;
 
+// Set by __skyAt below: while true, the post-locate and interval renders
+// in start() skip repainting so they don't clobber a pinned time with
+// the real "now" (this is what Chromatic's screenshot tests rely on).
+let skyPinned = false;
+
 function render(place: Place, mode: Mode, at = new Date(), demo = false) {
   const { latitude, longitude } = place;
 
@@ -913,17 +918,19 @@ async function start() {
 
   // Dev console hook: preview the sky at any moment, e.g.
   // __skyAt('2026-07-16T20:30'). Call with no argument to return to now.
-  (window as unknown as Record<string, unknown>).__skyAt = (iso?: string) =>
+  (window as unknown as Record<string, unknown>).__skyAt = (iso?: string) => {
+    skyPinned = Boolean(iso);
     render(place, mode, iso ? new Date(iso) : new Date(), Boolean(iso));
+  };
 
   // Paint immediately with the San Francisco fallback, then refine once
   // the IP lookup resolves.
   syncButton();
   render(place, mode);
   place = await locate();
-  if (!demoRunning && !cycleRunning) render(place, mode);
+  if (!demoRunning && !cycleRunning && !skyPinned) render(place, mode);
   setInterval(() => {
-    if (!demoRunning && !cycleRunning) render(place, mode);
+    if (!demoRunning && !cycleRunning && !skyPinned) render(place, mode);
   }, 60 * 1000);
 }
 

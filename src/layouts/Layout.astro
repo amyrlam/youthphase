@@ -6,7 +6,10 @@ interface Props {
   description?: string;
 }
 
-const { title = 'Amy Lam', description = 'Personal site of Amy Lam' } = Astro.props;
+const {
+  title = 'Amy Lam',
+  description = 'frontend-leaning software engineer · design systems · design engineer · relocating to san francisco',
+} = Astro.props;
 const ogImage = new URL('/og.png', Astro.site);
 ---
 
