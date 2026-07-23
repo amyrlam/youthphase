@@ -1,4 +1,4 @@
-import { test, expect } from '@chromatic-com/playwright';
+import { test, expect } from './fixtures';
 import { devices, type Page } from '@playwright/test';
 
 /* Regression tests for the about-page lightbox. Both bugs below shipped

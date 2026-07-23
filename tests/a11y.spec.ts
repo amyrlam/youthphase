@@ -1,4 +1,4 @@
-import { test, expect } from '@chromatic-com/playwright';
+import { test, expect } from './fixtures';
 import type { Locator } from '@playwright/test';
 import AxeBuilder from '@axe-core/playwright';
 
