@@ -2,13 +2,13 @@
 import Layout from '../../layouts/Layout.astro';
 import { getCollection } from 'astro:content';
 
-const pieces = (await getCollection('work', ({ data }) => !data.draft)).sort(
+const pieces = (await getCollection('caseStudies', ({ data }) => !data.draft)).sort(
   (a, b) => b.data.publishDate.valueOf() - a.data.publishDate.valueOf(),
 );
 ---
 
 <Layout
-  title="work — Amy Lam"
+  title="case studies — Amy Lam"
   description="Case studies and project writeups from Amy Lam."
 >
   <main class="relative mx-auto flex min-h-dvh max-w-2xl flex-col gap-8 px-page-gutter pt-20 pb-32">
@@ -19,7 +19,7 @@ const pieces = (await getCollection('work', ({ data }) => !data.draft)).sort(
       ← home
     </a>
 
-    <h1 class="text-headline font-medium lowercase sm:text-5xl">work</h1>
+    <h1 class="text-headline font-medium lowercase sm:text-5xl">case studies</h1>
 
     {
       pieces.length === 0 && (
@@ -34,7 +34,7 @@ const pieces = (await getCollection('work', ({ data }) => !data.draft)).sort(
         pieces.map((piece) => (
           <li>
             <a
-              href={`/work/${piece.id}`}
+              href={`/case-studies/${piece.id}`}
               class="sky-card group block rounded-card px-6 py-6 transition-transform duration-300 hover:-translate-y-0.5 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-current sm:p-8"
             >
               <p class="text-xs lowercase tracking-widest opacity-70">

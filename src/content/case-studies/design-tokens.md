@@ -7,7 +7,7 @@ draft: true
 
 <!--
   Placeholder — scaffolding only, not the real writeup. Draft: true keeps
-  this out of the /work listing until it's ready.
+  this out of the /case-studies listing until it's ready.
 
   Rough outline to flesh out:
   - The problem: hex literals duplicated across Lightbox.astro, contact.astro,
