@@ -1,0 +1,34 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { getCollection, render } from 'astro:content';
+
+export async function getStaticPaths() {
+  const pieces = await getCollection('work', ({ data }) => !data.draft);
+  return pieces.map((piece) => ({ params: { slug: piece.id }, props: { piece } }));
+}
+
+const { piece } = Astro.props;
+const { Content } = await render(piece);
+
+const dateFmt = (d: Date) => d.toLocaleDateString('en-US', { year: 'numeric', month: 'long' });
+---
+
+<Layout title={`${piece.data.title} — Amy Lam`} description={piece.data.description}>
+  <main class="relative mx-auto flex min-h-dvh max-w-2xl flex-col gap-6 px-page-gutter pt-20 pb-32">
+    <a
+      href="/work"
+      class="link-squiggle sky-top-ink relative self-start text-[19px] font-bold lowercase tracking-wide transition-transform duration-300 after:absolute after:-inset-3 after:content-[''] hover:-translate-y-0.5 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-current"
+    >
+      ← work
+    </a>
+
+    <article class="sky-card rounded-card px-6 py-8 sm:px-10 sm:py-10">
+      <p class="text-xs lowercase tracking-widest opacity-70">{dateFmt(piece.data.publishDate)}</p>
+      <h1 class="mt-2 text-headline font-medium tracking-tight sm:text-5xl">{piece.data.title}</h1>
+
+      <div class="prose prose-lg mt-8 max-w-none">
+        <Content />
+      </div>
+    </article>
+  </main>
+</Layout>
