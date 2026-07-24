@@ -7,22 +7,22 @@
    version of the same values). Tailwind v4 turns each of these into a
    real CSS custom property, so they're usable both as utility classes
    (rounded-card, text-headline, p-card-pad) and as var(--color-...)
-   inside plain <style> blocks like Lightbox.astro's — one source of
+   inside plain \3c style> blocks like Lightbox.astro's — one source of
    truth for the site's fixed accents instead of hex literals scattered
    per component. The sky's own live-computed colors (--sky-top,
    --ink, --card-bg, etc.) stay a separate runtime layer below; they
    change every frame and can't be static theme tokens. */
 @theme {
-  --color-sky-top-midnight: #0a1030;
-  --color-sky-bottom-midnight: #1e2c60;
-  --color-ink-default: #f1eefb;
-  --color-chip-bg-fallback: #141a3d;
-  --color-polaroid-ivory: #f7f4ed;
-  --color-polaroid-ink: #2a2620;
-  --color-moonlight: #f4f7ff;
-  --color-moonlight-low: #ffeecf;
-  --color-starlight: #f0f4ff;
-  --color-backdrop-night: #05060c;
+  --color-sky-top-midnight: oklch(19.04% 0.064 271.04deg);
+  --color-sky-bottom-midnight: oklch(31.28% 0.094 269.05deg);
+  --color-ink-default: oklch(95.52% 0.0176 296.63deg);
+  --color-chip-bg-fallback: oklch(23.43% 0.067 272.85deg);
+  --color-polaroid-ivory: oklch(96.75% 0.0098 87.47deg);
+  --color-polaroid-ink: oklch(27.09% 0.0123 78.08deg);
+  --color-moonlight: oklch(97.62% 0.0111 269.55deg);
+  --color-moonlight-low: oklch(95.47% 0.0445 82.61deg);
+  --color-starlight: oklch(96.73% 0.0153 269.99deg);
+  --color-backdrop-night: oklch(12.42% 0.0152 274.63deg);
 
   --text-display: clamp(3.75rem, 8vw, 6rem);
   --text-display--font-weight: 500;
@@ -52,19 +52,19 @@
 @property --sky-top {
   syntax: '<color>';
   inherits: true;
-  initial-value: #0a1030;
+  initial-value: oklch(19.04% 0.064 271.04deg);
 }
 
 @property --sky-bottom {
   syntax: '<color>';
   inherits: true;
-  initial-value: #1e2c60;
+  initial-value: oklch(31.28% 0.094 269.05deg);
 }
 
 @property --ink {
   syntax: '<color>';
   inherits: true;
-  initial-value: #f1eefb;
+  initial-value: oklch(95.52% 0.0176 296.63deg);
 }
 
 html {
