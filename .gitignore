@@ -3,6 +3,8 @@ dist/
 # playwright output
 test-results/
 playwright-report/
+# lighthouse ci output
+.lighthouseci/
 # generated types
 .astro/
 
