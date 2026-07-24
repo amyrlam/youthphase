@@ -15,7 +15,10 @@ colors:
 typography:
   display:
     fontFamily: 'Space Grotesk Variable, system-ui, sans-serif'
-    fontSize: 'clamp(3.75rem, 8vw, 6rem)'
+    # Stepped (text-6xl -> sm:text-8xl), not the fluid --text-display
+    # clamp defined in global.css's @theme -- the hero jump at the sm
+    # breakpoint reads better here than a continuous vw-scaled size.
+    fontSize: '3.75rem, sm: 6rem'
     fontWeight: 500
     letterSpacing: '-0.025em'
   headline:
@@ -83,7 +86,7 @@ Under that sky sits a warm, lowercase, human voice: squiggle-underlined links, p
 
 ## 2. Colors: The Sky Is the Palette
 
-The palette is an engine, not a swatch list — `src/scripts/sky.ts` computes every surface and ink from the live sun/moon position; the frontmatter values are defaults and fixed accents only.
+The palette is an engine, not a swatch list — `src/scripts/sky.ts` computes every surface and ink from the live sun/moon position; the frontmatter values are defaults and fixed accents only. Those fixed accents are wired into code as real design tokens, in the `@theme` block at the top of `src/styles/global.css` (`--color-polaroid-ivory`, `--color-moonlight`, etc.) — usable as Tailwind utilities (`bg-polaroid-ivory`) or as `var(--color-polaroid-ivory)` in plain CSS, one source of truth instead of hex literals copied per component.
 
 ### Primary
 
@@ -126,6 +129,8 @@ The palette is an engine, not a swatch list — `src/scripts/sky.ts` computes ev
 
 **The Two Registers Rule.** UI chrome (nav, buttons, captions, headings) is lowercase by design; body prose uses normal sentence case for readability. Don't lowercase prose to force consistency with the chrome — they're different registers on purpose.
 
+Headline, title, body, and label are also `@theme` tokens in `global.css` (`text-headline`, `text-title`, etc.), each bundling font-size with its paired weight/tracking/line-height so a page picks up the whole rule in one utility class rather than restating it. Display stays a stepped `text-6xl`/`sm:text-8xl` pair on the homepage hero rather than the fluid `--text-display` token — the breakpoint jump reads better there than a continuous vw-scaled size — so `text-display` exists as a token but isn't forced onto that one hero.
+
 ## 4. Elevation: Light, Not Shadow
 
 Depth on this site comes from luminosity, not box-shadow. The sun's glow, the moon's layered halo rings, the twinkle of stars, and the horizon gradient (`#horizon` — the sky settling into the solid chip color at ground level, like dusk gathering) do the work shadows would do elsewhere. Surfaces are flat; the sky behind them provides the atmosphere.
@@ -140,6 +145,8 @@ Depth on this site comes from luminosity, not box-shadow. The sun's glow, the mo
 **The Glow-Over-Shadow Rule.** New elements that need depth get light (a halo, a gradient toward the horizon, a brightened border) — never a gray drop shadow. The polaroid keeps its float because it is a physical object; nothing else earns one without that justification.
 
 ## 5. Components
+
+Shape and spacing are also `@theme` tokens: `rounded-card` (1rem) and `rounded-polaroid` (0.25rem) for radius, `p-card-pad`/`px-page-gutter`/`gap-section-gap` (1.5rem/1.5rem/2rem) for the recurring paddings and gaps below. `rounded-full` stays a plain Tailwind utility for pills — 9999px needs no named token.
 
 ### Chips (buttons)
 

@@ -10,7 +10,7 @@ import youthPhase from '../assets/contact/youth-phase-print.png';
 
 <Layout title="contact — Amy Lam" description="Get in touch with Amy Lam.">
   <!-- pb clears the fixed horizon band + chips, same as the about page. -->
-  <main class="relative mx-auto flex min-h-dvh max-w-2xl flex-col gap-6 px-6 pt-20 pb-48">
+  <main class="relative mx-auto flex min-h-dvh max-w-2xl flex-col gap-6 px-page-gutter pt-20 pb-48">
     <a
       href="/"
       class="link-squiggle sky-top-ink relative self-start text-[19px] font-bold lowercase tracking-wide transition-transform duration-300 after:absolute after:-inset-3 after:content-[''] hover:-translate-y-0.5 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-current"
@@ -18,9 +18,9 @@ import youthPhase from '../assets/contact/youth-phase-print.png';
       ← home
     </a>
 
-    <h1 class="text-4xl font-medium lowercase tracking-tight sm:text-5xl">contact</h1>
+    <h1 class="text-headline font-medium lowercase sm:text-5xl">contact</h1>
 
-    <section class="sky-card rounded-2xl px-6 py-8 sm:p-10">
+    <section class="sky-card rounded-card px-6 py-8 sm:p-10">
       <div class="prose sm:prose-lg max-w-none">
         <p>
           I grew up with my grandparents on the Connecticut shoreline, where Pop kept a dinghy in
@@ -76,7 +76,7 @@ import youthPhase from '../assets/contact/youth-phase-print.png';
       <p class="mt-4 text-base sm:text-lg">Want to get in touch? Send me a message below!</p>
     </section>
 
-    <section class="sky-card rounded-2xl px-6 py-8 sm:p-10">
+    <section class="sky-card rounded-card px-6 py-8 sm:p-10">
       <form id="contact-form" class="flex flex-col gap-5" novalidate>
         <div class="flex flex-col gap-1.5">
           <label for="contact-name" class="text-xs tracking-widest">Name</label>
@@ -169,8 +169,8 @@ import youthPhase from '../assets/contact/youth-phase-print.png';
   .photo-print {
     position: relative;
     padding: clamp(0.75rem, 2.5vw, 1.1rem);
-    background: #f7f4ed;
-    border-radius: 0.25rem;
+    background: var(--color-polaroid-ivory);
+    border-radius: var(--radius-polaroid);
     box-shadow: 0 20px 45px -14px rgb(0 0 0 / 55%);
     transform: rotate(-0.6deg);
     transition: transform 0.3s ease;
@@ -258,7 +258,7 @@ import youthPhase from '../assets/contact/youth-phase-print.png';
      Colors ride the sky's own slow transition; the lift stays quick. */
   #contact-submit {
     background: var(--chip-ink, #fff);
-    color: var(--card-bg, #141a3d);
+    color: var(--card-bg, var(--color-chip-bg-fallback));
     transition:
       background-color 1.6s ease,
       color 1.6s ease,

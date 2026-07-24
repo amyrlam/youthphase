@@ -85,7 +85,7 @@ const fullSizes = await Promise.all(
        to the bottom of the page (absolute, Layout.astro) and rest in this
        padding; on desktop they're viewport-fixed and fade while the page
        is actively scrolling (see sky.ts). -->
-  <main class="relative mx-auto flex min-h-dvh max-w-2xl flex-col gap-6 px-6 pt-20 pb-48">
+  <main class="relative mx-auto flex min-h-dvh max-w-2xl flex-col gap-6 px-page-gutter pt-20 pb-48">
     <a
       href="/"
       class="link-squiggle sky-top-ink relative self-start text-[19px] font-bold lowercase tracking-wide transition-transform duration-300 after:absolute after:-inset-3 after:content-[''] hover:-translate-y-0.5 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-current"
@@ -93,9 +93,9 @@ const fullSizes = await Promise.all(
       ← home
     </a>
 
-    <h1 class="text-4xl font-medium lowercase tracking-tight sm:text-5xl">about</h1>
+    <h1 class="text-headline font-medium lowercase sm:text-5xl">about</h1>
 
-    <section class="sky-card rounded-2xl px-6 py-8 sm:p-10">
+    <section class="sky-card rounded-card px-6 py-8 sm:p-10">
       <!-- prose-lg only from sm up: at 375px the card's inner width fits
            ~30ch of 18px text, which reads as a wall; base 16px buys back
            a few characters per line where they're scarcest. -->
@@ -139,7 +139,7 @@ const fullSizes = await Promise.all(
                 data-video={item.type === 'video' ? item.video : undefined}
                 data-alt={item.alt}
                 data-caption={item.caption}
-                class={`group relative overflow-hidden rounded-2xl focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-current ${isOrphan ? 'col-span-2 w-[calc(50%-0.375rem)] mx-auto sm:col-span-1 sm:w-full sm:mx-0' : ''}`}
+                class={`group relative overflow-hidden rounded-card focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-current ${isOrphan ? 'col-span-2 w-[calc(50%-0.375rem)] mx-auto sm:col-span-1 sm:w-full sm:mx-0' : ''}`}
                 aria-label={
                   item.type === 'video' ? `Play video: ${item.alt}` : `View larger: ${item.alt}`
                 }
