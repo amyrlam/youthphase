@@ -1,6 +1,6 @@
 ---
 title: 'the sky is the palette'
-description: 'Why my personal site has no color scheme, and what it took to make the sky itself into a design system with AAA contrast enforced at build time.'
+description: 'How youthphase.dev computes its design from your actual sky: the why, the accessibility engine underneath, and the craft in between.'
 publishDate: 2026-07-24
 draft: true
 ---
@@ -11,61 +11,36 @@ Most personal sites pick a palette. Mine computes one.
 
 The background of youthphase.dev is your actual sky. Sun and moon positions are calculated for your location, the seventy brightest stars are placed for your latitude and the hour, and every color the interface wears is derived from that sky at runtime. Visit at golden hour and the page is pink and peach. Visit at midnight and it is deep midnight blue with real constellations. The line I want a visitor to remember is not "nice site." It is "the site was showing me my own sky."
 
-This is a case study in what it takes to make that real: the design decisions behind it, the accessibility constraint that shaped everything, and how a system where color is weather still ends up needing ordinary design tokens.
-
 ## why a sky
 
-I had two audiences and one minute. Hiring managers and recruiters arrive from a resume link and decide fast. Fellow engineers and designers arrive from a DM and notice details. Both have seen a thousand dev portfolios: hero, skills grid, project cards, testimonial slider. That template was my anti-reference. So was corporate polish, and so was the over-animated showreel that buries a person under WebGL.
+I had two audiences and one minute: hiring managers deciding fast from a resume link, and fellow engineers who notice details. Both have seen a thousand dev portfolios, and that template (hero, skills grid, project cards, testimonial slider) was my anti-reference, along with corporate polish and the over-animated showreel. I wanted one person's living artifact instead, and the most alive thing a screen can do is reflect the actual world outside your window. Not a dark mode toggle. Weather.
 
-What I wanted instead was a site that felt like one person's living artifact. Natural, organic, alive. The sky idea came from that: the most alive thing a screen can do is reflect the actual world outside your window. Not a dark mode toggle, not a theme. Weather.
-
-That framing became the design system's north star, and it came with a rule that sounds absurd until you commit to it: nothing on this site is themed, so almost nothing gets to have a fixed color. Colors are never picked. They are computed.
+That framing came with a rule that sounds absurd until you commit to it: nothing on this site is themed, so almost nothing gets a fixed color. Colors are never picked. They are computed.
 
 ## the constraint that designed the system
 
-A palette that changes every frame has an obvious problem: contrast. A designer normally checks text contrast once, at design time, against a known background. I did not have a known background. I had every sun altitude from midnight through noon.
+A palette that changes every frame has an obvious problem: contrast. A designer normally checks text against a known background once, at design time. I had every sun altitude from midnight through noon. So accessibility became the engine of the design rather than a checklist at the end. Body ink is chosen per frame to hold at least 4.5:1 against the gradient band it sits on. Card surfaces are computed to guarantee 7:1, so anything on them is AAA before it loads. And a script sweeps every sun altitude in CI and fails the build if any pairing drops below AAA. Not a warning. A failed build.
 
-So accessibility became the engine of the whole design, not a checklist at the end:
+The constraint was not limiting the design; it was the design. The pretty part, the gradient itself, was almost free by comparison.
 
-- Body ink is chosen per frame to hold at least 4.5:1 against the sky gradient.
-- Chip and card surfaces are computed to guarantee at least 7:1, so anything sitting on them is AAA before it even loads.
-- A contrast script sweeps every sun altitude and fails the build if any pairing ever drops below AAA. Not a warning. A failed build.
+## real, not rendered
 
-This inverted the usual relationship between design and accessibility. The constraint was not limiting the design; it was the design. Deciding how ink gets picked, which surfaces guarantee what ratio, and what the build refuses to ship is where the actual design work happened. The pretty part, the gradient itself, was almost free by comparison.
+The sky's honesty is load-bearing, so the engineering keeps it honest. Location comes from the geolocation headers my host already attaches to every request, echoed back by a tiny serverless function: no third-party lookup, no tracking. When that fails, the site shows San Francisco and the status line says "borrowed sky" instead of "your sky," honest about whose sky you are looking at. The stars are the real brightest seventy for your coordinates and the hour. Everything advances in quarter-hour hops, a sundial tick rather than imperceptible drift.
 
-## two kinds of color
+And because delight should be discovered, not performed: every tap on open sky lands a small sparkle, shooting stars visit on clear nights, and three quick taps play a secret show that fits the moment, the moon running through its month of phases (terminator accurate) or a sudden shower and a rainbow by day. Every animation has a `prefers-reduced-motion` alternative. All of it is static files plus that one function; the sky is computed in your browser, not on a server.
 
-Committing to computed color forced a question I never had to ask on a themed site: which colors are weather, and which are fixed?
+## objects under the sky
 
-Most of the palette is weather. The sky gradient, the text ink, the card surfaces all track the sun and change over a slow 1.6 second transition, the speed of light shifting outside.
+One family of things refuses to participate in the weather: photographs. Photos render as physical prints on warm ivory stock, and a real print does not change color at dusk, so ivory is the system's one named exception. Everything else tracks the sky.
 
-But a few things refused to participate, and the interesting design work was noticing why. The polaroid is the clearest case. When you open a photo, it renders as a physical print: warm ivory card, dark ink caption written in the bottom margin. A real polaroid does not change color at dusk. Making it track the sky would have broken the object metaphor that makes it feel like a print in your hand. So it became the system's one named exception, written into the docs as a rule: polaroid ivory is the only surface allowed to ignore the sky. Everything else participates in the weather.
+The prints get two mountings, on purpose. On the about page they are polaroids: caption written in the bottom margin, and on a phone they swipe like a print in your hand, drag-follow with resistance and a settle-back. On the contact page, the photo of my grandfather's dinghy (the site's namesake) is the same ivory stock but taped into the page at all four corners, a scrapbook gesture. Polaroids are my life now; the taped print is an inherited memory. Same paper, different verb.
 
-Once I saw that split clearly, the rest of the fixed colors revealed themselves: the moonlight family, starlight, the near-black backdrop behind an expanded photo. Ten colors total. Everything else is computed.
+## one source of truth
 
-## from documented to enforced
+Even a computed system has fixed values: the ivory, the moonlight family, the type scale, the radii. Those started as raw color values copied into whichever component needed them, the ivory living in three files at once. Now they live in a single theme block (in oklch), flow from the same source the written design doc describes, and are usable as utility classes or CSS variables. A redesign edits the numbers once. The boundary matters as much as the tokens: the sky's own colors stay a runtime layer that can never be static, and the docs say so. A design system is not just what you systematize; it is knowing what you must not.
 
-Those ten fixed colors had a mundane problem: they existed as hex literals copied into whichever component needed them. The polaroid's ivory lived in three files. The design docs said one thing; the components each said their own thing.
+The proof is a live, unlisted page rendering every token, type style, and rule from the real site under the real sky: [/design-system](/design-system). This case study links there instead of embedding screenshots, because screenshots of this site are out of date by definition. The sky moved.
 
-The fix was ordinary design-token work, which is exactly why I wanted to do it properly on my own site: the values now live in one Tailwind theme block, flow from the same source that the human-readable design doc describes, and are usable both as utility classes and as CSS variables inside component styles. One source of truth. A redesign edits the numbers once.
+## why it's public
 
-The part I care about most is the boundary. The token layer holds only the fixed accents. The sky's own colors stay a separate runtime layer, computed every frame, and the docs say plainly that they can never be static tokens. A design system is not just what you systematize; it is knowing what you must not.
-
-There is a live, unlisted page that renders all of it, swatches, type scale, spacing, elevation, straight from the real tokens on the real site, under the real sky: [/design-system](/design-system). It is the proof this case study links to instead of screenshots, because screenshots of this site are always out of date by definition. The sky moved.
-
-## the quiet layer
-
-The sky gets the attention, but the system underneath is deliberately quiet. One typeface in two registers: lowercase for the site's chrome, because a nav link should read like handwriting on a nametag, and sentence case for prose, because paragraphs are for reading. Depth comes from light, glows and halos and the horizon gradient, never gray drop shadows; the polaroid keeps the system's single true shadow because it is the only thing pretending to be a physical object. Motion runs at two speeds, slow for weather and quick for feedback, so the site feels alive without ever feeling animated.
-
-Every one of those is written down as a named rule with a reason attached, because the test of a design system is not whether it looks coherent today. It is whether the next change, made months later on a tired evening, comes out coherent by default.
-
-## what transfers
-
-This site is small and personal, but nothing about the method is:
-
-- Let a real constraint design the system. Build-enforced AAA shaped better decisions than taste alone would have.
-- Decide what is dynamic and what is fixed before tokenizing anything. The boundary is the architecture.
-- Prove the system where it actually runs. A living styleguide on real infrastructure beats a static artifact.
-- Write down the why, not just the value. A hex code tells you what; a named rule tells the next person what not to break.
-
-I have spent years doing this work inside companies, where the systems stay behind NDAs. This one is public, running, and inspectable down to the commit history. That is the point of it.
+Every rule above is written down with its reason attached, because the test of a design system is not whether it looks coherent today but whether a change made months from now comes out coherent by default. I have spent years doing this work inside companies, behind NDAs. This one runs in the open: public repo, enforced accessibility, visual regression on every PR, inspectable down to the commit history. That is the point of it.
