@@ -1,5 +1,10 @@
 # youthphase.dev
 
+![Lighthouse Performance](https://img.shields.io/badge/Lighthouse%20Performance-100-brightgreen)
+![Lighthouse Accessibility](https://img.shields.io/badge/Lighthouse%20Accessibility-100-brightgreen)
+![Lighthouse Best Practices](https://img.shields.io/badge/Lighthouse%20Best%20Practices-100-brightgreen)
+![Lighthouse SEO](https://img.shields.io/badge/Lighthouse%20SEO-100-brightgreen)
+
 Personal site of Amy Lam. Built with [Astro](https://astro.build) and
 [Tailwind CSS](https://tailwindcss.com), package-managed with
 [pnpm](https://pnpm.io), linted with Prettier/ESLint/Stylelint. This
@@ -122,6 +127,17 @@ Key files:
 every sun altitude and fails if any ink/background pairing drops below
 WCAG AAA — see [the sky section](#the-sky) above.
 
+[Lighthouse CI](https://github.com/GoogleChrome/lighthouse-ci) runs
+against every page in the built `dist/` output and fails the build if
+Performance drops below 90, Best Practices drops below 95, or
+Accessibility or SEO drop below 100 — thresholds set in
+[lighthouserc.json](lighthouserc.json). Performance gets a lower floor
+because build-to-build timing variance on CI runners is real; Best
+Practices gets one because testing the static `dist/` directly (rather
+than a deployed Vercel environment) makes `/api/geo` and the Vercel
+Analytics script 404, which they don't in production. The badges above
+reflect an actual production run, which hits neither issue.
+
 The same Playwright run also feeds [Chromatic](https://www.chromatic.com)
 visual regression testing via
 [`@chromatic-com/playwright`](https://www.chromatic.com/docs/playwright/) —
@@ -153,8 +169,8 @@ to actually publish.
 
 [GitHub Actions](https://github.com/features/actions)
 (`.github/workflows/ci.yml`) runs the build, `check:contrast`, the full
-Playwright suite, and all three linters on every push to `main` and on
-every pull request.
+Playwright suite, Lighthouse CI, and all three linters on every push to
+`main` and on every pull request.
 
 ## Deploying (Vercel)
 
