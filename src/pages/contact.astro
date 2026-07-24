@@ -73,10 +73,11 @@ import youthPhase from '../assets/contact/youth-phase-print.png';
         >.
       </p>
 
-      <p class="mt-4 text-base sm:text-lg">Want to get in touch? Send me a message below!</p>
     </section>
 
     <section class="sky-card rounded-card px-6 py-8 sm:p-10">
+      <p class="mb-6 text-base sm:text-lg">Drop me a line.</p>
+
       <form id="contact-form" class="flex flex-col gap-5" novalidate>
         <div class="flex flex-col gap-1.5">
           <label for="contact-name" class="text-xs tracking-widest">Name</label>
@@ -162,14 +163,12 @@ import youthPhase from '../assets/contact/youth-phase-print.png';
 </Layout>
 
 <style>
-  /* The print treatment: a matte ivory border — the polaroid's own
-     ivory, the site's one sky-independent surface — with a soft float
-     shadow and a half-degree tilt, like a print laid down by hand.
-     Straightens gently on hover, the way you'd square it on a table. */
+  /* The print treatment: no border now — just the photo itself, with a
+     soft float shadow and a half-degree tilt, like a print laid down by
+     hand. Straightens gently on hover, the way you'd square it on a
+     table. */
   .photo-print {
     position: relative;
-    padding: clamp(0.75rem, 2.5vw, 1.1rem);
-    background: var(--color-polaroid-ivory);
     border-radius: var(--radius-polaroid);
     box-shadow: 0 20px 45px -14px rgb(0 0 0 / 55%);
     transform: rotate(-0.6deg);
@@ -180,42 +179,63 @@ import youthPhase from '../assets/contact/youth-phase-print.png';
     transform: rotate(0deg);
   }
 
-  /* The tape: translucent strips laid diagonally across each corner,
-     hanging onto the card behind. Slightly irregular quads + soft
-     shadows; the print's edge ghosts through the translucency, which
-     is what sells it as tape rather than a sticker. */
+  /* The tape: masking-tape strips laid diagonally across each corner,
+     hanging onto the card behind. Each strip gets its own size, angle,
+     and offset — torn off the roll by hand, not stamped from a
+     template. Masking tape is matte, papery, and nearly opaque: a
+     warm cream base with the faintest lengthwise unevenness (paper
+     fiber, not sheen), scissor-cut ends — straight edges, but each
+     cut at its own slightly-off angle, never parallel — and a tight
+     contact shadow. The photo's corner barely ghosts through
+     at 90% — just enough to sit on the image rather than float. */
   .tape {
     position: absolute;
-    width: clamp(4.2rem, 22%, 6rem);
     height: 1.55rem;
-    background: linear-gradient(rgb(244 240 225 / 72%), rgb(231 224 200 / 66%));
-    clip-path: polygon(2% 6%, 97% 0, 100% 92%, 0 100%);
-    box-shadow: 0 1px 3px rgb(0 0 0 / 20%);
+    background: linear-gradient(
+      to right,
+      rgb(232 225 205 / 92%),
+      rgb(238 232 213 / 88%) 30%,
+      rgb(229 221 199 / 91%) 65%,
+      rgb(236 229 209 / 89%)
+    );
+    box-shadow:
+      0 1px 2px rgb(0 0 0 / 22%),
+      0 2px 5px rgb(0 0 0 / 10%);
     pointer-events: none;
   }
 
   .tape-tl {
-    top: -0.2rem;
-    left: -1.5rem;
-    transform: rotate(-45deg);
+    top: -0.35rem;
+    left: -1.7rem;
+    width: clamp(4rem, 21%, 5.6rem);
+    clip-path: polygon(3% 0, 98% 6%, 100% 100%, 0 92%);
+    transform: rotate(-42deg);
   }
 
   .tape-tr {
-    top: -0.2rem;
-    right: -1.5rem;
-    transform: rotate(45deg);
+    top: -0.1rem;
+    right: -1.3rem;
+    width: clamp(4.6rem, 23%, 6.4rem);
+    height: 1.4rem;
+    clip-path: polygon(0 8%, 96% 0, 100% 94%, 2.5% 100%);
+    transform: rotate(48deg);
   }
 
   .tape-bl {
-    bottom: -0.2rem;
-    left: -1.5rem;
-    transform: rotate(45deg);
+    bottom: -0.05rem;
+    left: -1.6rem;
+    width: clamp(3.8rem, 20%, 5.2rem);
+    height: 1.7rem;
+    clip-path: polygon(1.5% 4%, 100% 0, 97% 96%, 0 100%);
+    transform: rotate(41deg);
   }
 
   .tape-br {
-    bottom: -0.2rem;
-    right: -1.5rem;
-    transform: rotate(-45deg);
+    bottom: -0.3rem;
+    right: -1.6rem;
+    width: clamp(4.4rem, 22.5%, 6.2rem);
+    clip-path: polygon(0 2%, 97.5% 8%, 96% 100%, 2% 94%);
+    transform: rotate(-49deg);
   }
 
   @media (prefers-reduced-motion: reduce) {
