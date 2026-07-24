@@ -1,10 +1,10 @@
 ---
-title: "an example repost"
-description: "a placeholder demonstrating the frontmatter shape for reposts."
+title: 'an example repost'
+description: 'a placeholder demonstrating the frontmatter shape for reposts.'
 publishDate: 2026-07-10
 original:
-  url: "https://example.com/the-original-article"
-  source: "example.com"
+  url: 'https://example.com/the-original-article'
+  source: 'example.com'
 ---
 
 This is an example repost — delete `src/content/blog/example-repost.md` once

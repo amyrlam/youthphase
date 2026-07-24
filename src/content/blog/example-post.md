@@ -1,6 +1,6 @@
 ---
-title: "hello, blog"
-description: "a placeholder post demonstrating the frontmatter shape for original writing."
+title: 'hello, blog'
+description: 'a placeholder post demonstrating the frontmatter shape for original writing.'
 publishDate: 2026-07-17
 ---
 

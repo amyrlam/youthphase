@@ -42,7 +42,9 @@ const dateFmt = (d: Date) =>
                 {post.data.original && ` · originally posted on ${post.data.original.source}`}
               </p>
               <h2 class="mt-1 text-xl font-medium">{post.data.title}</h2>
-              {post.data.description && <p class="mt-1 text-sm opacity-80">{post.data.description}</p>}
+              {post.data.description && (
+                <p class="mt-1 text-sm opacity-80">{post.data.description}</p>
+              )}
             </a>
           </li>
         ))
