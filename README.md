@@ -117,6 +117,10 @@ Key files:
 every sun altitude and fails if any ink/background pairing drops below
 WCAG AAA — see [the sky section](#the-sky) above.
 
+A mobile Lighthouse run against the live site currently scores a
+perfect 100 across Performance, Accessibility, Best Practices, and
+SEO — a snapshot, not a gate, since nothing in CI enforces it yet.
+
 The same Playwright run also feeds [Chromatic](https://www.chromatic.com)
 visual regression testing via
 [`@chromatic-com/playwright`](https://www.chromatic.com/docs/playwright/) —
