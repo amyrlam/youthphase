@@ -2,16 +2,16 @@
 name: youthphase.dev
 description: Amy Lam's personal site — a living sky with real stars, and a life in polaroids
 colors:
-  sky-top-midnight: '#0a1030'
-  sky-bottom-midnight: '#1e2c60'
-  ink-default: '#f1eefb'
-  chip-bg-fallback: '#141a3d'
-  polaroid-ivory: '#f7f4ed'
-  polaroid-ink: '#2a2620'
-  moonlight: '#f4f7ff'
-  moonlight-low: '#ffeecf'
-  starlight: '#f0f4ff'
-  backdrop-night: '#05060c'
+  sky-top-midnight: 'oklch(19.04% 0.064 271.04)'
+  sky-bottom-midnight: 'oklch(31.28% 0.094 269.05)'
+  ink-default: 'oklch(95.52% 0.0176 296.63)'
+  chip-bg-fallback: 'oklch(23.43% 0.067 272.85)'
+  polaroid-ivory: 'oklch(96.75% 0.0098 87.47)'
+  polaroid-ink: 'oklch(27.09% 0.0123 78.08)'
+  moonlight: 'oklch(97.62% 0.0111 269.55)'
+  moonlight-low: 'oklch(95.47% 0.0445 82.61)'
+  starlight: 'oklch(96.73% 0.0153 269.99)'
+  backdrop-night: 'oklch(12.42% 0.0152 274.63)'
 typography:
   display:
     fontFamily: 'Space Grotesk Variable, system-ui, sans-serif'
@@ -90,18 +90,18 @@ The palette is an engine, not a swatch list — `src/scripts/sky.ts` computes ev
 
 ### Primary
 
-- **The Sky Gradient** (`--sky-top` / `--sky-bottom`, defaults #0a1030 / #1e2c60): the page background, deep midnight blue at night through pink and peach at golden hour to moody slate at midday. Never hardcode a color that's meant to track the sky; use the variables.
-- **Computed Ink** (`--ink`, default #f1eefb): all body text, chosen per frame for ≥4.5:1 against the mid-gradient band.
-- **The Chip Surface** (`--card-bg` / `--chip-ink`, fallback #141a3d): the guaranteed-7:1 background used by `.sky-chip`, `.sky-card`, `.sky-caption`, and the horizon band.
+- **The Sky Gradient** (`--sky-top` / `--sky-bottom`, defaults oklch(19.04% 0.064 271.04) / oklch(31.28% 0.094 269.05)): the page background, deep midnight blue at night through pink and peach at golden hour to moody slate at midday. Never hardcode a color that's meant to track the sky; use the variables.
+- **Computed Ink** (`--ink`, default oklch(95.52% 0.0176 296.63)): all body text, chosen per frame for ≥4.5:1 against the mid-gradient band.
+- **The Chip Surface** (`--card-bg` / `--chip-ink`, fallback oklch(23.43% 0.067 272.85)): the guaranteed-7:1 background used by `.sky-chip`, `.sky-card`, `.sky-caption`, and the horizon band.
 
 ### Secondary
 
-- **Polaroid Ivory** (#f7f4ed) with **Polaroid Ink** (#2a2620): the one deliberately sky-independent surface — the expanded photo card in the lightbox, warm like a real print.
+- **Polaroid Ivory** (oklch(96.75% 0.0098 87.47)) with **Polaroid Ink** (oklch(27.09% 0.0123 78.08)): the one deliberately sky-independent surface — the expanded photo card in the lightbox, warm like a real print.
 
 ### Neutral
 
-- **Moonlight** (#f4f7ff, warming to #ffeecf when the moon rides low): the moon's core and halo family.
-- **Starlight** (#f0f4ff): stars, shooting stars.
+- **Moonlight** (oklch(97.62% 0.0111 269.55), warming to oklch(95.47% 0.0445 82.61) when the moon rides low): the moon's core and halo family.
+- **Starlight** (oklch(96.73% 0.0153 269.99)): stars, shooting stars.
 - **Night Backdrop** (rgba(5, 6, 12, 0.82) over the page): the lightbox dimming layer.
 
 ### Named Rules
@@ -171,7 +171,7 @@ Shape and spacing are also `@theme` tokens: `rounded-card` (1rem) and `rounded-p
 
 ### The Polaroid (signature component)
 
-The expanded photo view: ivory card (#f7f4ed), 1rem padding with a deeper 1.25rem bottom margin, 0.25rem radius, caption written in the bottom margin in Polaroid Ink. Emoji-only captions render at 1.75rem (jumbomoji). On touch phones, it swipes like a physical print — drag-follow with resistance and a capped ±3° tilt, toss-off past 40px, settle-back under it — with Instagram-style position dots below.
+The expanded photo view: ivory card (oklch(96.75% 0.0098 87.47)), 1rem padding with a deeper 1.25rem bottom margin, 0.25rem radius, caption written in the bottom margin in Polaroid Ink. Emoji-only captions render at 1.75rem (jumbomoji). On touch phones, it swipes like a physical print — drag-follow with resistance and a capped ±3° tilt, toss-off past 40px, settle-back under it — with Instagram-style position dots below.
 
 ### Navigation
 
