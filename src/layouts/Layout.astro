@@ -43,6 +43,7 @@ const ogImage = new URL('/og.png', Astro.site);
     <div
       id="glow"
       aria-hidden="true"
+      data-chromatic="ignore"
       class="pointer-events-none fixed size-[60vw] -translate-1/2 rounded-full opacity-0 blur-[55px] sm:size-[45vmin] sm:blur-[90px]"
     >
     </div>
@@ -59,6 +60,7 @@ const ogImage = new URL('/og.png', Astro.site);
     <div
       id="moon-core"
       aria-hidden="true"
+      data-chromatic="ignore"
       class="pointer-events-none fixed size-[7px] -translate-1/2 rounded-full opacity-0"
     >
     </div>
@@ -73,7 +75,12 @@ const ogImage = new URL('/og.png', Astro.site);
          sliding off another circle. sky.ts positions it with the moon and
          rewrites the shadow path each tick; visibility and the bloom
          transition live in global.css under html.moon-cycle. -->
-    <div id="moon-face" aria-hidden="true" class="pointer-events-none fixed size-14 -translate-1/2">
+    <div
+      id="moon-face"
+      aria-hidden="true"
+      data-chromatic="ignore"
+      class="pointer-events-none fixed size-14 -translate-1/2"
+    >
       <svg viewBox="0 0 100 100" class="size-full">
         <defs>
           <radialGradient id="moon-sphere" cx="42%" cy="38%" r="72%">
@@ -111,18 +118,29 @@ const ogImage = new URL('/og.png', Astro.site);
          moonlight rises softly from the stage and recedes (sky.ts).
          Sits below the page content in DOM order so the flood stays
          behind the text. -->
-    <div id="moon-finale" aria-hidden="true" class="pointer-events-none fixed inset-0 opacity-0">
+    <div
+      id="moon-finale"
+      aria-hidden="true"
+      data-chromatic="ignore"
+      class="pointer-events-none fixed inset-0 opacity-0"
+    >
     </div>
 
     <!-- Day-show shower cloud: a faint gray dim over the sky while the
          rain falls, lifting when the rainbow arrives (sky.ts). -->
-    <div id="cloud-dim" aria-hidden="true" class="pointer-events-none fixed inset-0 opacity-0">
+    <div
+      id="cloud-dim"
+      aria-hidden="true"
+      data-chromatic="ignore"
+      class="pointer-events-none fixed inset-0 opacity-0"
+    >
     </div>
 
     <!-- Day-show rainbow: the left leg of a bow whose arch is far off
          the upper right — mostly horizontal across the page, sweeping
          up as it exits (sky.ts triggers it; geometry in global.css). -->
-    <div id="rainbow" aria-hidden="true" class="pointer-events-none fixed"></div>
+    <div id="rainbow" aria-hidden="true" data-chromatic="ignore" class="pointer-events-none fixed">
+    </div>
 
     <!-- The easter egg's trigger is a triple-tap anywhere on the sky
          (sky.ts) — no dedicated touch target needed, so nothing ever
@@ -132,13 +150,20 @@ const ogImage = new URL('/og.png', Astro.site);
 
     <!-- The real night sky: sky.ts positions the brightest stars for the
          visitor's location and time. -->
-    <div id="stars" aria-hidden="true" class="pointer-events-none fixed inset-0 opacity-0"></div>
+    <div
+      id="stars"
+      aria-hidden="true"
+      data-chromatic="ignore"
+      class="pointer-events-none fixed inset-0 opacity-0"
+    >
+    </div>
 
     <!-- Contrast scrim: sky.ts raises its opacity when the gradient behind
          the center content can't meet AAA on its own (golden hour). -->
     <div
       id="scrim"
       aria-hidden="true"
+      data-chromatic="ignore"
       class="pointer-events-none fixed top-[48%] left-1/2 h-[44vh] w-[min(96vw,64rem)] -translate-1/2 rounded-[50%] opacity-0 blur-3xl"
     >
     </div>
