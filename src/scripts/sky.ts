@@ -532,9 +532,20 @@ function render(place: Place, mode: Mode, at = new Date(), demo = false) {
   // Mobile browser chrome (Safari's toolbar tint) follows the horizon's
   // settled chip color. Both metas — Safari picks the one matching the
   // device's light/dark scheme and ignores the other, so each must carry
-  // the current sky (issue #60).
+  // the current sky. Updated by REPLACING each meta node, not mutating
+  // it: iOS Safari re-evaluates theme-color when a meta is inserted but
+  // does not reliably observe content changes on one already in the
+  // DOM, so setAttribute left the toolbar stuck on whichever color it
+  // last noticed — the load-time midnight fallback, or a stale day
+  // slate (issue #60). Replaced only when the color actually changed,
+  // so the once-a-minute idle repaints don't churn the head.
   for (const meta of document.querySelectorAll('meta[name="theme-color"]')) {
-    meta.setAttribute('content', css(chip.bg));
+    const color = css(chip.bg);
+    if (meta.getAttribute('content') !== color) {
+      const fresh = meta.cloneNode() as HTMLMetaElement;
+      fresh.setAttribute('content', color);
+      meta.replaceWith(fresh);
+    }
   }
 
   // The stars come out as the sun drops below civil twilight.
