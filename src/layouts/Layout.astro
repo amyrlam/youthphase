@@ -20,10 +20,18 @@ const ogImage = new URL('/og.png', Astro.site);
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="description" content={description} />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <!-- Tints mobile browser chrome (Safari's toolbar) to match the sky.
-         Starts at the midnight chip fallback; sky.ts rewrites it on every
-         render so the tint tracks day/night, including manual switches. -->
-    <meta name="theme-color" content="oklch(23.43% 0.067 272.85deg)" />
+    <!-- Tints mobile browser chrome (Safari's toolbar) to match the sky;
+         sky.ts rewrites both on every render so the tint tracks
+         day/night, including manual switches. Two media-gated metas, not
+         one: iOS Safari treats a bare theme-color as a light-mode
+         suggestion and falls back to its own neutral grey chrome in dark
+         mode unless a dark-scheme variant exists. Content stays plain
+         hex/rgb — Safari's theme-color parser rejects oklch(), and a
+         rejected value also lands on the default grey. The fallback is
+         the pre-render midnight chip (the hex twin of
+         --color-chip-bg-fallback). -->
+    <meta name="theme-color" media="(prefers-color-scheme: light)" content="#141a3d" />
+    <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#141a3d" />
     <title>{title}</title>
 
     <!-- Link previews (LinkedIn, Slack, iMessage, X): without these a

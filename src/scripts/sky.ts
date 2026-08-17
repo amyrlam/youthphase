@@ -530,9 +530,12 @@ function render(place: Place, mode: Mode, at = new Date(), demo = false) {
   }
 
   // Mobile browser chrome (Safari's toolbar tint) follows the horizon's
-  // settled chip color. Without this, Safari samples the page once at
-  // load and keeps that tint after a manual day/night switch (issue #60).
-  document.querySelector('meta[name="theme-color"]')?.setAttribute('content', css(chip.bg));
+  // settled chip color. Both metas — Safari picks the one matching the
+  // device's light/dark scheme and ignores the other, so each must carry
+  // the current sky (issue #60).
+  for (const meta of document.querySelectorAll('meta[name="theme-color"]')) {
+    meta.setAttribute('content', css(chip.bg));
+  }
 
   // The stars come out as the sun drops below civil twilight.
   const starOpacity = altDeg <= -12 ? 1 : altDeg >= -6 ? 0 : (-altDeg - 6) / 6;
