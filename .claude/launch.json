@@ -19,9 +19,9 @@
       "name": "worktree-1",
       "runtimeExecutable": "/Users/amyrlam/.local/opt/node/bin/pnpm",
       "runtimeArgs": [
-        "run",
+        "exec",
+        "astro",
         "dev",
-        "--",
         "--port",
         "4331",
         "--host"
@@ -35,9 +35,9 @@
       "name": "worktree-2",
       "runtimeExecutable": "/Users/amyrlam/.local/opt/node/bin/pnpm",
       "runtimeArgs": [
-        "run",
+        "exec",
+        "astro",
         "dev",
-        "--",
         "--port",
         "4332",
         "--host"
@@ -51,9 +51,9 @@
       "name": "worktree-3",
       "runtimeExecutable": "/Users/amyrlam/.local/opt/node/bin/pnpm",
       "runtimeArgs": [
-        "run",
+        "exec",
+        "astro",
         "dev",
-        "--",
         "--port",
         "4333",
         "--host"
@@ -66,7 +66,13 @@
     {
       "name": "worktree-4",
       "runtimeExecutable": "/Users/amyrlam/.local/opt/node/bin/pnpm",
-      "runtimeArgs": ["run", "dev", "--", "--port", "4334"],
+      "runtimeArgs": [
+        "exec",
+        "astro",
+        "dev",
+        "--port",
+        "4334"
+      ],
       "port": 4334,
       "env": {
         "PATH": "/Users/amyrlam/.local/opt/node/bin:/usr/bin:/bin:/usr/sbin:/sbin"
