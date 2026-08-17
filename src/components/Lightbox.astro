@@ -73,21 +73,34 @@
   }
 
   /* Touch phones hide prev/next (swipe + dots take over), so no side
-     reservation — just a slim margin so the polaroid isn't edge-to-edge.
+     reservation — just slim padding so the polaroid isn't edge-to-edge.
      Gated on pointer, not just width: a mouse user in a narrow window
      has no swipe, so they keep the arrows and the desktop layout.
 
-     max-height is also trimmed by the safe-area insets: the dialog is
-     centered with margin: auto, and a dialog sized right up to 100dvh
-     would center itself straight under the notch/Dynamic Island with no
-     margin to push it clear. .lightbox-media below caps the photo/video
-     itself to match, so a tall portrait one can't reflate the dialog
-     back past this ceiling. */
+     The close button is viewport-pinned to the top-right corner here
+     (see .lightbox-close's mobile rule below), so the top strip it
+     occupies — safe-area inset + 0.75rem offset + 2.25rem button +
+     0.5rem breathing room, --close-zone — is carved out of the dialog
+     entirely: explicit margins hand the dialog the screen region BELOW
+     that strip, and the polaroid centers inside it with grid. Centering
+     across the full viewport instead (the old margin: auto) let a tall
+     portrait photo or video ride up underneath the button, where the
+     translucent circle and near-white ✕ both vanish against the ivory
+     frame. Spanning the region full-width also widens tap-to-close:
+     lightbox.ts closes on any click whose target is the dialog itself. */
   @media (pointer: coarse) and (width <= 640px) {
     .lightbox-dialog {
-      max-width: 96vw;
-      max-height: calc(100dvh - env(safe-area-inset-top) - env(safe-area-inset-bottom));
+      --close-zone: calc(env(safe-area-inset-top) + 3.5rem);
+
+      width: 100vw;
+      max-width: 100vw;
+      height: calc(100dvh - var(--close-zone) - env(safe-area-inset-bottom));
+      max-height: none;
+      margin: var(--close-zone) 0 env(safe-area-inset-bottom);
       padding-inline: 0.75rem;
+      display: grid;
+      justify-items: center;
+      align-content: center;
     }
   }
 
@@ -139,17 +152,19 @@
   }
 
   /* Tighter cap than desktop's flat 74dvh: on a phone, the polaroid's own
-     padding (~2.25rem), the caption, the close button's overshoot above,
-     and the dot row below are all real height the media has to share the
-     screen with — 74dvh of media plus all of that reliably overflows a
-     short viewport (Safari's toolbar showing, an SE-sized screen). ~9rem
-     covers that fixed chrome so a tall portrait photo or video still
-     leaves the close button and dots on-screen. */
+     padding (~2.25rem), the caption, and the dot row below are all real
+     height the media has to share the screen with — 74dvh of media plus
+     all of that reliably overflows a short viewport (Safari's toolbar
+     showing, an SE-sized screen). The subtraction mirrors the dialog's
+     own box: the --close-zone strip carved off the top (3.5rem past the
+     safe-area inset) plus ~8rem for that in-dialog chrome, so a tall
+     portrait photo or video fills the carved-out region without ever
+     reaching the close button above it. */
   @media (pointer: coarse) and (width <= 640px) {
     .lightbox-media {
       max-height: min(
         74dvh,
-        calc(100dvh - env(safe-area-inset-top) - env(safe-area-inset-bottom) - 9rem)
+        calc(100dvh - env(safe-area-inset-top) - env(safe-area-inset-bottom) - 11.5rem)
       );
     }
   }
