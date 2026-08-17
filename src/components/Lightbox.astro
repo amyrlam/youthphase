@@ -98,6 +98,14 @@
       max-height: none;
       margin: var(--close-zone) 0 env(safe-area-inset-bottom);
       padding-inline: 0.75rem;
+    }
+
+    /* [open] only: an unconditional author display beats the UA's
+       dialog:not([open]) { display: none }, so the closed lightbox would
+       render as a ghost box (empty polaroid, dot row) at the bottom of
+       the page — Lighthouse then fails its tap-target audit on the
+       ghost's dot row. */
+    .lightbox-dialog[open] {
       display: grid;
       justify-items: center;
       align-content: center;
