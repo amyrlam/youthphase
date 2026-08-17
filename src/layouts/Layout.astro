@@ -20,6 +20,10 @@ const ogImage = new URL('/og.png', Astro.site);
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="description" content={description} />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <!-- Tints mobile browser chrome (Safari's toolbar) to match the sky.
+         Starts at the midnight chip fallback; sky.ts rewrites it on every
+         render so the tint tracks day/night, including manual switches. -->
+    <meta name="theme-color" content="oklch(23.43% 0.067 272.85deg)" />
     <title>{title}</title>
 
     <!-- Link previews (LinkedIn, Slack, iMessage, X): without these a

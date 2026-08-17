@@ -529,6 +529,11 @@ function render(place: Place, mode: Mode, at = new Date(), demo = false) {
     el.style.color = css(chip.ink);
   }
 
+  // Mobile browser chrome (Safari's toolbar tint) follows the horizon's
+  // settled chip color. Without this, Safari samples the page once at
+  // load and keeps that tint after a manual day/night switch (issue #60).
+  document.querySelector('meta[name="theme-color"]')?.setAttribute('content', css(chip.bg));
+
   // The stars come out as the sun drops below civil twilight.
   const starOpacity = altDeg <= -12 ? 1 : altDeg >= -6 ? 0 : (-altDeg - 6) / 6;
   nightNow = starOpacity > 0.5;
@@ -615,7 +620,10 @@ function render(place: Place, mode: Mode, at = new Date(), demo = false) {
     longitude,
   );
   const rising = inTenMinutes.altitude > sun.altitude;
-  const label = skyLabel(sunAltDeg, rising, moonIllum.phase);
+  // Label follows the sky being shown: under a manual day/night override
+  // that's the forced altitude, not the real sun — otherwise "sky: night"
+  // at noon still reads "daylight" (issue #60).
+  const label = skyLabel(altDeg, rising, moonIllum.phase);
 
   const status = document.getElementById('sky-status');
   if (status) {
@@ -836,7 +844,12 @@ function enableMoonShow(getPlace: () => Place, getMode: () => Mode) {
    running) or pressing Escape bails out and restores the real sky. */
 let demoAbort = false;
 
-async function playDemo(place: Place, mode: Mode, syncButton: () => void) {
+/* Place and mode are read through getters, not captured: the mode button
+   stays clickable during the demo (its render is skipped, not its state
+   change), so the final repaint must use whatever mode/place are current
+   when the demo ends — a snapshot from when it started can restore a sky
+   the user has since switched away from (issue #51). */
+async function playDemo(getPlace: () => Place, getMode: () => Mode, syncButton: () => void) {
   if (demoRunning || cycleRunning) return;
   demoRunning = true;
   demoAbort = false;
@@ -846,7 +859,7 @@ async function playDemo(place: Place, mode: Mode, syncButton: () => void) {
   let nightFrames = 0;
   for (let m = 0; m <= 24 * 60; m += 10) {
     if (demoAbort) break;
-    render(place, 'auto', new Date(base.getTime() + m * 60 * 1000), true);
+    render(getPlace(), 'auto', new Date(base.getTime() + m * 60 * 1000), true);
     // A few frames into darkness and again deeper in — position is
     // random, timing is guaranteed so every run shows one.
     if (nightNow && !reducedMotion()) {
@@ -858,7 +871,7 @@ async function playDemo(place: Place, mode: Mode, syncButton: () => void) {
   document.documentElement.classList.remove('sky-demo');
   demoRunning = false;
   syncButton();
-  render(place, mode);
+  render(getPlace(), getMode());
 }
 
 async function start() {
@@ -909,7 +922,11 @@ async function start() {
     if (demoRunning) {
       demoAbort = true;
     } else {
-      playDemo(place, mode, syncDemoButton);
+      playDemo(
+        () => place,
+        () => mode,
+        syncDemoButton,
+      );
     }
   });
   addEventListener('keydown', (e) => {

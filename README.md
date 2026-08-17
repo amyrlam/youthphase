@@ -56,7 +56,11 @@ The background is your actual sky, computed in the browser:
   `prefers-reduced-motion`.
 - **Controls**: the `▶︎ 24h` chip plays the whole day as a time-lapse;
   the `sky:` chip pins day or night (persisted in localStorage) for
-  anyone who'd rather not read on a sunset. In the dev console,
+  anyone who'd rather not read on a sunset. The status line and the
+  browser's own chrome follow along: every repaint rewrites a
+  `theme-color` meta tag with the horizon's computed chip color, so
+  mobile Safari's toolbar tints to match the sky instead of keeping
+  whatever it sampled at load. In the dev console,
   `__skyAt('2026-07-16T20:30')` previews any moment.
 
 The page paints immediately with the fallback sky, then refines once
