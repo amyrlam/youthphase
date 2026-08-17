@@ -82,6 +82,13 @@ body {
   min-height: 100dvh;
   color: var(--ink);
   background: linear-gradient(180deg, var(--sky-top), var(--sky-bottom));
+
+  /* The shorthand above resets background-color to transparent; give it
+     the sky's ground color explicitly. Mobile Safari derives its chrome
+     and overscroll tint from a real background-color when it distrusts
+     (or lacks) a theme-color — a transparent body reads as white/grey
+     there, which is what a night sky must never fade into. */
+  background-color: var(--sky-bottom);
   transition:
     --sky-top 1.6s ease,
     --sky-bottom 1.6s ease,
