@@ -568,12 +568,20 @@ function render(place: Place, mode: Mode, at = new Date(), demo = false) {
   // and never clobbering a fragment the site didn't put there. The
   // fragment matches no element id, so it can't scroll the page.
   if (!demo && chrome !== lastChrome) {
-    const appleTouch = /Apple/.test(navigator.vendor) && navigator.maxTouchPoints > 1;
+    const appleTouch =
+      /Apple/.test(navigator.vendor) && (navigator.maxTouchPoints > 1 || 'ontouchstart' in window);
     if (
       lastChrome !== undefined &&
       appleTouch &&
       (!location.hash || location.hash.startsWith('#sky-'))
     ) {
+      // Synchronously, in the same task as the meta swap. KNOWN GAP,
+      // kept honest by scripts/check-sky-chrome.mjs (currently red on
+      // its in-page-switch legs): current simulator Safari honors at
+      // most the load-time apply, and no re-apply lever found so far
+      // survives it — plain/deferred/pushed/doubled hash navigations
+      // all verified ineffective there. The nudge stays because it is
+      // harmless and some Safari builds do honor hash navigations.
       const slug = chip.bg.map((c) => Math.round(c).toString(16).padStart(2, '0')).join('');
       location.replace(`${location.pathname}${location.search}#sky-${slug}`);
     }
@@ -1024,6 +1032,32 @@ async function start() {
     repaint();
     setTimeout(repaint, 1200);
   });
+
+  // Dev-only test harness: ?skyseq=night,day cycles modes in-page, 5s
+  // apart, through the same path as sky-button clicks — how
+  // scripts/check-sky-chrome.mjs drives real simulator Safari, where
+  // nothing can tap the button. Stripped from production builds.
+  if (import.meta.env.DEV) {
+    const seq = new URLSearchParams(location.search).get('skyseq');
+    if (seq) {
+      seq
+        .split(',')
+        .filter((m): m is Mode => MODES.includes(m as Mode))
+        .forEach((m, i) => {
+          setTimeout(
+            () => {
+              mode = m;
+              syncButton();
+              render(place, mode);
+              // Surface the nudge state where a screenshot can see it.
+              const status = document.getElementById('sky-status');
+              if (status) status.textContent += ` · ${location.hash || 'no-hash'}`;
+            },
+            5000 * (i + 1),
+          );
+        });
+    }
+  }
 }
 
 if (typeof document !== 'undefined') start();

@@ -14,10 +14,19 @@ export default defineConfig({
   },
   // Chromatic's Playwright integration requires an explicit Chrome project
   // to snapshot against — https://www.chromatic.com/docs/playwright/.
+  // The sky-chrome contract tests instead run in real WebKit with iPhone
+  // emulation (Apple vendor + touch points, which gate the Safari
+  // chrome-tint mechanisms they assert) and take no Chromatic snapshots.
   projects: [
     {
       name: 'chromium',
       use: { ...devices['Desktop Chrome'] },
+      testIgnore: /sky-chrome/,
+    },
+    {
+      name: 'webkit-iphone',
+      use: { ...devices['iPhone 15'] },
+      testMatch: /sky-chrome/,
     },
   ],
 });
