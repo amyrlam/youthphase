@@ -57,12 +57,18 @@ The background is your actual sky, computed in the browser:
 - **Controls**: the `▶︎ 24h` chip plays the whole day as a time-lapse;
   the `sky:` chip pins day or night (persisted in localStorage) for
   anyone who'd rather not read on a sunset. The status line and the
-  browser's own chrome follow along: every repaint rewrites a pair of
-  `theme-color` meta tags (one per light/dark color scheme — iOS Safari
-  ignores a bare one in dark mode and shows grey chrome) with the
-  horizon's computed chip color, so mobile Safari's toolbar tints to
-  match the sky instead of keeping whatever it sampled at load. In the
-  dev console, `__skyAt('2026-07-16T20:30')` previews any moment.
+  browser's own chrome follow along, via three mechanisms tuned against
+  real iOS Safari: a pair of `theme-color` metas (one per light/dark
+  color scheme) re-inserted on every repaint, the body's
+  `background-color` set inline each repaint (Safari's status-bar strip
+  samples it, but never re-samples a change driven only by a CSS
+  variable transition), and a re-render on `pageshow` (Safari applies
+  theme-color once around that moment and can miss swaps made
+  mid-load or across a back/forward-cache restore). The page also sets
+  `viewport-fit=cover`, so the sky itself paints under the notch and
+  home indicator. On a phone, `?sky=day|night|auto` pins the mode for
+  one load; in the dev console, `__skyAt('2026-07-16T20:30')` previews
+  any moment.
 
 The page paints immediately with the fallback sky, then refines once
 the geo lookup resolves, and re-renders every minute.

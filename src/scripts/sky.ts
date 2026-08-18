@@ -26,6 +26,12 @@ const MODES: Mode[] = ['auto', 'day', 'night'];
 const FORCED_ALT: Record<'day' | 'night', number> = { day: 45, night: -30 };
 
 function storedMode(): Mode {
+  // ?sky=day|night|auto pins the mode for this load — a deep-linkable
+  // override for testing real devices, where there's no dev console to
+  // call __skyAt from. Deliberately not persisted: a shared link
+  // shouldn't overwrite the visitor's chosen mode.
+  const q = new URLSearchParams(location.search).get('sky');
+  if (q === 'day' || q === 'night' || q === 'auto') return q;
   try {
     const m = localStorage.getItem(MODE_KEY);
     if (m === 'day' || m === 'night') return m;
@@ -535,18 +541,24 @@ function render(place: Place, mode: Mode, at = new Date(), demo = false) {
   // the current sky. Updated by REPLACING each meta node, not mutating
   // it: iOS Safari re-evaluates theme-color when a meta is inserted but
   // does not reliably observe content changes on one already in the
-  // DOM, so setAttribute left the toolbar stuck on whichever color it
-  // last noticed — the load-time midnight fallback, or a stale day
-  // slate (issue #60). Replaced only when the color actually changed,
-  // so the once-a-minute idle repaints don't churn the head.
+  // DOM. Replaced unconditionally — Safari can also drop a swap it was
+  // shown mid-load or across a bfcache restore, so an equal-color
+  // repaint (like the pageshow one in start()) must still re-assert the
+  // value rather than assume Safari kept the last one (issue #60).
   for (const meta of document.querySelectorAll('meta[name="theme-color"]')) {
-    const color = css(chip.bg);
-    if (meta.getAttribute('content') !== color) {
-      const fresh = meta.cloneNode() as HTMLMetaElement;
-      fresh.setAttribute('content', color);
-      meta.replaceWith(fresh);
-    }
+    const fresh = meta.cloneNode() as HTMLMetaElement;
+    fresh.setAttribute('content', css(chip.bg));
+    meta.replaceWith(fresh);
   }
+
+  // Safari's status-bar strip tints from the body's computed
+  // background-color, and a change driven purely by a CSS custom
+  // property's transition never triggers its re-sample — the strip
+  // keeps the sky it sampled at load. An inline style write is a real
+  // mutation it does notice; the color is invisible on the page itself
+  // (the opaque sky gradient paints over it), so this only feeds the
+  // chrome. The stylesheet's var(--sky-bottom) stays for pre-JS paint.
+  document.body.style.backgroundColor = css(bottom);
 
   // The stars come out as the sun drops below civil twilight.
   const starOpacity = altDeg <= -12 ? 1 : altDeg >= -6 ? 0 : (-altDeg - 6) / 6;
@@ -963,6 +975,26 @@ async function start() {
   setInterval(() => {
     if (!demoRunning && !cycleRunning && !skyPinned) render(place, mode);
   }, 60 * 1000);
+
+  // Repaint once the page is fully shown. iOS Safari latches theme-color
+  // from the parsed HTML and can miss meta swaps made while the page is
+  // still loading (the renders above), leaving its toolbar on the static
+  // midnight fallback; pageshow also fires on back/forward-cache
+  // restores, where the chrome otherwise keeps whatever sky the page
+  // left with (issue #60).
+  // Twice — immediately, and again a beat later. Safari's apply point
+  // for the chrome tint lands at slightly different moments across
+  // loads, and a repaint that fires just before it is ignored the same
+  // as the mid-load ones (the once-a-minute interval above would
+  // eventually self-heal, but a visitor switching modes right away
+  // shouldn't wait on that).
+  const repaint = () => {
+    if (!demoRunning && !cycleRunning && !skyPinned) render(place, mode);
+  };
+  addEventListener('pageshow', () => {
+    repaint();
+    setTimeout(repaint, 1200);
+  });
 }
 
 if (typeof document !== 'undefined') start();

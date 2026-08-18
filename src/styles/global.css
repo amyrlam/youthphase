@@ -83,6 +83,13 @@ body {
   color: var(--ink);
   background: linear-gradient(180deg, var(--sky-top), var(--sky-bottom));
 
+  /* With viewport-fit=cover (Layout.astro) the page spans the physical
+     screen; keep content out of the rounded corners and the landscape
+     notch. Top/bottom stay unpadded on purpose — the sky should run
+     under the status bar and home indicator, and the elements that live
+     near those edges already pad themselves by the insets. */
+  padding-inline: env(safe-area-inset-left) env(safe-area-inset-right);
+
   /* The shorthand above resets background-color to transparent; give it
      the sky's ground color explicitly. Mobile Safari derives its chrome
      and overscroll tint from a real background-color when it distrusts

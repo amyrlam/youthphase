@@ -17,19 +17,24 @@ const ogImage = new URL('/og.png', Astro.site);
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <!-- viewport-fit=cover: the sky paints edge-to-edge, under the
+         notch and home indicator. This is what keeps iOS Safari's
+         status-bar strip in sync with the sky — the strip shows the
+         page's own pixels, whereas its theme-color-derived tint can
+         lag a day/night switch indefinitely (issue #60). Controls and
+         page content already pad by env(safe-area-inset-*). -->
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <meta name="description" content={description} />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <!-- Tints mobile browser chrome (Safari's toolbar) to match the sky;
-         sky.ts rewrites both on every render so the tint tracks
-         day/night, including manual switches. Two media-gated metas, not
-         one: iOS Safari treats a bare theme-color as a light-mode
-         suggestion and falls back to its own neutral grey chrome in dark
-         mode unless a dark-scheme variant exists. Content stays plain
-         hex/rgb — Safari's theme-color parser rejects oklch(), and a
-         rejected value also lands on the default grey. The fallback is
-         the pre-render midnight chip (the hex twin of
-         --color-chip-bg-fallback). -->
+    <!-- Tints mobile browser chrome to match the sky; sky.ts re-replaces
+         both on every render. Two media-gated metas, not one: iOS
+         Safari treats a bare theme-color as a light-mode suggestion and
+         falls back to neutral grey chrome in dark mode. Content stays
+         plain hex/rgb (Safari's theme-color parser rejects oklch), and
+         the fallback is the pre-render midnight chip. Some Safari
+         versions only honor the value they see around pageshow — that's
+         why start() re-renders on pageshow rather than trusting the
+         swaps made mid-load (issue #60). -->
     <meta name="theme-color" media="(prefers-color-scheme: light)" content="#141a3d" />
     <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#141a3d" />
     <title>{title}</title>
