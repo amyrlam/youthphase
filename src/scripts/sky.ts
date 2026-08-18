@@ -26,6 +26,12 @@ const MODES: Mode[] = ['auto', 'day', 'night'];
 const FORCED_ALT: Record<'day' | 'night', number> = { day: 45, night: -30 };
 
 function storedMode(): Mode {
+  // ?sky=day|night|auto pins the mode for this load — a deep-linkable
+  // override for testing real devices, where there's no dev console to
+  // call __skyAt from. Deliberately not persisted: a shared link
+  // shouldn't overwrite the visitor's chosen mode.
+  const q = new URLSearchParams(location.search).get('sky');
+  if (q === 'day' || q === 'night' || q === 'auto') return q;
   try {
     const m = localStorage.getItem(MODE_KEY);
     if (m === 'day' || m === 'night') return m;
@@ -476,6 +482,10 @@ function formatTime(d: Date): string {
 
 let demoRunning = false;
 
+/* Last theme-color pushed to the browser chrome — render() nudges iOS
+   Safari with a same-document navigation only when this changes. */
+let lastChrome: string | undefined;
+
 // Set by __skyAt below: while true, the post-locate and interval renders
 // in start() skip repainting so they don't clobber a pinned time with
 // the real "now" (this is what Chromatic's screenshot tests rely on).
@@ -535,18 +545,57 @@ function render(place: Place, mode: Mode, at = new Date(), demo = false) {
   // the current sky. Updated by REPLACING each meta node, not mutating
   // it: iOS Safari re-evaluates theme-color when a meta is inserted but
   // does not reliably observe content changes on one already in the
-  // DOM, so setAttribute left the toolbar stuck on whichever color it
-  // last noticed — the load-time midnight fallback, or a stale day
-  // slate (issue #60). Replaced only when the color actually changed,
-  // so the once-a-minute idle repaints don't churn the head.
+  // DOM. Replaced unconditionally — Safari can also drop a swap it was
+  // shown mid-load or across a bfcache restore, so an equal-color
+  // repaint (like the pageshow one in start()) must still re-assert the
+  // value rather than assume Safari kept the last one (issue #60).
+  const chrome = css(chip.bg);
   for (const meta of document.querySelectorAll('meta[name="theme-color"]')) {
-    const color = css(chip.bg);
-    if (meta.getAttribute('content') !== color) {
-      const fresh = meta.cloneNode() as HTMLMetaElement;
-      fresh.setAttribute('content', color);
-      meta.replaceWith(fresh);
-    }
+    const fresh = meta.cloneNode() as HTMLMetaElement;
+    fresh.setAttribute('content', chrome);
+    meta.replaceWith(fresh);
   }
+
+  // iOS Safari applies the toolbar's theme-color once per navigation
+  // and ignores every later meta swap (simulator-verified: mutation,
+  // node replacement, re-insertion, replaceState, pushState — all
+  // ignored once applied). The one lever that re-runs the apply is a
+  // same-document navigation; location.replace with a fresh #sky-
+  // fragment does that without adding a history entry, so Back stays
+  // clean. Apple touch devices only (every iOS browser shares this
+  // WebKit chrome), only when the chrome color really changed (not on
+  // first paint — load applies natively), never at demo frame rate,
+  // and never clobbering a fragment the site didn't put there. The
+  // fragment matches no element id, so it can't scroll the page.
+  if (!demo && chrome !== lastChrome) {
+    const appleTouch =
+      /Apple/.test(navigator.vendor) && (navigator.maxTouchPoints > 1 || 'ontouchstart' in window);
+    if (
+      lastChrome !== undefined &&
+      appleTouch &&
+      (!location.hash || location.hash.startsWith('#sky-'))
+    ) {
+      // Synchronously, in the same task as the meta swap. KNOWN GAP,
+      // kept honest by scripts/check-sky-chrome.mjs (currently red on
+      // its in-page-switch legs): current simulator Safari honors at
+      // most the load-time apply, and no re-apply lever found so far
+      // survives it — plain/deferred/pushed/doubled hash navigations
+      // all verified ineffective there. The nudge stays because it is
+      // harmless and some Safari builds do honor hash navigations.
+      const slug = chip.bg.map((c) => Math.round(c).toString(16).padStart(2, '0')).join('');
+      location.replace(`${location.pathname}${location.search}#sky-${slug}`);
+    }
+    lastChrome = chrome;
+  }
+
+  // Safari's status-bar strip tints from the body's computed
+  // background-color, and a change driven purely by a CSS custom
+  // property's transition never triggers its re-sample — the strip
+  // keeps the sky it sampled at load. An inline style write is a real
+  // mutation it does notice; the color is invisible on the page itself
+  // (the opaque sky gradient paints over it), so this only feeds the
+  // chrome. The stylesheet's var(--sky-bottom) stays for pre-JS paint.
+  document.body.style.backgroundColor = css(bottom);
 
   // The stars come out as the sun drops below civil twilight.
   const starOpacity = altDeg <= -12 ? 1 : altDeg >= -6 ? 0 : (-altDeg - 6) / 6;
@@ -963,6 +1012,52 @@ async function start() {
   setInterval(() => {
     if (!demoRunning && !cycleRunning && !skyPinned) render(place, mode);
   }, 60 * 1000);
+
+  // Repaint once the page is fully shown. iOS Safari latches theme-color
+  // from the parsed HTML and can miss meta swaps made while the page is
+  // still loading (the renders above), leaving its toolbar on the static
+  // midnight fallback; pageshow also fires on back/forward-cache
+  // restores, where the chrome otherwise keeps whatever sky the page
+  // left with (issue #60).
+  // Twice — immediately, and again a beat later. Safari's apply point
+  // for the chrome tint lands at slightly different moments across
+  // loads, and a repaint that fires just before it is ignored the same
+  // as the mid-load ones (the once-a-minute interval above would
+  // eventually self-heal, but a visitor switching modes right away
+  // shouldn't wait on that).
+  const repaint = () => {
+    if (!demoRunning && !cycleRunning && !skyPinned) render(place, mode);
+  };
+  addEventListener('pageshow', () => {
+    repaint();
+    setTimeout(repaint, 1200);
+  });
+
+  // Dev-only test harness: ?skyseq=night,day cycles modes in-page, 5s
+  // apart, through the same path as sky-button clicks — how
+  // scripts/check-sky-chrome.mjs drives real simulator Safari, where
+  // nothing can tap the button. Stripped from production builds.
+  if (import.meta.env.DEV) {
+    const seq = new URLSearchParams(location.search).get('skyseq');
+    if (seq) {
+      seq
+        .split(',')
+        .filter((m): m is Mode => MODES.includes(m as Mode))
+        .forEach((m, i) => {
+          setTimeout(
+            () => {
+              mode = m;
+              syncButton();
+              render(place, mode);
+              // Surface the nudge state where a screenshot can see it.
+              const status = document.getElementById('sky-status');
+              if (status) status.textContent += ` · ${location.hash || 'no-hash'}`;
+            },
+            5000 * (i + 1),
+          );
+        });
+    }
+  }
 }
 
 if (typeof document !== 'undefined') start();
