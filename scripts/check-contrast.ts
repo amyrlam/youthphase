@@ -2,6 +2,11 @@
    - heading (large text) ink vs mid-gradient: ≥ 4.5:1
    - status/button ink vs computed chip background: ≥ 7:1
    - top-of-page link ink (pickTopInk) vs --sky-top: ≥ 4.5:1
+   - card text ink (--ink) vs --card-bg (.sky-card): ≥ 4.5:1 — this
+     pairing bottoms out around dusk (~6.6:1), which is why card text
+     must never carry an opacity de-emphasis: any multiplier drags the
+     dusk floor under 4.5 and Lighthouse fails whenever CI happens to
+     run at sunset.
    Run: node scripts/check-contrast.ts */
 import {
   skyColors,
@@ -17,6 +22,7 @@ import {
 let worstHeading = Infinity;
 let worstChip = Infinity;
 let worstTopInk = Infinity;
+let worstCard = Infinity;
 let failures = 0;
 
 for (let alt = -90; alt <= 90; alt += 0.1) {
@@ -40,14 +46,19 @@ for (let alt = -90; alt <= 90; alt += 0.1) {
   const topInk = pickTopInk(top);
   const topInkRatio = contrast(topInk, top);
 
+  // .sky-card pairs --ink (pickInk) with --card-bg (chipFor's bg) —
+  // the combination blog cards and article bodies actually render.
+  const cardRatio = contrast(ink, chip.bg);
+
   worstHeading = Math.min(worstHeading, headingRatio);
   worstChip = Math.min(worstChip, chipRatio);
   worstTopInk = Math.min(worstTopInk, topInkRatio);
+  worstCard = Math.min(worstCard, cardRatio);
 
-  if (headingRatio < 4.5 || chipRatio < 7 || topInkRatio < 4.5) {
+  if (headingRatio < 4.5 || chipRatio < 7 || topInkRatio < 4.5 || cardRatio < 4.5) {
     failures++;
     console.error(
-      `FAIL alt=${alt.toFixed(1)}° heading=${headingRatio.toFixed(2)} chip=${chipRatio.toFixed(2)} topInk=${topInkRatio.toFixed(2)}`,
+      `FAIL alt=${alt.toFixed(1)}° heading=${headingRatio.toFixed(2)} chip=${chipRatio.toFixed(2)} topInk=${topInkRatio.toFixed(2)} card=${cardRatio.toFixed(2)}`,
     );
   }
 }
@@ -55,6 +66,7 @@ for (let alt = -90; alt <= 90; alt += 0.1) {
 console.log(`worst heading contrast   (needs ≥ 4.5): ${worstHeading.toFixed(2)}`);
 console.log(`worst chip contrast      (needs ≥ 7.0): ${worstChip.toFixed(2)}`);
 console.log(`worst top-link contrast  (needs ≥ 4.5): ${worstTopInk.toFixed(2)}`);
+console.log(`worst card-text contrast (needs ≥ 4.5): ${worstCard.toFixed(2)}`);
 if (failures > 0) {
   console.error(`${failures} altitude(s) failed AAA`);
   process.exit(1);

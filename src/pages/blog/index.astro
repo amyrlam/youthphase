@@ -37,14 +37,17 @@ const dateFmt = (d: Date) =>
               href={`/blog/${post.id}/`}
               class="sky-card group block rounded-2xl px-5 py-4 transition-transform duration-300 hover:-translate-y-0.5 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-current"
             >
-              <p class="text-xs lowercase tracking-widest opacity-70">
+              {/* No opacity de-emphasis on card text: the computed
+                  ink/card pairing bottoms out at ~6.6:1 around dusk, and
+                  any opacity multiplies that below the 4.5:1 floor small
+                  text needs (caught by Lighthouse when CI ran at sunset).
+                  Size and tracking carry the hierarchy instead. */}
+              <p class="text-xs lowercase tracking-widest">
                 {dateFmt(post.data.publishDate)}
                 {post.data.original && ` · originally posted on ${post.data.original.source}`}
               </p>
               <h2 class="mt-1 text-xl font-medium">{post.data.title}</h2>
-              {post.data.description && (
-                <p class="mt-1 text-sm opacity-80">{post.data.description}</p>
-              )}
+              {post.data.description && <p class="mt-1 text-sm">{post.data.description}</p>}
             </a>
           </li>
         ))
