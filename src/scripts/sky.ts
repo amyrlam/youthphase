@@ -482,6 +482,10 @@ function formatTime(d: Date): string {
 
 let demoRunning = false;
 
+/* Last theme-color pushed to the browser chrome — render() nudges iOS
+   Safari with a same-document navigation only when this changes. */
+let lastChrome: string | undefined;
+
 // Set by __skyAt below: while true, the post-locate and interval renders
 // in start() skip repainting so they don't clobber a pinned time with
 // the real "now" (this is what Chromatic's screenshot tests rely on).
@@ -545,10 +549,35 @@ function render(place: Place, mode: Mode, at = new Date(), demo = false) {
   // shown mid-load or across a bfcache restore, so an equal-color
   // repaint (like the pageshow one in start()) must still re-assert the
   // value rather than assume Safari kept the last one (issue #60).
+  const chrome = css(chip.bg);
   for (const meta of document.querySelectorAll('meta[name="theme-color"]')) {
     const fresh = meta.cloneNode() as HTMLMetaElement;
-    fresh.setAttribute('content', css(chip.bg));
+    fresh.setAttribute('content', chrome);
     meta.replaceWith(fresh);
+  }
+
+  // iOS Safari applies the toolbar's theme-color once per navigation
+  // and ignores every later meta swap (simulator-verified: mutation,
+  // node replacement, re-insertion, replaceState, pushState — all
+  // ignored once applied). The one lever that re-runs the apply is a
+  // same-document navigation; location.replace with a fresh #sky-
+  // fragment does that without adding a history entry, so Back stays
+  // clean. Apple touch devices only (every iOS browser shares this
+  // WebKit chrome), only when the chrome color really changed (not on
+  // first paint — load applies natively), never at demo frame rate,
+  // and never clobbering a fragment the site didn't put there. The
+  // fragment matches no element id, so it can't scroll the page.
+  if (!demo && chrome !== lastChrome) {
+    const appleTouch = /Apple/.test(navigator.vendor) && navigator.maxTouchPoints > 1;
+    if (
+      lastChrome !== undefined &&
+      appleTouch &&
+      (!location.hash || location.hash.startsWith('#sky-'))
+    ) {
+      const slug = chip.bg.map((c) => Math.round(c).toString(16).padStart(2, '0')).join('');
+      location.replace(`${location.pathname}${location.search}#sky-${slug}`);
+    }
+    lastChrome = chrome;
   }
 
   // Safari's status-bar strip tints from the body's computed
